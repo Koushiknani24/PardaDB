@@ -52,7 +52,7 @@ class ProcStats:
     """CPU %, RSS, threads and state-dir size of this process, from /proc (no psutil)."""
 
     def __init__(self) -> None:
-        self.tick = os.sysconf("SC_CLK_TCK")
+        self.tick = os.sysconf("SC_CLK_TCK") if hasattr(os, "sysconf") else 100  # Windows has no sysconf
         self.last = (time.monotonic(), self._cpu())
 
     def _cpu(self) -> float:

@@ -355,7 +355,7 @@ function Install-PardaDB {
         $uvCmd = 'uv'
         if (-not (Get-Command uv -ErrorAction SilentlyContinue)) { $uvCmd = "& '$uv'" }
         $run = "$uvCmd run pardadb"
-        $test = "$uvCmd run pytest"
+        $test = "$uvCmd run --extra dev pytest"
     } else {
         $run = "& '$(Get-VenvExe $venv 'pardadb')'"
         $test = "& '$(Get-VenvExe $venv 'python')' -m pytest"

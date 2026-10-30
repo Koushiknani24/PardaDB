@@ -289,7 +289,7 @@ print_next_steps() {
     local uv_cmd="uv"
     command -v uv >/dev/null 2>&1 || uv_cmd="$uv_bin"
     run="$uv_cmd run pardadb"
-    test="$uv_cmd run pytest"
+    test="$uv_cmd run --extra dev pytest"
   else
     run=".venv/bin/pardadb"
     test=".venv/bin/python -m pytest"

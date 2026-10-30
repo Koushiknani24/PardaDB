@@ -7,7 +7,7 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "pardadb"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # FULL_CODE/, so `import pardadb` works
 import evaluate as ev
 import torch
 from gliner import GLiNER
