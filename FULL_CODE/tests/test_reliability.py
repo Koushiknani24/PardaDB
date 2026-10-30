@@ -301,3 +301,14 @@ def test_http_server_answers_oversized_post_with_413(rt: server.Runtime) -> None
     finally:
         httpd.shutdown()
         httpd.server_close()
+
+
+def test_relative_path_settings_resolve_against_full_code(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A relative path in .env (e.g. PARDADB_DATASET=./data) means FULL_CODE/<path> wherever pardadb starts."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("PARDADB_TEST_PATH", "./pack-folder")
+    assert config.env_path("PARDADB_TEST_PATH", tmp_path) == (config.REPO / "pack-folder").resolve()
+    monkeypatch.setenv("PARDADB_TEST_PATH", str(tmp_path / "abs"))
+    assert config.env_path("PARDADB_TEST_PATH", tmp_path) == tmp_path / "abs"
+    monkeypatch.delenv("PARDADB_TEST_PATH")
+    assert config.env_path("PARDADB_TEST_PATH", tmp_path / "default") == tmp_path / "default"

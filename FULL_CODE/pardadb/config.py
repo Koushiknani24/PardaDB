@@ -25,12 +25,20 @@ def _load_dotenv(path: Path) -> None:
 
 _load_dotenv(REPO / ".env")
 
+
 # The problem pack (sql/, data/users.csv) goes in FULL_CODE/data/, which is git-ignored.
-DATASET = Path(os.environ.get("PARDADB_DATASET", REPO / "data")).resolve()
-SQLITE_PATH = Path(os.environ.get("PARDADB_SQLITE", DATASET / "sql" / "sqlite" / "saffron_bank.db")).resolve()
-USERS_CSV = Path(os.environ.get("PARDADB_USERS", DATASET / "data" / "users.csv"))
-STATE_DIR = Path(os.environ.get("PARDADB_STATE", REPO / ".state"))
-POLICY_PATH = Path(os.environ.get("PARDADB_POLICY", Path(__file__).resolve().parent / "policy.json"))
+def env_path(name: str, default: Path) -> Path:
+    """A path setting from the environment; relative values are taken from FULL_CODE/, not the shell's folder."""
+    raw = os.environ.get(name)
+    path = Path(raw).expanduser() if raw else default
+    return (path if path.is_absolute() else REPO / path).resolve()
+
+
+DATASET = env_path("PARDADB_DATASET", REPO / "data")
+SQLITE_PATH = env_path("PARDADB_SQLITE", DATASET / "sql" / "sqlite" / "saffron_bank.db")
+USERS_CSV = env_path("PARDADB_USERS", DATASET / "data" / "users.csv")
+STATE_DIR = env_path("PARDADB_STATE", REPO / ".state")
+POLICY_PATH = env_path("PARDADB_POLICY", Path(__file__).resolve().parent / "policy.json")
 
 MYSQL = dict(
     host=os.environ.get("PARDADB_MYSQL_HOST", "127.0.0.1"),
@@ -55,7 +63,7 @@ EXTRA_HOSTS = tuple(h.strip() for h in os.environ.get("PARDADB_ALLOWED_HOSTS", "
 DB_TIMEOUT_S = int(os.environ.get("PARDADB_DB_TIMEOUT", "10"))
 
 # Optional AI add-on (fine-tuned GLiNER served by ml/serve.py on localhost)
-ML_DIR = Path(os.environ.get("PARDADB_ML_DIR", REPO / "ml"))
+ML_DIR = env_path("PARDADB_ML_DIR", REPO / "ml")
 ML_URL = os.environ.get("PARDADB_ML_URL", "http://127.0.0.1:8766").rstrip("/")
 if not ML_URL.startswith(("http://", "https://")):
     raise ValueError(f"PARDADB_ML_URL must be an http(s) URL, got {ML_URL!r}")
