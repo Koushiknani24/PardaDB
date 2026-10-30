@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-31T04:50:16",
+  "url": "http://127.0.0.1:8776",
+  "clients": 64,
+  "minutes": 0.67,
+  "backends": [
+    "sqlite",
+    "mysql",
+    "postgres"
+  ],
+  "roles": [
+    "admin",
+    "support",
+    "analyst"
+  ],
+  "distinct_queries": 153,
+  "queries": 12253,
+  "ok": 8367,
+  "blocked_as_expected": 3886,
+  "errors": 0,
+  "error_samples": [],
+  "per_backend": {
+    "mysql": 4083,
+    "postgres": 4088,
+    "sqlite": 4082
+  },
+  "throughput_qps": 304.0,
+  "latency_ms": {
+    "p50": 89.92,
+    "p95": 492.1,
+    "p99": 794.05,
+    "max": 3621.28,
+    "mean": 151.09
+  },
+  "rss_mb": {
+    "start": 67.2,
+    "end": 68.9,
+    "max": 68.9
+  },
+  "samples": [
+    {
+      "t_s": 4.0,
+      "rss_mb": 67.2,
+      "cpu": 116.2
+    },
+    {
+      "t_s": 8.0,
+      "rss_mb": 68.1,
+      "cpu": 125.9
+    },
+    {
+      "t_s": 12.0,
+      "rss_mb": 68.4,
+      "cpu": 124.5
+    },
+    {
+      "t_s": 16.1,
+      "rss_mb": 68.6,
+      "cpu": 126.0
+    },
+    {
+      "t_s": 20.1,
+      "rss_mb": 68.6,
+      "cpu": 125.8
+    },
+    {
+      "t_s": 24.1,
+      "rss_mb": 68.7,
+      "cpu": 126.2
+    },
+    {
+      "t_s": 28.1,
+      "rss_mb": 68.7,
+      "cpu": 125.7
+    },
+    {
+      "t_s": 32.1,
+      "rss_mb": 68.8,
+      "cpu": 124.2
+    },
+    {
+      "t_s": 36.1,
+      "rss_mb": 68.7,
+      "cpu": 125.6
+    },
+    {
+      "t_s": 40.1,
+      "rss_mb": 68.9,
+      "cpu": 124.8
+    }
+  ],
+  "audit": {
+    "records_added": 12253,
+    "chain_ok_after": true,
+    "segments_after": 1
+  }
+}

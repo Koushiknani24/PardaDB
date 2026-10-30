@@ -27,6 +27,7 @@ Measured on the organisers' Saffron Bank data (9 tables, 120 columns, 129,260 ro
 | Customer names inside tickets and remarks | rules alone 0.911 recall; rules + optional AI model 0.993 |
 | Same masked output on all three databases | yes, including identical tokens; all 17 read, probe and blocked-write presets give the same outcome on each for every role |
 | 10-minute soak, 8 parallel clients on all three databases (`benchmarks/soak.json`) | 375,636 queries, **0 errors**, 626 per second, p50 8.5 ms / p95 40 ms, RAM 60.5 → 62.2 MB (flat), audit chain verified across 4 rotated files |
+| Stress ramp, 40 s per step on a freshly started server, all three databases (`benchmarks/stress-*-clients.json`) | 16 / 32 / 64 parallel clients: **0 errors** at every step; p95 150 / 264 / 492 ms as requests queue in one process; RAM stays under 70 MB; audit chain verified after each step |
 | Masking speed after profiling (same output, byte for byte) | `SELECT * FROM customers LIMIT 50` as Support: 236 ms → 10 ms first run, about 2 ms repeated |
 
 ## How to run
