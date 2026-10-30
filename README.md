@@ -29,9 +29,65 @@ Measured on the organisers' Saffron Bank data (9 tables, 120 columns, 129,260 ro
 
 ## How to run
 
-**Requirements:** Python 3.10+, and [uv](https://docs.astral.sh/uv/) (recommended) or pip. Docker is only needed for the MySQL and PostgreSQL demo.
+**Requirements:** git and Python 3.10+. The installer adds [uv](https://docs.astral.sh/uv/) if it is missing (uv can also download Python for you). Docker is only needed for the MySQL and PostgreSQL demo.
 
-**1. Put the problem pack's files in `FULL_CODE/data/`** (this folder is git-ignored and never committed). PardaDB expects the pack layout:
+### Install (one command)
+
+Pick your operating system and paste one line into a terminal. It downloads PardaDB into `~/pardadb` (Windows: `%USERPROFILE%\pardadb`), installs the exact locked dependencies and creates `FULL_CODE/.env`. No admin rights or `sudo` are needed, and running it again simply updates the install.
+
+**Linux and macOS** (Terminal):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/deadhearth01/pardadb/main/FULL_CODE/scripts/install.sh | bash
+```
+
+**Windows** (PowerShell; the terminal UI works best in Windows Terminal):
+
+```powershell
+irm https://raw.githubusercontent.com/deadhearth01/pardadb/main/FULL_CODE/scripts/install.ps1 | iex
+```
+
+**With options**, for example linking the problem pack and adding the AI model:
+
+```bash
+# Linux / macOS: everything after "--" goes to the installer
+curl -fsSL https://raw.githubusercontent.com/deadhearth01/pardadb/main/FULL_CODE/scripts/install.sh | bash -s -- --data /path/to/B1_Smart_Data_Masking_PII --with-ai
+```
+
+```powershell
+# Windows: "| iex" cannot pass options, so run the downloaded script as a script block
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/deadhearth01/pardadb/main/FULL_CODE/scripts/install.ps1))) -Data C:\path\to\B1_Smart_Data_Masking_PII -WithAI
+```
+
+| Linux / macOS | Windows | Environment variable | What it does |
+|---|---|---|---|
+| `--dir PATH` | `-Dir PATH` | `PARDADB_INSTALL_DIR` | Install location (default `~/pardadb`) |
+| `--branch NAME` | `-Branch NAME` | `PARDADB_INSTALL_BRANCH` | Git branch (default `main`) |
+| `--data PATH` | `-Data PATH` | `PARDADB_INSTALL_DATA` | Link the problem pack folder to `FULL_CODE/data` (a symlink; a junction on Windows) |
+| `--with-ai` | `-WithAI` | `PARDADB_INSTALL_WITH_AI=1` | Also set up the optional AI add-on in `FULL_CODE/ml/.venv`. Downloads up to about 1 GB; uses the CUDA build of PyTorch only when an NVIDIA GPU is found, otherwise the CPU build |
+| `--start-databases` | `-StartDatabases` | `PARDADB_INSTALL_START_DATABASES=1` | Run the pack's `docker compose up -d` (MySQL and PostgreSQL) if Docker is installed |
+| `--source URL` | `-Source URL` | `PARDADB_INSTALL_SOURCE` | Clone from another git URL or local path |
+| `--no-uv` | `-NoUv` | `PARDADB_INSTALL_NO_UV=1` | Do not use uv; use `python -m venv` and pip |
+
+The environment variables are handy with `irm ... | iex`, for example `$env:PARDADB_INSTALL_DATA = 'C:\path\to\pack'` before the one-liner.
+
+**From a clone:** `./FULL_CODE/scripts/install.sh` (Linux / macOS) or `powershell -ExecutionPolicy Bypass -File .\FULL_CODE\scripts\install.ps1` (Windows) installs in place, without pulling, and takes the same options.
+
+**Manual (pip, no installer):**
+
+```bash
+git clone https://github.com/deadhearth01/pardadb.git && cd pardadb/FULL_CODE
+python3 -m venv .venv && .venv/bin/pip install -e ".[dev]"     # Windows: .venv\Scripts\pip install -e ".[dev]"
+cp .env.example .env                                            # Windows: copy .env.example .env
+```
+
+With uv, `uv sync --frozen --extra dev` replaces the venv and pip line.
+
+**Uninstall:** delete the install folder (`~/pardadb`, or `%USERPROFILE%\pardadb` on Windows). Nothing is installed elsewhere, apart from uv itself if the installer added it (delete `uv` and `uvx` from `~/.local/bin`, or `%USERPROFILE%\.local\bin` on Windows). Docker volumes from `--start-databases` are removed with `docker compose down -v` in the pack folder.
+
+### Problem pack
+
+The Saffron Bank data is not in this repository. Use `--data` / `-Data` above, or copy or link the whole `B1_Smart_Data_Masking_PII` folder to `FULL_CODE/data/` (git-ignored, never committed), or point `PARDADB_DATASET` at it in `FULL_CODE/.env`. PardaDB expects the pack layout:
 
 ```
 FULL_CODE/data/sql/sqlite/saffron_bank.db
@@ -39,26 +95,13 @@ FULL_CODE/data/data/users.csv
 FULL_CODE/data/docker-compose.yml        (for MySQL / PostgreSQL)
 ```
 
-Copy the whole `B1_Smart_Data_Masking_PII` folder's contents there, or point `PARDADB_DATASET` at it.
+For MySQL and PostgreSQL, put the database passwords from the pack's README into `FULL_CODE/.env`, and start them with `--start-databases` or by hand: `docker compose up -d` inside the pack folder. SQLite needs nothing.
 
-**2. Install and configure:**
-
-```bash
-cd FULL_CODE
-uv sync --extra dev               # or: python3 -m venv .venv && .venv/bin/pip install -e ".[dev]"
-cp .env.example .env              # then fill in the database passwords from the pack README
-```
-
-**3. (Optional) start MySQL and PostgreSQL** with the pack's Docker setup:
+### Start
 
 ```bash
-cd data && docker compose up -d && cd ..
-```
-
-**4. Run:**
-
-```bash
-uv run pardadb                    # or: python main.py
+cd ~/pardadb/FULL_CODE            # Windows: cd $HOME\pardadb\FULL_CODE
+uv run pardadb                    # without uv: .venv/bin/pardadb (Windows: .venv\Scripts\pardadb)
 ```
 
 This connects to every database it can reach, fingerprints every table, scans every column, opens the terminal UI, and serves the web app at <http://127.0.0.1:8765> (landing page; **DEMO** opens the dashboard). Databases that are not running yet are retried every 10 seconds.
