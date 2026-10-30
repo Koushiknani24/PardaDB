@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>PardaDB Monitor</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--bg:#f4f5f7;--panel:#fff;--panel2:#f1f3f6;--line:#dde1e8;--line2:#eaedf2;--text:#1a2230;--muted:#5b6677;--dim:#8b95a4;--accent:#2b59c3;--on-accent:#fff;
+--red:#b42318;--teal:#0f766e;--olive:#687a14;--violet:#6b3fc4;--blue:#1d64c8;--indigo:#4338ca;--grey:#667085;--green:#16803c;--amber:#b25e09;
+--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--panel:#161b22;--panel2:#1c222b;--line:#2a323d;--line2:#222932;--text:#e3e8ef;--muted:#9aa5b4;--dim:#6b7686;--accent:#6d9cff;--on-accent:#0b1220;
+--red:#f47a6e;--teal:#3cc7b9;--olive:#b3c25a;--violet:#b197fc;--blue:#74a9ff;--indigo:#9b9ff7;--grey:#98a2b3;--green:#5bc98b;--amber:#f0b44c}}
+:root[data-theme="dark"]{--bg:#0f1318;--panel:#161b22;--panel2:#1c222b;--line:#2a323d;--line2:#222932;--text:#e3e8ef;--muted:#9aa5b4;--dim:#6b7686;--accent:#6d9cff;--on-accent:#0b1220;
+--red:#f47a6e;--teal:#3cc7b9;--olive:#b3c25a;--violet:#b197fc;--blue:#74a9ff;--indigo:#9b9ff7;--grey:#98a2b3;--green:#5bc98b;--amber:#f0b44c}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 var(--sans);overflow-x:hidden}
+.mono,code,textarea{font-family:var(--mono)}
+.muted{color:var(--muted)}.dim{color:var(--dim)}.sm{font-size:12px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+header.top{display:flex;align-items:center;gap:20px;padding:10px 20px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{flex:none;color:var(--accent)}
+.brand b{font-size:17px;letter-spacing:.2px}
+.brand small{display:block;color:var(--muted);font-size:11.5px;line-height:1.2}
+.hstats{margin-left:auto;display:flex;gap:20px;align-items:center}
+.hs{display:flex;flex-direction:column;line-height:1.25;min-width:52px}
+.hs i{font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+.hs b{font:600 13px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.live{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--grey);display:inline-block;flex:none}
+.ok>.dot,.ok .be-h .dot,.dot.ok{background:var(--green)}.bad>.dot,.bad .be-h .dot,.dot.bad{background:var(--red)}.warn>.dot,.warn .be-h .dot{background:var(--amber)}
+nav.tabs{position:sticky;top:0;z-index:6;display:flex;gap:2px;padding:0 20px;background:var(--panel);border-bottom:1px solid var(--line)}
+nav.tabs button{appearance:none;border:0;background:none;color:var(--muted);font:500 13.5px var(--sans);padding:10px 14px;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px}
+nav.tabs button:hover{color:var(--text)}
+nav.tabs button[aria-selected="true"]{color:var(--text);border-bottom-color:var(--accent);font-weight:600}
+.down{background:color-mix(in srgb,var(--red) 12%,var(--panel));color:var(--red);border-bottom:1px solid color-mix(in srgb,var(--red) 35%,transparent);padding:8px 20px;font-weight:600;font-size:13px}
+main{padding:16px 20px 40px;max-width:1500px;margin:0 auto}
+main.stale .card{opacity:.7}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c7{grid-column:span 7}.c8{grid-column:span 8}.c9{grid-column:span 9}.c12{grid-column:span 12}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.card h2{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px;min-height:24px;flex-wrap:wrap}
+.card h2 .r{margin-left:auto;display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-weight:400}
+.b{--c:var(--grey);display:inline-block;font:600 10.5px/1.65 var(--mono);padding:0 6px;border-radius:4px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 32%,transparent);white-space:nowrap;vertical-align:middle}
+.c-red{--c:var(--red)}.c-teal{--c:var(--teal)}.c-olive{--c:var(--olive)}.c-violet{--c:var(--violet)}.c-blue{--c:var(--blue)}.c-indigo{--c:var(--indigo)}.c-grey{--c:var(--grey)}.c-green{--c:var(--green)}.c-amber{--c:var(--amber)}
+.bes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.be{border:1px solid var(--line);border-radius:7px;padding:10px 12px;background:var(--panel2);min-width:0}
+.be-h{display:flex;align-items:center;gap:8px}
+.be-st{margin-left:auto;font-size:12px;color:var(--muted)}
+.be.ok .be-st{color:var(--green)}.be.bad .be-st{color:var(--red)}.be.warn .be-st{color:var(--amber)}
+.be-d{font:12px var(--mono);color:var(--muted);margin:4px 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{font-size:10.5px;padding:0 7px;border-radius:9px;border:1px solid var(--accent);color:var(--accent)}
+.kv{display:flex;gap:18px;margin:0;flex-wrap:wrap}
+.kv div{display:flex;flex-direction:column;min-width:0}
+.kv dt{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+.kv dd{margin:0;font:600 13px var(--mono);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:10px 0 6px}
+.bar span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.bar.done span{background:var(--green)}
+.srow{display:flex;gap:16px;font:12.5px var(--mono);color:var(--muted);flex-wrap:wrap}
+.srow b{color:var(--text)}
+.scur{margin:10px 0 12px;font:13px var(--mono);padding:8px 10px;border-radius:6px;background:var(--panel2);border:1px solid var(--line2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scur.done{color:var(--green);border-color:color-mix(in srgb,var(--green) 35%,transparent);background:color-mix(in srgb,var(--green) 8%,var(--panel))}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{border:1px solid var(--line2);border-radius:7px;padding:8px 10px;background:var(--panel2);min-width:0}
+.stat .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);display:block}
+.stat .v{font:600 20px var(--mono);font-variant-numeric:tabular-nums}
+.spark{display:block;width:100%;height:32px;margin-top:4px}
+.spark polyline{fill:none;stroke:var(--accent);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.counters{display:flex;flex-direction:column;gap:10px}
+.counters .v{font-size:26px}
+.events{list-style:none;margin:0;padding:0;max-height:360px;overflow:auto;font-size:12.5px}
+.events li{display:grid;grid-template-columns:64px 50px minmax(0,1fr);gap:8px;padding:5px 6px;border-bottom:1px solid var(--line2)}
+.events time{font-family:var(--mono);color:var(--dim)}
+.events .msg{overflow-wrap:anywhere}
+.lv{font:600 10.5px/1.9 var(--mono);text-transform:uppercase;color:var(--c)}
+.lv-info{--c:var(--blue)}.lv-ok{--c:var(--green)}.lv-warn{--c:var(--amber)}.lv-block{--c:var(--red)}
+.events li.lv-block{background:color-mix(in srgb,var(--red) 6%,transparent)}
+.btn{appearance:none;font:500 13px var(--sans);padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--panel2)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.5;cursor:default}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel)}
+.seg button{appearance:none;border:0;border-right:1px solid var(--line);background:none;color:var(--muted);font:500 13px var(--sans);padding:6px 12px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 15%,var(--panel));color:var(--accent);font-weight:600}
+.seg.big button{padding:8px 20px;font-size:14px}
+select,input[type=search],input[type=text],textarea{font:13px var(--sans);padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);min-width:0}
+textarea{font-family:var(--mono);width:100%;min-height:140px;resize:vertical;line-height:1.5;font-size:13px}
+label.ck{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.tools .sp{flex:1}
+.fl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+.tw{overflow:auto;max-height:62vh;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+table.tbl{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+.tbl th{position:sticky;top:0;background:var(--panel2);text-align:left;font:600 11.5px var(--sans);color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:2;vertical-align:bottom}
+.tbl td{padding:5px 10px;border-bottom:1px solid var(--line2);white-space:nowrap;vertical-align:top;background:var(--panel)}
+.tbl td.w{white-space:normal;min-width:18em;max-width:40em}
+.tbl td.t{font-family:var(--mono)}
+.tbl td.ell{max-width:30em;overflow:hidden;text-overflow:ellipsis}
+.grid-t td{font-family:var(--mono);min-width:8ch}
+.grid-t th:first-child,.grid-t td:first-child{position:sticky;left:0;z-index:1;border-right:1px solid var(--line)}
+.grid-t th:first-child{z-index:3}
+.grid-t .thb{display:flex;gap:4px;margin-top:3px}
+.grid-t th .cl{font:500 10.5px var(--mono);color:var(--dim)}
+.hl .grid-t td.m{background:color-mix(in srgb,var(--c) 10%,var(--panel))}
+.null{color:var(--dim);font-style:italic}
+.conf{display:inline-block;width:56px;height:6px;border-radius:3px;background:var(--panel2);border:1px solid var(--line);vertical-align:middle;margin-right:6px;overflow:hidden}
+.conf span{display:block;height:100%;background:var(--accent)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;gap:6px;align-items:center;padding:3px 10px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);font-size:12.5px}
+.chip b{font-family:var(--mono)}
+.blocked{border:1px solid color-mix(in srgb,var(--red) 40%,transparent);border-left:4px solid var(--red);background:color-mix(in srgb,var(--red) 8%,var(--panel));border-radius:6px;padding:14px 16px}
+.blocked h3{margin:0 0 6px;color:var(--red);font-size:15px;display:flex;gap:8px;align-items:center}
+.blocked .mono{font-size:13px;overflow-wrap:anywhere}
+.err{border:1px solid color-mix(in srgb,var(--amber) 40%,transparent);border-left:4px solid var(--amber);background:color-mix(in srgb,var(--amber) 8%,var(--panel));border-radius:6px;padding:12px 14px}
+.err .mono{font-size:12.5px;overflow-wrap:anywhere;margin-top:4px}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.rfoot{display:flex;gap:14px;flex-wrap:wrap;font:12px var(--mono);color:var(--muted);padding:8px 2px 0}
+.rp-h{font-weight:600;margin-bottom:8px;display:flex;gap:8px;align-items:baseline}
+.cmp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cmp>div{min-width:0}
+.cmp .tw{max-height:50vh}
+.presets{display:flex;flex-direction:column;gap:6px;max-height:330px;overflow:auto}
+.preset{appearance:none;text-align:left;border:1px solid var(--line2);background:var(--panel2);color:var(--text);border-radius:6px;padding:7px 10px;cursor:pointer;font:13px var(--sans)}
+.preset:hover{border-color:var(--accent)}
+.preset span{display:block;font-size:11.5px;color:var(--muted)}
+.preset[aria-current="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--panel))}
+.qrow{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px}
+.qrow>div{display:flex;flex-direction:column;gap:4px}
+.hint{font-size:12px;color:var(--muted)}
+.banner{border-radius:8px;padding:14px 16px;font-size:16px;font-weight:600;margin-bottom:12px;display:flex;gap:10px;align-items:center}
+.banner.good{color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--green) 35%,transparent)}
+.banner.bad{color:var(--red);background:color-mix(in srgb,var(--red) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--red) 35%,transparent)}
+.yes{color:var(--green);font-weight:700}.no{color:var(--red);font-weight:700}
+.ex{display:grid;grid-template-columns:250px minmax(0,1fr);gap:14px;align-items:start}
+.tlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;max-height:75vh;overflow:auto}
+.tlist button{appearance:none;width:100%;text-align:left;border:1px solid transparent;background:none;color:var(--text);border-radius:6px;padding:7px 9px;cursor:pointer;font:13px var(--sans)}
+.tlist button:hover{background:var(--panel2)}
+.tlist button[aria-current="true"]{background:color-mix(in srgb,var(--accent) 10%,var(--panel));border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.tl1{display:flex;justify-content:space-between;gap:6px}
+.tl1 b{font:600 13px var(--mono);overflow:hidden;text-overflow:ellipsis}
+.tl2{display:flex;align-items:center;gap:4px;margin-top:3px;font-size:11.5px;color:var(--muted)}
+.tl2 .td{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.tl2 .n{margin-left:auto}
+.pager{display:flex;gap:10px;align-items:center;margin-top:10px;font:12.5px var(--mono);color:var(--muted)}
+.busy{opacity:.55}
+.exhead{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}
+.exhead b{font:600 16px var(--mono)}
+@media (max-width:1150px){.c3,.c4,.c5{grid-column:span 6}.c7,.c8,.c9{grid-column:span 12}.cmp{grid-template-columns:minmax(0,1fr)}.hs.opt{display:none}}
+td[data-v]{cursor:zoom-in}td[data-v]:hover{outline:1px solid var(--accent);outline-offset:-1px}dialog#cellbox{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);width:min(760px,92vw);padding:0;box-shadow:0 12px 40px rgba(0,0,0,.25)}dialog#cellbox::backdrop{background:rgba(0,0,0,.35)}#cellbox .cb-h{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}#cellbox .cb-h b{font-size:13px;word-break:break-all}#cellbox pre{margin:0;padding:16px;max-height:60vh;overflow:auto;white-space:pre-wrap;word-break:break-word;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}#cellbox .cb-f{display:flex;gap:8px;justify-content:flex-end;padding:10px 16px;border-top:1px solid var(--line)}
+.mkb{display:inline-block;margin-left:4px;padding:0 5px;border-radius:8px;font-size:10px;line-height:15px;background:var(--red);color:#fff;vertical-align:super}.mkb.det{background:var(--accent)}mark.pii{background:rgba(220,60,50,.18);color:inherit;border-bottom:2px solid var(--red);padding:0 1px;border-radius:2px}mark.pii.det{background:rgba(43,89,195,.15);border-bottom-color:var(--accent)}.cb-m{padding:10px 16px 0;font-size:13px;color:var(--muted)}
+.pcat{margin:8px 0 2px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.pcat:first-child{margin-top:0}.presets{max-height:520px}
+.tagsdd{position:relative}.tagsdd summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;padding:2px 8px;border:1px solid var(--line);border-radius:6px}.tagsdd summary::-webkit-details-marker{display:none}.tagsdd summary i{font-style:normal;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.tagsdd summary b{font-size:12px}.tagsdd[open] summary{border-color:var(--accent)}.tdd-panel{position:absolute;right:0;top:calc(100% + 6px);z-index:50;width:min(860px,94vw);max-height:70vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:12px}.tdd-h{font-weight:700;font-size:13px;margin-bottom:8px}.tdd-t td.w{white-space:normal;min-width:260px}
+#h-ml-btn{padding:4px 10px;font-size:12px;white-space:nowrap}#h-ml-btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+mark.pii.ai{background:rgba(124,58,237,.20);border-bottom:2px solid #7c3aed}.mkb.ai{background:#7c3aed}.cb-m .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:rgba(220,60,50,.35);border-bottom:2px solid var(--red)}.cb-m .sw.det{background:rgba(43,89,195,.3)}.cb-m .sw.ai{background:rgba(124,58,237,.35);border-bottom-color:#7c3aed}.cb-m div{margin:2px 0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 9.5h8M8 13h8M8 16.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <div><b>PardaDB</b><small>Smart Data Masking &middot; Team AVNI</small></div>
+  </div>
+  <div class="hstats">
+    <span class="hs"><i>Backend</i><b id="h-be">&ndash;</b></span>
+    <span class="hs"><i>DBs connected</i><b id="h-dbs">&ndash;</b></span>
+    <span class="hs" id="h-ml-wrap" title="Fine-tuned GLiNER model for names and addresses in free text"><i>AI model</i><b id="h-ml">off</b></span>
+    <button class="btn" id="h-ml-btn" type="button" title="Start or stop the AI model add-on">Activate AI</button>
+    <span class="hs" id="h-lq-wrap" title="No query yet"><i>Last query</i><b id="h-lq">&ndash;</b></span>
+    <details class="tagsdd" id="h-tags"><summary><i>Used tags</i><b id="h-tags-n">&ndash;</b></summary>
+      <div class="tdd-panel" id="h-tags-panel"><div class="muted">Waiting for the first scan&hellip;</div></div></details>
+    <span class="hs"><i>CPU</i><b id="h-cpu">&ndash;</b></span>
+    <span class="hs"><i>RAM</i><b id="h-ram">&ndash;</b></span>
+    <span class="hs"><i>Uptime</i><b id="h-up">&ndash;</b></span>
+    <span class="hs opt"><i>Version</i><b id="h-ver">&ndash;</b></span>
+    <span class="live" id="h-live"><span class="dot"></span><span id="h-live-t">Connecting</span></span>
+    <button class="btn" id="theme" type="button" title="Toggle colour theme">Theme: Auto</button>
+  </div>
+</header>
+<dialog id="cellbox" aria-labelledby="cb-col"><div class="cb-h"><b id="cb-col"></b><span class="muted" id="cb-len"></span></div><div id="cb-m" class="cb-m" hidden></div><pre id="cb-v"></pre><div class="cb-f"><button class="btn" type="button" id="cb-copy">Copy</button><button class="btn" type="button" id="cb-x">Close</button></div></dialog>
+<nav class="tabs" role="tablist" aria-label="Sections" id="tabs">
+  <button role="tab" id="t-monitor" data-tab="monitor" aria-controls="p-monitor" aria-selected="true">Monitor</button>
+  <button role="tab" id="t-explorer" data-tab="explorer" aria-controls="p-explorer" aria-selected="false" tabindex="-1">Explorer</button>
+  <button role="tab" id="t-catalog" data-tab="catalog" aria-controls="p-catalog" aria-selected="false" tabindex="-1">Catalog</button>
+  <button role="tab" id="t-query" data-tab="query" aria-controls="p-query" aria-selected="false" tabindex="-1">Query</button>
+  <button role="tab" id="t-audit" data-tab="audit" aria-controls="p-audit" aria-selected="false" tabindex="-1">Audit</button>
+  <button role="tab" id="t-integrity" data-tab="integrity" aria-controls="p-integrity" aria-selected="false" tabindex="-1">Integrity</button>
+</nav>
+<div class="down" id="down" role="status" hidden>PardaDB not reachable, retrying&hellip;</div>
+<main id="main">
+
+<!-- MONITOR -->
+<section class="tabpanel" id="p-monitor" role="tabpanel" aria-labelledby="t-monitor">
+<div class="grid">
+  <section class="card c12"><h2>Database connections</h2><div class="bes" id="m-be"><div class="empty">Waiting for status&hellip;</div></div></section>
+  <section class="card c7">
+    <h2>PII scan <span class="b c-grey" id="sc-state">idle</span><span class="r"><button class="btn" type="button" id="m-rescan">Re-scan</button></span></h2>
+    <div class="bar" id="sc-bar" role="progressbar" aria-label="Scan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="sc-fill"></span></div>
+    <div class="srow"><span><b id="sc-cols">0 / 0</b> columns</span><span><b id="sc-tabs">0 / 0</b> tables</span><span><b id="sc-pct">0%</b></span></div>
+    <div class="scur" id="sc-cur" aria-live="polite">Waiting for scan&hellip;</div>
+    <dl class="kv"><div><dt>Sensitive columns tagged</dt><dd id="sc-tag">&ndash;</dd></div><div><dt>Elapsed</dt><dd id="sc-el">&ndash;</dd></div><div><dt>Backend</dt><dd id="sc-be">&ndash;</dd></div></dl>
+  </section>
+  <section class="card c5">
+    <h2>Process resources <span class="r dim sm" id="p-pid"></span></h2>
+    <div class="res">
+      <div class="stat"><span class="k">CPU</span><span class="v" id="p-cpu">&ndash;</span><svg class="spark" viewBox="0 0 120 32" preserveAspectRatio="none" role="img" aria-label="CPU over the last 2 minutes"><polyline id="sp-cpu" points=""/></svg></div>
+      <div class="stat"><span class="k">RSS memory</span><span class="v" id="p-rss">&ndash;</span><svg class="spark" viewBox="0 0 120 32" preserveAspectRatio="none" role="img" aria-label="Memory over the last 2 minutes"><polyline id="sp-rss" points=""/></svg></div>
+      <div class="stat"><span class="k">Threads</span><span class="v" id="p-thr">&ndash;</span></div>
+      <div class="stat"><span class="k">Disk (state)</span><span class="v" id="p-disk">&ndash;</span></div>
+    </div>
+  </section>
+  <section class="card c3"><h2>Counters</h2>
+    <div class="counters">
+      <div class="stat"><span class="k">Queries</span><span class="v" id="k-q">&ndash;</span></div>
+      <div class="stat"><span class="k">Blocked by guard</span><span class="v" id="k-b" style="color:var(--red)">&ndash;</span></div>
+      <div class="stat"><span class="k">Masked cells</span><span class="v" id="k-m">&ndash;</span></div>
+    </div>
+  </section>
+  <section class="card c9"><h2>Live events <span class="r dim sm">newest first</span></h2><ol class="events" id="ev" aria-live="off"><li><span></span><span></span><span class="msg muted">No events yet</span></li></ol></section>
+</div>
+</section>
+
+<!-- EXPLORER -->
+<section class="tabpanel" id="p-explorer" role="tabpanel" aria-labelledby="t-explorer" hidden>
+<div class="ex">
+  <section class="card"><h2>Tables <span class="r"><button class="btn" type="button" id="ex-reload" title="Reload table list">Reload</button></span></h2>
+    <ul class="tlist" id="ex-list"><li class="empty">Loading&hellip;</li></ul></section>
+  <section class="card" style="min-width:0">
+    <div class="tools">
+      <div class="seg big" id="ex-role" role="group" aria-label="View as role"><button type="button" data-role="admin" aria-pressed="false">Admin</button><button type="button" data-role="support" aria-pressed="true">Support</button><button type="button" data-role="analyst" aria-pressed="false">Analyst</button></div>
+      <label class="fl" for="ex-be">Backend</label><select id="ex-be" class="be-sel"></select>
+      <span class="sp"></span>
+      <label class="ck"><input type="checkbox" id="ex-hl" checked> Highlight masked cells</label>
+      <div class="seg" id="ex-cols" role="group" aria-label="Columns"><button type="button" data-sens="0" aria-pressed="true">All columns</button><button type="button" data-sens="1" aria-pressed="false">Sensitive only</button></div>
+    </div>
+    <form class="tools" id="ex-filter">
+      <span class="fl">Filter</span>
+      <select id="ex-fcol" aria-label="Filter column"></select>
+      <input type="text" id="ex-fval" placeholder="value (use % for LIKE)" aria-label="Filter value" style="width:220px">
+      <button class="btn pri" type="submit">Apply</button>
+      <button class="btn" type="button" id="ex-fclear">Clear</button>
+      <span class="hint" id="ex-fnote"></span>
+    </form>
+    <div class="exhead" id="ex-head"></div>
+    <div id="ex-out" class="hl"><div class="empty">Select a table</div></div>
+    <div class="pager" id="ex-pager" hidden><button class="btn" type="button" id="ex-prev">&larr; Prev</button><button class="btn" type="button" id="ex-next">Next &rarr;</button><span id="ex-range"></span><span id="ex-ms"></span></div>
+  </section>
+</div>
+</section>
+
+<!-- CATALOG -->
+<section class="tabpanel" id="p-catalog" role="tabpanel" aria-labelledby="t-catalog" hidden>
+<section class="card">
+  <div class="tools">
+    <label class="fl" for="cat-be">Backend</label><select id="cat-be" class="be-sel"></select>
+    <button class="btn" type="button" id="cat-rescan">Re-scan</button>
+    <input type="search" id="cat-q" placeholder="Filter table, column, tag, entity&hellip;" aria-label="Filter catalog" style="width:260px">
+    <label class="ck"><input type="checkbox" id="cat-clean"> Show clean columns</label>
+    <span class="sp"></span><span class="hint" id="cat-note"></span>
+  </div>
+  <div class="chips" id="cat-chips" style="margin-bottom:10px"></div>
+  <div id="cat-out"><div class="empty">Loading catalog&hellip;</div></div>
+</section>
+</section>
+
+<!-- QUERY -->
+<section class="tabpanel" id="p-query" role="tabpanel" aria-labelledby="t-query" hidden>
+<div class="grid">
+  <section class="card c8">
+    <h2>Run a query through PardaDB</h2>
+    <div class="qrow">
+      <div><label class="fl" for="q-user">User</label><select id="q-user"><option value="">(loading users)</option></select></div>
+      <div><span class="fl">Role</span><div class="seg" id="q-role" role="group" aria-label="Role"><button type="button" data-role="admin" aria-pressed="false">Admin</button><button type="button" data-role="support" aria-pressed="true">Support</button><button type="button" data-role="analyst" aria-pressed="false">Analyst</button></div></div>
+      <div><label class="fl" for="q-be">Backend</label><select id="q-be" class="be-sel"></select></div>
+    </div>
+    <textarea id="q-sql" spellcheck="false" aria-label="SQL query" placeholder="SELECT * FROM customers LIMIT 10">SELECT * FROM customers LIMIT 10</textarea>
+    <div class="qrow" style="margin:10px 0 0;align-items:center">
+      <button class="btn pri" type="button" id="q-run">Run</button>
+      <button class="btn" type="button" id="q-cmp">Compare all roles</button>
+      <span class="hint">Ctrl+Enter to run &middot; Admin: full values &middot; Support: partial &middot; Analyst: redacted / hashed / bucketed</span>
+    </div>
+  </section>
+  <section class="card c4"><h2>Presets</h2><div class="presets" id="q-presets"><div class="empty">Loading&hellip;</div></div></section>
+  <section class="card c12">
+    <h2>Result <span class="r"><label class="ck"><input type="checkbox" id="q-hl" checked> Highlight masked</label>
+      <div class="seg" id="q-cols" role="group" aria-label="Columns"><button type="button" data-sens="0" aria-pressed="true">All columns</button><button type="button" data-sens="1" aria-pressed="false">Sensitive only</button></div></span></h2>
+    <div id="q-out" class="hl"><div class="empty">Run a query or pick a preset.</div></div>
+  </section>
+</div>
+</section>
+
+<!-- AUDIT -->
+<section class="tabpanel" id="p-audit" role="tabpanel" aria-labelledby="t-audit" hidden>
+<section class="card">
+  <div class="tools"><button class="btn" type="button" id="au-reload">Refresh</button><span id="au-chain"></span><span class="sp"></span><span class="hint" id="au-note"></span></div>
+  <div id="au-out"><div class="empty">Loading audit log&hellip;</div></div>
+</section>
+</section>
+
+<!-- INTEGRITY -->
+<section class="tabpanel" id="p-integrity" role="tabpanel" aria-labelledby="t-integrity" hidden>
+<section class="card">
+  <div class="tools"><label class="fl" for="in-be">Backend</label><select id="in-be" class="be-sel"></select><button class="btn pri" type="button" id="in-run">Verify raw data unchanged</button><span class="sp"></span><span class="hint" id="in-note">Hashes every table before and after masking to prove the source data is never modified.</span></div>
+  <div id="in-out"></div>
+</section>
+</section>
+</main>
+
+<script>
+'use strict';
+(function () {
+const $ = (s) => document.querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ESC[c]);
+const num = (v) => (v == null || v === '' || isNaN(v)) ? null : Number(v);
+const fmt = (v) => { const n = num(v); return n == null ? '–' : n.toLocaleString('en-US'); };
+const fx = (v, d) => { const n = num(v); return n == null ? '–' : n.toFixed(d); };
+const POLL_MS = 2000, MAX_ROWS = 200, PAGE = 25, CELL = 22;
+const TAGS = ['PII_HIGH', 'PII_MEDIUM', 'PII_QUASI', 'FINANCIAL_CONFIDENTIAL', 'PII_FREE_TEXT', 'SENSITIVE_JSON', 'INTERNAL_ID'];
+const TAGC = { PII_HIGH: 'red', PII_MEDIUM: 'teal', PII_QUASI: 'olive', FINANCIAL_CONFIDENTIAL: 'violet', PII_FREE_TEXT: 'blue', SENSITIVE_JSON: 'indigo', INTERNAL_ID: 'grey' };
+const STRC = { FULL: 'green', PARTIAL: 'amber', HASH: 'violet', REDACT: 'red', BUCKET: 'violet', GENERALIZE: 'olive', SPANS: 'blue', JSON: 'indigo' };
+const ROLES = ['admin', 'support', 'analyst'];
+const RL = { admin: 'Admin', support: 'Support', analyst: 'Analyst' };
+const ICON_BLOCK = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.6 5.6l12.8 12.8" stroke="currentColor" stroke-width="2"/></svg>';
+
+const S = {
+  status: null, up: null, cache: {}, cpu: [], rss: [], tab: 'monitor', timer: 0, inflight: false,
+  scanState: null, scanGen: 0,
+  users: [], user: '', role: 'support', qInit: false, presets: [],
+  q: { last: null, compare: false, sens: false },
+  cat: { data: null, tok: 0 },
+  ex: { be: null, gen: -1, tables: null, table: null, role: 'support', offset: 0, fcol: '', fval: '', resp: null, sens: false, tok: 0 }
+};
+
+const badge = (t, c) => `<span class="b c-${c || 'grey'}">${esc(t)}</span>`;
+const tagB = (t) => t ? badge(t, TAGC[t] || 'grey') : '';
+const strB = (s) => s ? badge(s, STRC[String(s).toUpperCase()] || 'grey') : '';
+const errBox = (msg, head) => `<div class="err" role="alert"><b>${esc(head || 'Error')}</b><div class="mono">${esc(msg)}</div></div>`;
+const blockBox = (r) => `<div class="blocked" role="alert"><h3>${ICON_BLOCK}Blocked by inference guard</h3><div class="mono">${esc(r.reason || 'Query rejected by policy')}</div>${r.role ? `<div class="muted sm" style="margin-top:6px">role: ${esc(r.role)}</div>` : ''}</div>`;
+function setText(node, t) { t = String(t); if (node && node.textContent !== t) node.textContent = t; }
+function setHTML(key, node, html) { if (S.cache[key] === html) return; S.cache[key] = html; node.innerHTML = html; }
+function dur(s) {
+  s = Math.max(0, Math.floor(num(s) || 0));
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  return h ? `${h}h ${m}m` : m ? `${m}m ${x}s` : `${x}s`;
+}
+function newestFirst(arr) {
+  if (!Array.isArray(arr)) return [];
+  if (arr.length > 1 && String(arr[0].ts || '') < String(arr[arr.length - 1].ts || '')) return arr.slice().reverse();
+  return arr;
+}
+
+async function api(path, body) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), body === undefined ? 10000 : 120000);
+  try {
+    const opt = body === undefined ? { cache: 'no-store', signal: ctl.signal }
+      : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctl.signal };
+    const r = await fetch(path, opt);
+    const txt = await r.text();
+    let data = null;
+    try { data = txt ? JSON.parse(txt) : null; } catch (e) { throw new Error(`HTTP ${r.status}: not JSON`); }
+    if (!r.ok && (!data || typeof data !== 'object')) throw new Error(`HTTP ${r.status}`);
+    if (!r.ok && data.error && data.ok === undefined) data.ok = false;
+    return data;
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error('request timed out');
+    throw e;
+  } finally { clearTimeout(t); }
+}
+
+/* ---------- polling ---------- */
+async function poll() {
+  clearTimeout(S.timer);
+  if (document.hidden || S.inflight) return;
+  S.inflight = true;
+  try { onStatus(await api('/api/status')); setUp(true); }
+  catch (e) { setUp(false); }
+  finally { S.inflight = false; if (!document.hidden) S.timer = setTimeout(poll, POLL_MS); }
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(S.timer); else poll(); });
+
+function setUp(ok) {
+  if (S.up === ok) return;
+  S.up = ok;
+  $('#down').hidden = ok;
+  $('#main').classList.toggle('stale', !ok);
+  $('#h-live').className = 'live ' + (ok ? 'ok' : 'bad');
+  setText($('#h-live-t'), ok ? 'Live' : 'Offline');
+}
+
+function onStatus(s) {
+  if (!s || typeof s !== 'object') return;
+  S.status = s;
+  const p = s.process || {}, bes = Array.isArray(s.backends) ? s.backends : [];
+  const act = bes.find((b) => b.name === s.active_backend);
+  setText($('#h-be'), act ? act.label || act.name : (s.active_backend || '–'));
+  setText($('#h-cpu'), fx(p.cpu_percent, 1) + '%');
+  setText($('#h-ram'), fx(p.rss_mb, 1) + ' MB');
+  setText($('#h-up'), dur(s.uptime_s));
+  setText($('#h-ver'), s.version ? 'v' + s.version : '–');
+  setText($('#h-dbs'), bes.filter((b) => b.status === 'connected').length + ' / ' + bes.length);
+  if (s.tags) renderUsedTags(s.tags, s.active_backend); else usedTagsFromCatalog(s.active_backend);
+  const mlI = s.ml || {};
+  setText($('#h-ml'), mlI.status === 'ready' ? `on · ${mlI.device || ''}` : (mlI.status || 'off'));
+  $('#h-ml').style.color = mlI.status === 'ready' ? 'var(--green, #1d7a3a)' : '';
+  $('#h-ml-wrap').title = mlI.status === 'ready'
+    ? `Fine-tuned GLiNER (${mlI.params_m} M params) on ${mlI.device}; sidecar RAM ${mlI.rss_mb} MB; ${mlI.texts} texts analysed, ${mlI.cache_hits} cache hits`
+    : 'AI model off: free text masked by rules only. Click "Activate AI" to start it.';
+  const mb = $('#h-ml-btn');
+  if (mb) {
+    const st = mlI.status || 'off';
+    mb.textContent = st === 'ready' ? 'Turn off AI' : st === 'starting' ? 'Starting…' : 'Activate AI';
+    mb.disabled = st === 'starting';
+    mb.classList.toggle('primary', st !== 'ready');
+  }
+  const lq = (s.stats || {}).last_query;
+  if (lq) {
+    setText($('#h-lq'), (lq.ms != null ? fx(lq.ms, 1) + ' ms' : '–') + (lq.status !== 'OK' ? ' · ' + lq.status : ''));
+    $('#h-lq').style.color = lq.status === 'OK' ? '' : 'var(--red)';
+    $('#h-lq-wrap').title = `${lq.status} at ${lq.at} · ${lq.user || lq.role} on ${lq.backend} · ${lq.rows} rows`;
+  }
+  if (num(p.cpu_percent) != null) { S.cpu.push(+p.cpu_percent); if (S.cpu.length > 60) S.cpu.shift(); }
+  if (num(p.rss_mb) != null) { S.rss.push(+p.rss_mb); if (S.rss.length > 60) S.rss.shift(); }
+  fillBackendSelects(bes, s.active_backend);
+  if (S.tab === 'monitor') renderMonitor(s);
+  const st = (s.scan && s.scan.state) || 'idle';
+  if (S.scanState === 'scanning' && st !== 'scanning') {
+    S.scanGen++;
+    if (S.tab === 'catalog') loadCatalog();
+    if (S.tab === 'explorer') loadTables(false);
+  }
+  S.scanState = st;
+}
+
+function renderMonitor(s) {
+  const p = s.process || {}, st = s.stats || {}, bes = Array.isArray(s.backends) ? s.backends : [];
+  setHTML('be', $('#m-be'), bes.length ? bes.map((b) => {
+    const cls = b.status === 'connected' ? 'ok' : b.status === 'unreachable' ? 'bad' : b.status === 'connecting' ? 'warn' : '';
+    return `<div class="be ${cls}"><div class="be-h"><span class="dot"></span><b>${esc(b.label || b.name)}</b>${b.name === s.active_backend ? '<span class="pill">active</span>' : ''}<span class="be-st">${esc(b.status || 'unknown')}</span></div>`
+      + `<div class="be-d" title="${esc(b.detail)}">${esc(b.detail || '')}</div><dl class="kv"><div><dt>Tables</dt><dd>${fmt(b.tables)}</dd></div><div><dt>Rows</dt><dd>${fmt(b.rows)}</dd></div><div><dt>Latency</dt><dd>${b.latency_ms == null ? '–' : esc(fx(b.latency_ms, 1)) + ' ms'}</dd></div></dl></div>`;
+  }).join('') : '<div class="empty">No backends configured</div>');
+  renderScan(s.scan || {});
+  setText($('#p-cpu'), fx(p.cpu_percent, 1) + '%');
+  setText($('#p-rss'), fx(p.rss_mb, 1) + ' MB');
+  setText($('#p-thr'), fmt(p.threads));
+  setText($('#p-disk'), fx(p.disk_mb, 1) + ' MB');
+  setText($('#p-pid'), p.pid ? 'pid ' + p.pid : '');
+  spark($('#sp-cpu'), S.cpu, 0, 5);
+  spark($('#sp-rss'), S.rss, null, 8);
+  setText($('#k-q'), fmt(st.queries));
+  setText($('#k-b'), fmt(st.blocked));
+  setText($('#k-m'), fmt(st.masked_cells));
+  const ev = newestFirst(s.events).slice(0, 50);
+  setHTML('ev', $('#ev'), ev.length ? ev.map((e) => {
+    const lv = ['info', 'ok', 'warn', 'block'].includes(e.level) ? e.level : 'info';
+    return `<li class="lv-${lv}"><time>${esc(e.ts)}</time><span class="lv">${lv}</span><span class="msg">${esc(e.msg)}</span></li>`;
+  }).join('') : '<li><span></span><span></span><span class="msg muted">No events yet</span></li>');
+}
+
+function renderScan(sc) {
+  const st = sc.state || 'idle';
+  const tot = num(sc.columns_total) || 0, done = num(sc.columns_done) || 0;
+  const fin = st === 'done' || st === 'complete' || st === 'completed' || (st !== 'scanning' && st !== 'error' && sc.finished_at);
+  const pct = tot ? Math.min(100, Math.round(done / tot * 100)) : (fin ? 100 : 0);
+  const sb = $('#sc-state');
+  setText(sb, fin ? 'complete' : st);
+  sb.className = 'b c-' + (st === 'scanning' ? 'blue' : fin ? 'green' : st === 'error' ? 'red' : 'grey');
+  const fill = $('#sc-fill'); if (fill.style.width !== pct + '%') fill.style.width = pct + '%';
+  const bar = $('#sc-bar'); bar.setAttribute('aria-valuenow', pct); bar.classList.toggle('done', !!fin);
+  setText($('#sc-cols'), `${fmt(done)} / ${fmt(tot)}`);
+  setText($('#sc-tabs'), `${fmt(sc.tables_done || 0)} / ${fmt(sc.tables_total || 0)}`);
+  setText($('#sc-pct'), pct + '%');
+  const cur = $('#sc-cur');
+  let msg = 'Waiting for scan…';
+  if (st === 'scanning') msg = sc.current ? `Scanning ${sc.current}…` : 'Scanning…';
+  else if (fin) msg = `Scan complete: ${fmt(sc.tagged)} sensitive columns found in ${fx(sc.elapsed_s, 1)} s`;
+  else if (st === 'error') msg = 'Scan failed' + (sc.error ? ': ' + sc.error : '');
+  setText(cur, msg);
+  cur.classList.toggle('done', !!fin);
+  setText($('#sc-tag'), fmt(sc.tagged));
+  setText($('#sc-el'), sc.elapsed_s == null ? '–' : fx(sc.elapsed_s, 1) + ' s');
+  setText($('#sc-be'), sc.backend || '–');
+}
+
+function spark(poly, arr, lo, span) {
+  let pts = '';
+  if (arr.length > 1) {
+    let mn = lo != null ? lo : Math.min.apply(null, arr), mx = Math.max.apply(null, arr);
+    if (mx - mn < span) { if (lo != null) mx = mn + span; else { const c = (mx + mn) / 2; mn = c - span / 2; mx = c + span / 2; } }
+    const n = arr.length, step = 120 / 59;
+    pts = arr.map((v, i) => `${(120 - (n - 1 - i) * step).toFixed(1)},${(31 - (v - mn) / (mx - mn) * 30).toFixed(1)}`).join(' ');
+  }
+  if (poly.getAttribute('points') !== pts) poly.setAttribute('points', pts);
+}
+
+function fillBackendSelects(bes, active) {
+  const con = bes.filter((b) => b.status === 'connected');
+  const key = con.map((b) => b.name + ':' + (b.label || '')).join('|');
+  if (S.cache.beKey === key) return;
+  S.cache.beKey = key;
+  const html = con.length ? con.map((b) => `<option value="${esc(b.name)}">${esc(b.label || b.name)}</option>`).join('')
+    : '<option value="">(no backend connected)</option>';
+  $$('select.be-sel').forEach((sel) => {
+    const prev = sel.value;
+    sel.innerHTML = html;
+    const want = con.some((b) => b.name === prev) ? prev : con.some((b) => b.name === active) ? active : (con[0] ? con[0].name : '');
+    sel.value = want;
+  });
+}
+const backendOf = (sel) => (sel && sel.value) || (S.status && S.status.active_backend) || 'sqlite';
+
+/* ---------- tabs ---------- */
+const TABS = ['monitor', 'explorer', 'catalog', 'query', 'audit', 'integrity'];
+function showTab(name, focus, noLoad) {
+  if (!TABS.includes(name)) name = 'monitor';
+  S.tab = name;
+  $$('[role=tab]').forEach((b) => {
+    const on = b.dataset.tab === name;
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+    b.tabIndex = on ? 0 : -1;
+    if (on && focus) b.focus();
+  });
+  $$('.tabpanel').forEach((p) => { p.hidden = p.id !== 'p-' + name; });
+  try { history.replaceState(null, '', '#' + name); } catch (e) { /* ignore */ }
+  if (!noLoad) loadFor(name);
+}
+function loadFor(name) {
+  if (name === 'monitor' && S.status) renderMonitor(S.status);
+  else if (name === 'explorer') loadTables(false);
+  else if (name === 'catalog') loadCatalog();
+  else if (name === 'query') initQuery();
+  else if (name === 'audit') loadAudit();
+}
+$('#tabs').addEventListener('click', (e) => { const b = e.target.closest('[role=tab]'); if (b) showTab(b.dataset.tab); });
+$('#tabs').addEventListener('keydown', (e) => {
+  const i = TABS.indexOf(S.tab); let j = -1;
+  if (e.key === 'ArrowRight') j = (i + 1) % TABS.length;
+  else if (e.key === 'ArrowLeft') j = (i + TABS.length - 1) % TABS.length;
+  else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = TABS.length - 1;
+  if (j >= 0) { e.preventDefault(); showTab(TABS[j], true); }
+});
+
+/* ---------- shared result grid ---------- */
+function cellHTML(v, cls, color, col, mk) {
+  const c = cls ? ` class="m c-${color}"` : '';
+  if (v === null || v === undefined) return `<td${c}><span class="null">NULL</span></td>`;
+  const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+  const hasM = Array.isArray(mk) && mk.length;
+  const d = ` data-v="${esc(s)}" data-col="${esc(col || '')}"` + (hasM ? ` data-m="${esc(JSON.stringify(mk))}"` : '');
+  const nAi = hasM ? mk.filter((m) => String(m[2]).includes('(AI)')).length : 0, nRule = hasM ? mk.length - nAi : 0;
+  const badge = (nRule ? `<sup class="mkb${mk[0][3] ? '' : ' det'}" title="${nRule} PII span(s) found by rules">${nRule}</sup>` : '')
+    + (nAi ? `<sup class="mkb ai" title="${nAi} span(s) found by the AI model">AI ${nAi}</sup>` : '');
+  if (s.length > CELL) return `<td${c}${d} title="Click to open">${esc(s.slice(0, CELL - 1))}…${badge}</td>`;
+  return `<td${c}${d}>${esc(s)}${badge}</td>`;
+}
+// cols: [{name, strategy, tag, title}]; rows: arrays (or objects keyed by name)
+function gridHTML(cols, rows, sens, limit, marks) {
+  marks = marks || {};
+  let idx = cols.map((c, i) => i);
+  if (sens) { const f = idx.filter((i) => cols[i].tag); if (f.length) idx = f; }
+  const shown = rows.slice(0, limit);
+  const mk = cols.map((c) => { const s = String(c.strategy || '').toUpperCase(); return s && s !== 'FULL' ? (STRC[s] || 'grey') : ''; });
+  let h = '<div class="tw"><table class="tbl grid-t"><thead><tr>';
+  for (const i of idx) {
+    const c = cols[i];
+    h += `<th title="${esc(c.title || '')}"><div>${esc(c.name)}</div><div class="thb">${c.tag ? tagB(c.tag) : '<span class="cl">clean</span>'}${strB(c.strategy)}</div></th>`;
+  }
+  h += '</tr></thead><tbody>';
+  for (const [ri, row] of shown.entries()) {
+    const r = Array.isArray(row) ? row : cols.map((c) => row ? row[c.name] : null);
+    h += '<tr>';
+    for (const i of idx) h += cellHTML(r[i], !!mk[i], mk[i], `${cols[i].name} · ${cols[i].tag || 'clean'} · ${cols[i].strategy || 'FULL'}`, marks[ri + ':' + i]);
+    h += '</tr>';
+  }
+  if (!shown.length) h += `<tr><td colspan="${idx.length || 1}" class="muted">No rows</td></tr>`;
+  return h + '</tbody></table></div>';
+}
+function srcTitle(c) {
+  const src = Array.isArray(c.source) ? c.source.join(', ') : (c.source || '');
+  return `${c.name}\nstrategy: ${c.strategy || '–'}\ntag: ${c.tag || 'clean'}\nsource: ${src || 'computed'}`;
+}
+function resultHTML(r, title, sens) {
+  const h = title ? `<div class="rp-h">${esc(title)}${r && r.user ? `<span class="muted sm mono">${esc(r.user)}</span>` : ''}</div>` : '';
+  if (!r || typeof r !== 'object') return h + errBox('No response from server');
+  if (r.blocked) return h + blockBox(r);
+  if (!r.ok) return h + errBox(r.error || 'Query failed', 'Query error');
+  const cols = (Array.isArray(r.columns) ? r.columns : []).map((c) => typeof c === 'string' ? { name: c } : c);
+  const rows = Array.isArray(r.rows) ? r.rows : [];
+  cols.forEach((c) => { c.title = srcTitle(c); });
+  const n = r.row_count != null ? r.row_count : rows.length;
+  const nm = cols.filter((c) => c.strategy && String(c.strategy).toUpperCase() !== 'FULL').length;
+  const notes = [`${fmt(n)} row${n === 1 ? '' : 's'}`, r.elapsed_ms != null ? `${fx(r.elapsed_ms, 1)} ms` : '', `${nm} of ${cols.length} columns masked`,
+    rows.length > MAX_ROWS ? `showing first ${MAX_ROWS}` : '', r.truncated ? 'truncated by server' : '', r.role ? 'role: ' + r.role : '', r.backend ? 'backend: ' + r.backend : '']
+    .filter(Boolean).map((x) => `<span>${esc(x)}</span>`).join('');
+  return h + gridHTML(cols, rows, sens, MAX_ROWS, r.marks) + `<div class="rfoot">${notes}</div>`;
+}
+function segSet(seg, attr, val) { $$('button', seg).forEach((b) => b.setAttribute('aria-pressed', b.dataset[attr] === String(val) ? 'true' : 'false')); }
+
+/* ---------- explorer ---------- */
+async function loadTables(force) {
+  const X = S.ex, be = backendOf($('#ex-be'));
+  if (!force && X.tables && X.be === be && X.gen === S.scanGen) return;
+  const tok = ++X.tok;
+  if (!X.tables) $('#ex-list').innerHTML = '<li class="empty">Loading…</li>';
+  try {
+    const d = await api('/api/tables?backend=' + encodeURIComponent(be));
+    if (tok !== X.tok) return;
+    if (!d || !Array.isArray(d.tables)) throw new Error((d && d.error) || 'unexpected response');
+    X.tables = d.tables; X.be = be; X.gen = S.scanGen;
+    if (!X.tables.some((t) => t.table === X.table)) { X.table = X.tables[0] ? X.tables[0].table : null; X.offset = 0; X.fcol = ''; X.fval = ''; }
+    renderTableList(); fillFilterCols(); browse();
+  } catch (e) {
+    if (tok !== X.tok) return;
+    $('#ex-list').innerHTML = `<li>${errBox(e.message, 'Could not load tables')}</li>`;
+  }
+}
+function renderTableList() {
+  const X = S.ex;
+  $('#ex-list').innerHTML = X.tables.length ? X.tables.map((t) => {
+    const tags = (Array.isArray(t.tags) ? t.tags : []).filter((g) => TAGC[g]);
+    return `<li><button type="button" data-t="${esc(t.table)}" aria-current="${t.table === X.table}"><span class="tl1"><b>${esc(t.table)}</b><span class="dim sm mono">${fmt(t.rows)}</span></span>`
+      + `<span class="tl2" title="${esc(tags.join(', ') || 'no PII tags')}">${tags.map((g) => `<span class="td c-${TAGC[g]}"></span>`).join('')}<span class="n">${fmt(t.sensitive || 0)} sensitive</span></span></button></li>`;
+  }).join('') : '<li class="empty">No tables</li>';
+}
+const curTable = () => (S.ex.tables || []).find((t) => t.table === S.ex.table) || null;
+function fillFilterCols() {
+  const t = curTable(), X = S.ex;
+  const cols = t && Array.isArray(t.columns) ? t.columns : [];
+  $('#ex-fcol').innerHTML = cols.map((c) => `<option value="${esc(c.name)}">${esc(c.name)}${c.tag ? ' · ' + esc(c.tag) : ''}</option>`).join('') || '<option value="">(no columns)</option>';
+  if (X.fcol) $('#ex-fcol').value = X.fcol;
+  $('#ex-fval').value = X.fval;
+  setText($('#ex-fnote'), X.fcol ? `active: ${X.fcol} = ${X.fval}` : '');
+}
+async function browse() {
+  const X = S.ex;
+  if (!X.table) { $('#ex-out').innerHTML = '<div class="empty">No table selected</div>'; return; }
+  const q = new URLSearchParams({ backend: X.be || backendOf($('#ex-be')), table: X.table, role: X.role, offset: X.offset, limit: PAGE });
+  if (X.fcol) { q.set('filter_col', X.fcol); q.set('filter_val', X.fval); }
+  const tok = ++X.tok;
+  $('#ex-out').classList.add('busy');
+  renderExHead(true);
+  try {
+    const r = await api('/api/browse?' + q.toString());
+    if (tok !== X.tok) return;
+    X.resp = r;
+  } catch (e) {
+    if (tok !== X.tok) return;
+    X.resp = { ok: false, blocked: false, error: 'Request failed: ' + e.message };
+  }
+  $('#ex-out').classList.remove('busy');
+  renderExplorer();
+}
+function renderExHead(loading) {
+  const t = curTable(), X = S.ex;
+  if (!t) { $('#ex-head').innerHTML = ''; return; }
+  $('#ex-head').innerHTML = `<b>${esc(t.table)}</b><span class="muted">${fmt(t.rows)} rows · ${fmt(t.sensitive || 0)} sensitive of ${fmt((t.columns || []).length)} columns</span>`
+    + `<span class="muted">viewing as <strong>${esc(RL[X.role])}</strong></span>${loading ? '<span class="dim sm">loading…</span>' : ''}`;
+}
+function renderExplorer() {
+  const X = S.ex, r = X.resp, t = curTable(), out = $('#ex-out'), pg = $('#ex-pager');
+  renderExHead(false);
+  if (!r) return;
+  if (r.blocked) { out.innerHTML = blockBox(r); pg.hidden = true; return; }
+  if (!r.ok) { out.innerHTML = errBox(r.error || 'Browse failed'); pg.hidden = true; return; }
+  const meta = {};
+  (t && t.columns || []).forEach((c) => { meta[String(c.name).toLowerCase()] = c; });
+  const cols = (r.columns || []).map((c) => {
+    c = typeof c === 'string' ? { name: c } : c;
+    const m = meta[String(c.name).toLowerCase()] || {};
+    const strat = c.strategy || (m.strategy && m.strategy[X.role]) || null;
+    const tag = c.tag !== undefined ? c.tag : m.tag;
+    const ev = Array.isArray(m.evidence) ? m.evidence.join('; ') : (m.evidence || '');
+    return { name: c.name, strategy: strat, tag: tag,
+      title: `${c.name}${m.type ? ' (' + m.type + ')' : ''}\ntag: ${tag || 'clean'}\nentity: ${m.entity || '–'}\nconfidence: ${m.confidence != null ? Math.round(m.confidence * 100) + '%' : '–'}\nevidence: ${ev || '–'}\nstrategy for ${X.role}: ${strat || '–'}` };
+  });
+  const rows = Array.isArray(r.rows) ? r.rows : [];
+  out.innerHTML = gridHTML(cols, rows, X.sens, PAGE, r.marks);
+  const total = num(r.total) != null ? +r.total : (num(r.row_count) || rows.length);
+  const off = num(r.offset) != null ? +r.offset : X.offset;
+  X.offset = off;
+  pg.hidden = false;
+  setText($('#ex-range'), total ? `rows ${fmt(off + 1)}–${fmt(off + Math.min(rows.length, PAGE))} of ${fmt(total)}` : 'no matching rows');
+  setText($('#ex-ms'), r.elapsed_ms != null ? `· ${fx(r.elapsed_ms, 1)} ms` : '');
+  $('#ex-prev').disabled = off <= 0;
+  $('#ex-next').disabled = off + PAGE >= total;
+}
+$('#ex-list').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-t]'); if (!b) return;
+  const X = S.ex; if (b.dataset.t === X.table) return;
+  X.table = b.dataset.t; X.offset = 0; X.fcol = ''; X.fval = ''; X.resp = null;
+  $$('button[data-t]', $('#ex-list')).forEach((x) => x.setAttribute('aria-current', x === b ? 'true' : 'false'));
+  fillFilterCols(); browse();
+});
+$('#ex-role').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-role]'); if (!b || b.dataset.role === S.ex.role) return;
+  S.ex.role = b.dataset.role; segSet($('#ex-role'), 'role', S.ex.role); browse();
+});
+$('#ex-cols').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-sens]'); if (!b) return;
+  S.ex.sens = b.dataset.sens === '1'; segSet($('#ex-cols'), 'sens', b.dataset.sens); renderExplorer();
+});
+$('#ex-hl').addEventListener('change', (e) => $('#ex-out').classList.toggle('hl', e.target.checked));
+$('#ex-be').addEventListener('change', () => { S.ex.table = null; loadTables(true); });
+$('#ex-reload').addEventListener('click', () => loadTables(true));
+$('#ex-filter').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const X = S.ex, col = $('#ex-fcol').value, val = $('#ex-fval').value.trim();
+  if (!col || !val) { setText($('#ex-fnote'), 'Pick a column and type a value'); return; }
+  X.fcol = col; X.fval = val; X.offset = 0;
+  setText($('#ex-fnote'), `active: ${col} = ${val}`); browse();
+});
+$('#ex-fclear').addEventListener('click', () => {
+  const X = S.ex; $('#ex-fval').value = '';
+  if (!X.fcol) return;
+  X.fcol = ''; X.fval = ''; X.offset = 0; setText($('#ex-fnote'), ''); browse();
+});
+$('#ex-prev').addEventListener('click', () => { S.ex.offset = Math.max(0, S.ex.offset - PAGE); browse(); });
+$('#ex-next').addEventListener('click', () => { S.ex.offset += PAGE; browse(); });
+
+/* ---------- catalog ---------- */
+async function loadCatalog() {
+  const be = backendOf($('#cat-be')), tok = ++S.cat.tok;
+  if (!S.cat.data) $('#cat-out').innerHTML = '<div class="empty">Loading catalog…</div>';
+  setText($('#cat-note'), S.scanState === 'scanning' ? 'Scan in progress, results refresh when complete' : '');
+  try {
+    const d = await api('/api/catalog?backend=' + encodeURIComponent(be));
+    if (tok !== S.cat.tok) return;
+    if (!d || !Array.isArray(d.columns)) throw new Error((d && d.error) || 'no catalog yet');
+    S.cat.data = d; renderCatalog();
+  } catch (e) {
+    if (tok !== S.cat.tok) return;
+    S.cat.data = null; $('#cat-chips').innerHTML = '';
+    $('#cat-out').innerHTML = errBox(e.message, 'Could not load catalog');
+  }
+}
+function renderCatalog() {
+  const d = S.cat.data; if (!d) return;
+  const sm = d.summary || {}, cols = d.columns;
+  const byTag = {};
+  cols.forEach((c) => { if (c.tag) byTag[c.tag] = (byTag[c.tag] || 0) + 1; });
+  $('#cat-chips').innerHTML = `<span class="chip">Tagged <b>${fmt(sm.tagged)}</b></span><span class="chip">Needs review <b style="color:var(--amber)">${fmt(sm.review)}</b></span><span class="chip">Clean <b>${fmt(sm.clean)}</b></span><span class="chip">Total <b>${fmt(cols.length)}</b></span>`
+    + TAGS.filter((t) => byTag[t]).map((t) => `<span class="chip">${tagB(t)}<b>${byTag[t]}</b></span>`).join('');
+  const q = $('#cat-q').value.trim().toLowerCase(), clean = $('#cat-clean').checked;
+  const rows = cols.filter((c) => {
+    if (!clean && !c.tag && c.status === 'clean') return false;
+    if (!q) return true;
+    return [c.table, c.column, c.tag, c.entity, c.status, (c.evidence || []).join(' ')].join(' ').toLowerCase().includes(q);
+  });
+  const SC = { auto: 'green', review: 'amber', clean: 'grey' };
+  let h = '<div class="tw"><table class="tbl"><thead><tr><th>Table</th><th>Column</th><th>Tag</th><th>Entity</th><th>Confidence</th><th>Evidence</th><th>Status</th></tr></thead><tbody>';
+  for (const c of rows.slice(0, 300)) {
+    const cf = Math.max(0, Math.min(1, num(c.confidence) || 0)), ev = Array.isArray(c.evidence) ? c.evidence.join('; ') : (c.evidence || '');
+    h += `<tr><td class="t">${esc(c.table)}</td><td class="t"><b>${esc(c.column)}</b></td><td>${c.tag ? tagB(c.tag) : '<span class="dim">clean</span>'}</td><td class="t">${esc(c.entity || '–')}</td>`
+      + `<td class="t"><span class="conf"><span style="width:${Math.round(cf * 100)}%"></span></span>${cf.toFixed(2)}</td><td class="w">${esc(ev)}</td><td>${badge(c.status || '–', SC[c.status] || 'blue')}</td></tr>`;
+  }
+  if (!rows.length) h += '<tr><td colspan="7" class="muted">No columns match</td></tr>';
+  $('#cat-out').innerHTML = h + '</tbody></table></div>';
+  if (S.scanState !== 'scanning') setText($('#cat-note'), `Showing ${rows.length} of ${cols.length} columns · ${d.backend || ''}`);
+}
+async function rescan(be, btn) {
+  btn.disabled = true;
+  try {
+    const r = await api('/api/scan', { backend: be });
+    if (r && r.ok === false) alertNote(r.error || 'Scan refused');
+    else { S.scanState = 'scanning'; setText($('#cat-note'), 'Re-scan started, results refresh when complete'); }
+  } catch (e) { alertNote('Could not start scan: ' + e.message); }
+  finally { btn.disabled = false; poll(); }
+}
+function alertNote(m) { setText($('#cat-note'), m); setText($('#sc-cur'), m); }
+$('#cat-rescan').addEventListener('click', (e) => rescan(backendOf($('#cat-be')), e.currentTarget));
+$('#m-rescan').addEventListener('click', (e) => rescan((S.status && S.status.active_backend) || backendOf($('#cat-be')), e.currentTarget));
+$('#cat-q').addEventListener('input', renderCatalog);
+$('#cat-clean').addEventListener('change', renderCatalog);
+$('#cat-be').addEventListener('change', () => { S.cat.data = null; loadCatalog(); });
+
+/* ---------- query ---------- */
+async function initQuery() {
+  if (S.qInit) return;
+  S.qInit = true;
+  const [u, p] = await Promise.allSettled([api('/api/users'), api('/api/presets')]);
+  if (u.status === 'fulfilled' && Array.isArray(u.value)) {
+    S.users = u.value;
+    $('#q-user').innerHTML = '<option value="">(no specific user)</option>' + S.users.map((x) =>
+      `<option value="${esc(x.username)}">${esc(x.display_name || x.username)} · ${esc(x.role)}</option>`).join('');
+    pickUserForRole(S.role);
+  } else { $('#q-user').innerHTML = '<option value="">(users unavailable)</option>'; S.qInit = false; }
+  if (p.status === 'fulfilled' && Array.isArray(p.value)) {
+    S.presets = p.value;
+    let html = '', cat = null;
+    S.presets.forEach((x, i) => {
+      if (x.category && x.category !== cat) { cat = x.category; html += `<div class="pcat">${esc(cat)}</div>`; }
+      html += `<button type="button" class="preset" data-i="${i}" title="${esc(x.sql)}"><b>${esc(x.title)}</b><span>${esc(x.expect || '')}</span></button>`;
+    });
+    $('#q-presets').innerHTML = html || '<div class="empty">No presets</div>';
+  } else { $('#q-presets').innerHTML = errBox('Could not load presets'); S.qInit = false; }
+}
+function pickUserForRole(role) {
+  const u = S.users.find((x) => x.role === role);
+  S.user = u ? u.username : '';
+  $('#q-user').value = S.user;
+}
+$('#q-user').addEventListener('change', (e) => {
+  S.user = e.target.value;
+  const u = S.users.find((x) => x.username === S.user);
+  if (u && ROLES.includes(u.role)) { S.role = u.role; segSet($('#q-role'), 'role', S.role); }
+});
+$('#q-role').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-role]'); if (!b) return;
+  S.role = b.dataset.role; segSet($('#q-role'), 'role', S.role); pickUserForRole(S.role);
+});
+$('#q-presets').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-i]'); if (!b) return;
+  const p = S.presets[+b.dataset.i]; if (!p) return;
+  $('#q-sql').value = p.sql || '';
+  $$('.preset', $('#q-presets')).forEach((x) => x.setAttribute('aria-current', x === b ? 'true' : 'false'));
+  $('#q-sql').focus();
+});
+function qBusy(on, label) {
+  $('#q-run').disabled = on; $('#q-cmp').disabled = on;
+  if (on) $('#q-out').innerHTML = `<div class="empty">${esc(label)}</div>`;
+}
+function renderQ() {
+  const L = S.q.last; if (!L) return;
+  if (L.err) { $('#q-out').innerHTML = errBox(L.err, 'Request failed'); return; }
+  if (S.q.compare) {
+    const r = L.data || {};
+    $('#q-out').innerHTML = '<div class="cmp">' + ROLES.map((k) => `<div>${resultHTML(r[k], RL[k], S.q.sens)}</div>`).join('') + '</div>';
+  } else $('#q-out').innerHTML = resultHTML(L.data, '', S.q.sens);
+}
+async function runQuery(compare) {
+  const sql = $('#q-sql').value.trim();
+  if (!sql) { $('#q-out').innerHTML = errBox('Type a SQL query first', 'Nothing to run'); return; }
+  const be = backendOf($('#q-be'));
+  qBusy(true, compare ? 'Running as Admin, Support and Analyst…' : 'Running…');
+  try {
+    const data = compare ? await api('/api/compare', { sql, backend: be })
+      : await api('/api/query', { user: S.user || null, role: S.role, sql, backend: be });
+    S.q.last = { data };
+  } catch (e) { S.q.last = { err: e.message }; }
+  S.q.compare = compare;
+  qBusy(false); renderQ();
+}
+$('#q-run').addEventListener('click', () => runQuery(false));
+$('#q-cmp').addEventListener('click', () => runQuery(true));
+$('#q-sql').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (!$('#q-run').disabled) runQuery(false); } });
+$('#q-hl').addEventListener('change', (e) => $('#q-out').classList.toggle('hl', e.target.checked));
+$('#q-cols').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-sens]'); if (!b) return;
+  S.q.sens = b.dataset.sens === '1'; segSet($('#q-cols'), 'sens', b.dataset.sens); renderQ();
+});
+
+/* ---------- audit ---------- */
+async function loadAudit() {
+  const out = $('#au-out');
+  try {
+    const d = await api('/api/audit?limit=100');
+    if (!d || !Array.isArray(d.records)) throw new Error((d && d.error) || 'unexpected response');
+    $('#au-chain').innerHTML = d.chain_ok ? badge('Hash chain intact', 'green') : badge('Chain broken', 'red');
+    const recs = newestFirst(d.records).slice(0, 100);
+    setText($('#au-note'), `${recs.length} most recent records`);
+    let h = '<div class="tw"><table class="tbl"><thead><tr><th>Time</th><th>User</th><th>Role</th><th>Backend</th><th>Status</th><th>SQL</th><th>Masked columns</th><th>Reason</th><th>Hash</th></tr></thead><tbody>';
+    for (const r of recs) {
+      const st = String(r.status || '').toUpperCase();
+      const m = r.masked && typeof r.masked === 'object'
+        ? (Array.isArray(r.masked) ? r.masked.map((x) => esc(x)).join(', ') : Object.entries(r.masked).map(([k, v]) => `${esc(k)} ${strB(v)}`).join(' '))
+        : esc(r.masked || '');
+      const ts = String(r.ts || '').replace('T', ' ');
+      h += `<tr><td class="t">${esc(ts.slice(0, 19))}</td><td class="t">${esc(r.user || '–')}</td><td>${esc(r.role || '')}</td><td>${esc(r.backend || '')}</td>`
+        + `<td>${badge(st || '–', st === 'OK' ? 'green' : st === 'BLOCKED' ? 'red' : 'amber')}</td><td class="t ell" title="${esc(r.sql)}">${esc(String(r.sql || '').slice(0, 80))}</td>`
+        + `<td class="w">${m || '<span class="dim">none</span>'}</td><td class="w">${esc(r.reason || '')}</td><td class="t" title="${esc(r.hash)}">${esc(String(r.hash || '').slice(0, 10))}</td></tr>`;
+    }
+    if (!recs.length) h += '<tr><td colspan="9" class="muted">No queries audited yet</td></tr>';
+    out.innerHTML = h + '</tbody></table></div>';
+  } catch (e) { out.innerHTML = errBox(e.message, 'Could not load audit log'); }
+}
+$('#au-reload').addEventListener('click', loadAudit);
+
+/* ---------- integrity ---------- */
+$('#in-run').addEventListener('click', async (e) => {
+  const btn = e.currentTarget, out = $('#in-out'), t0 = performance.now();
+  btn.disabled = true; out.innerHTML = '<div class="empty">Hashing every table…</div>';
+  try {
+    const d = await api('/api/integrity', { backend: backendOf($('#in-be')) });
+    if (!d || !Array.isArray(d.tables)) throw new Error((d && d.error) || 'unexpected response');
+    const n = d.tables.length, bad = d.tables.filter((t) => !t.unchanged).length;
+    let h = d.all_unchanged ? `<div class="banner good">&#10003; All ${n} tables unchanged</div>`
+      : `<div class="banner bad">&#10007; ${bad} of ${n} tables changed</div>`;
+    h += '<div class="tw"><table class="tbl"><thead><tr><th>Table</th><th>Rows</th><th>Hash before</th><th>Hash after</th><th>Unchanged</th></tr></thead><tbody>';
+    for (const t of d.tables) {
+      h += `<tr><td class="t"><b>${esc(t.table)}</b></td><td class="t">${fmt(t.rows)}</td><td class="t" title="${esc(t.before)}">${esc(String(t.before || '').slice(0, 16))}</td>`
+        + `<td class="t" title="${esc(t.after)}">${esc(String(t.after || '').slice(0, 16))}</td><td>${t.unchanged ? '<span class="yes">&#10003; yes</span>' : '<span class="no">&#10007; no</span>'}</td></tr>`;
+    }
+    out.innerHTML = h + '</tbody></table></div>';
+    setText($('#in-note'), `${d.backend || ''} verified at ${new Date().toLocaleTimeString()} in ${Math.round(performance.now() - t0)} ms`);
+  } catch (err) { out.innerHTML = errBox(err.message, 'Integrity check failed'); }
+  finally { btn.disabled = false; }
+});
+
+/* ---------- theme ---------- */
+const THEMES = ['auto', 'light', 'dark'];
+function applyTheme(t) {
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
+  setText($('#theme'), 'Theme: ' + t[0].toUpperCase() + t.slice(1));
+}
+let theme = 'auto';
+try { theme = localStorage.getItem('pardadb-theme') || 'auto'; } catch (e) { /* ignore */ }
+if (!THEMES.includes(theme)) theme = 'auto';
+applyTheme(theme);
+$('#theme').addEventListener('click', () => {
+  theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+  applyTheme(theme);
+  try { localStorage.setItem('pardadb-theme', theme); } catch (e) { /* ignore */ }
+});
+
+/* ---------- init ---------- */
+const initial = (location.hash || '').slice(1);
+showTab(initial, false, true);
+poll().finally(() => loadFor(S.tab));
+/* ---------- nav bar: AI model on/off ---------- */
+$('#h-ml-btn').addEventListener('click', async (e) => {
+  const b = e.currentTarget, on = b.textContent.startsWith('Turn off');
+  b.disabled = true; b.textContent = on ? 'Stopping…' : 'Starting…';
+  try {
+    const r = await api('/api/ml', { action: on ? 'stop' : 'start' });
+    if (!r || r.ok === false) throw new Error((r && r.error) || 'no response');
+  } catch (err) {
+    b.disabled = false;
+    b.textContent = 'Restart PardaDB';
+    b.title = 'This PardaDB process is older than the AI switch. Restart it (Ctrl+C, then pardadb) and reload this page.';
+  }
+});
+
+/* ---------- nav bar: used tags dropdown ---------- */
+const TAG_INFO = {
+  PII_HIGH: 'Direct identifiers: card, Aadhaar, PAN, SSN, account number',
+  PII_MEDIUM: 'Contact and identity: name, phone, email, UPI, address',
+  PII_QUASI: 'Identifying in combination: date of birth, pincode, gender, residency',
+  FINANCIAL_CONFIDENTIAL: 'Money: balances, amounts, limits, income, credit score',
+  PII_FREE_TEXT: 'Free text with PII inside: tickets, notes, remarks, narrations',
+  SENSITIVE_JSON: 'JSON documents with PII keys (e.g. kyc_meta)',
+  INTERNAL_ID: 'Customer identifiers that link records to a person',
+};
+const TAG_ORDER = Object.keys(TAG_INFO);
+let usedTagsKey = '', policyCache = null, catTagsFor = '';
+async function usedTagsFromCatalog(backend) {
+  if (!backend || catTagsFor === backend) return;
+  catTagsFor = backend;
+  try {
+    const c = await api('/api/catalog?backend=' + encodeURIComponent(backend));
+    const tags = {};
+    (c.columns || []).forEach((x) => { if (x.tag) tags[x.tag] = (tags[x.tag] || 0) + 1; });
+    renderUsedTags(tags, backend);
+  } catch (_) { catTagsFor = ''; }
+}
+async function renderUsedTags(tags, backend) {
+  const key = backend + JSON.stringify(tags);
+  if (key === usedTagsKey) return;
+  usedTagsKey = key;
+  const names = Object.keys(tags).sort((a, b) => TAG_ORDER.indexOf(a) - TAG_ORDER.indexOf(b));
+  const total = names.reduce((n, t) => n + tags[t], 0);
+  setText($('#h-tags-n'), names.length ? `${names.length} tags · ${total} cols` : '–');
+  if (!policyCache) { try { policyCache = await api('/api/policy'); } catch (_) { policyCache = null; } }
+  const pol = (policyCache && policyCache.tags) || {};
+  let html = `<div class="tdd-h">Tags in the ${esc(backend || '')} catalog</div><table class="tbl tdd-t"><thead><tr><th>Tag</th><th>Columns</th><th>Means</th><th>Admin</th><th>Support</th><th>Analyst</th></tr></thead><tbody>`;
+  for (const t of names) {
+    const p = pol[t] || {};
+    html += `<tr><td>${tagB(t)}</td><td class="t">${fmt(tags[t])}</td><td class="w">${esc(TAG_INFO[t] || '')}</td>`
+      + ['admin', 'support', 'analyst'].map((r) => { const v = p[r] || ''; const m = v.match(/^(SPANS|JSON)_(PARTIAL|TYPED|REDACT)$/);
+        return `<td>${v ? (m ? strB(m[1]) + `<span class="muted"> ${m[2].toLowerCase()}</span>` : strB(v)) : '–'}</td>`; }).join('') + '</tr>';
+  }
+  if (!names.length) html += '<tr><td colspan="6" class="muted">No tags yet</td></tr>';
+  $('#h-tags-panel').innerHTML = html + '</tbody></table>';
+}
+document.addEventListener('click', (e) => { const d = $('#h-tags'); if (d && d.open && !d.contains(e.target)) d.open = false; });
+})();
+
+/* ---------- open any cell in full ---------- */
+(function () {
+  const esc = (x) => String(x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const box = document.getElementById('cellbox');
+  if (!box || !box.showModal) return;
+  document.addEventListener('click', (e) => {
+    const td = e.target.closest && e.target.closest('td[data-v]');
+    if (!td) return;
+    let v = td.getAttribute('data-v');
+    try { const j = JSON.parse(v); if (j && typeof j === 'object') v = JSON.stringify(j, null, 2); } catch (_) { /* not JSON */ }
+    document.getElementById('cb-col').textContent = td.getAttribute('data-col') || 'Value';
+    document.getElementById('cb-len').textContent = v.length + ' chars';
+    const pre = document.getElementById('cb-v'), legend = document.getElementById('cb-m');
+    let marks = [];
+    try { marks = JSON.parse(td.getAttribute('data-m') || '[]'); } catch (_) { marks = []; }
+    if (marks.length && v === td.getAttribute('data-v')) {
+      let html = '', pos = 0;
+      for (const [a, b, ent, masked] of marks) {
+        const isAi = String(ent).includes('(AI)');
+        html += esc(v.slice(pos, a)) + `<mark class="pii${isAi ? ' ai' : masked ? '' : ' det'}" title="${esc(isAi ? 'found by the AI model: ' + ent.replace(' (AI)', '') : 'found by rules: ' + ent)}">${esc(v.slice(a, b))}</mark>`;
+        pos = b;
+      }
+      pre.innerHTML = html + esc(v.slice(pos));
+      const how = marks[0][3] ? 'masked' : 'detected, shown in full to Admin';
+      const group = (arr) => { const k = {}; arr.forEach((m) => { const e = String(m[2]).replace(' (AI)', ''); k[e] = (k[e] || 0) + 1; });
+        return Object.entries(k).map(([e, n]) => `${e}${n > 1 ? ' ×' + n : ''}`).join(', '); };
+      const ai = marks.filter((m) => String(m[2]).includes('(AI)')), rule = marks.filter((m) => !String(m[2]).includes('(AI)'));
+      legend.innerHTML = (rule.length ? `<div><span class="sw${marks[0][3] ? '' : ' det'}"></span>${rule.length} found by rules (${how}): ${esc(group(rule))}</div>` : '')
+        + (ai.length ? `<div><span class="sw ai"></span>${ai.length} found by the AI model (${how}): ${esc(group(ai))}</div>` : '');
+      legend.hidden = false;
+    } else {
+      pre.textContent = v;
+      legend.hidden = true;
+    }
+    box.showModal();
+  });
+  document.getElementById('cb-x').addEventListener('click', () => box.close());
+  box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
+  document.getElementById('cb-copy').addEventListener('click', () => {
+    const t = document.getElementById('cb-v').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(t).catch(() => {});
+  });
+})();
+
+</script>
+</body>
+</html>
