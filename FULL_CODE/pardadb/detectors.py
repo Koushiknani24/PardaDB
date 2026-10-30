@@ -10,6 +10,7 @@ Rules are tuned for messy legacy bank data:
 
 from __future__ import annotations
 
+import functools
 import json
 import re
 from collections.abc import Iterable
@@ -268,19 +269,29 @@ NAME_CONTEXT = [
 ]
 
 
+SPAN_CACHE_SIZE = 4096  # distinct texts whose spans are remembered (per NameIndex, and for the rules)
+WORD = re.compile(r"[A-Za-z]+")
+
+
 class NameIndex:
     """Full names known to the bank (from person-tagged columns), matched in free text."""
 
     def __init__(self, names: Iterable[Any] = ()) -> None:
         self.names = {" ".join(n.lower().split()) for n in names if n and " " in str(n).strip()}
         self.max_words = max((n.count(" ") + 1 for n in self.names), default=0)
+        # the index never changes after construction (a re-scan builds a new one), so a text's
+        # matches can be remembered; lru_cache is thread-safe and bounded
+        self._cached_find = functools.lru_cache(maxsize=SPAN_CACHE_SIZE)(self._find)
 
     def find(self, text: str) -> list[Span]:
         """Spans of known full names in `text`, preferring the longest match at each word."""
+        return list(self._cached_find(text))
+
+    def _find(self, text: str) -> tuple[Span, ...]:
         if not self.names:
-            return []
+            return ()
         out = []
-        toks = [(m.start(), m.end(), m.group().lower()) for m in re.finditer(r"[A-Za-z]+", text)]
+        toks = [(m.start(), m.end(), m.group().lower()) for m in WORD.finditer(text)]
         i = 0
         while i < len(toks):
             hit = None
@@ -294,14 +305,16 @@ class NameIndex:
                 out.append(hit)
             else:
                 i += 1
-        return out
+        return tuple(out)
 
 
-def find_spans(text: str, names: NameIndex | None = None, extra: Iterable[Span] | None = None) -> list[Span]:
-    """Non-overlapping (start, end, entity) spans of PII inside free text.
-    `extra` adds spans from the ML model, labelled e.g. "person (AI)"."""
-    if not text:
-        return []
+@functools.lru_cache(maxsize=SPAN_CACHE_SIZE)
+def _rule_spans(text: str) -> tuple[Span, ...]:
+    """Spans the fixed rules find in `text` (identifiers, name contexts, addresses), in rule order.
+
+    A pure function of the text, so repeated values (the same narration on many rows, the same
+    query run again) are matched once.
+    """
     found = []
     for entity, rx in SPAN_RULES:
         for m in rx.finditer(text):
@@ -317,6 +330,15 @@ def find_spans(text: str, names: NameIndex | None = None, extra: Iterable[Span] 
         for m in rx.finditer(text):
             found.append((m.start(1), m.end(1), "person"))
     found += [(s_, e_, "address") for s_, e_ in address_spans(text)]
+    return tuple(found)
+
+
+def find_spans(text: str, names: NameIndex | None = None, extra: Iterable[Span] | None = None) -> list[Span]:
+    """Non-overlapping (start, end, entity) spans of PII inside free text.
+    `extra` adds spans from the ML model, labelled e.g. "person (AI)"."""
+    if not text:
+        return []
+    found = list(_rule_spans(text))
     if names:
         found += names.find(text)
     if extra:
