@@ -26,7 +26,10 @@ def hmac_key() -> bytes:
     """Token key: PARDADB_HMAC_KEY if set, else a random key created once in the state dir."""
     global _KEY
     if _KEY is None:
-        env = os.environ.get("PARDADB_HMAC_KEY")
+        env = os.environ.get("PARDADB_HMAC_KEY", "").strip()
+        if env.startswith("change-me"):
+            log.warning("PARDADB_HMAC_KEY is the .env.example placeholder; using a generated key instead")
+            env = ""
         if env:
             _KEY = env.encode()
         else:
