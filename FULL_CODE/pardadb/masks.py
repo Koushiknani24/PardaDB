@@ -7,12 +7,15 @@ import datetime as dt
 import hashlib
 import hmac
 import json
+import logging
 import os
 import re
 import secrets
 from typing import Any
 
 from . import config, detectors
+
+log = logging.getLogger(__name__)
 
 Span = tuple[int, int, str]  # (start, end, entity) inside a text value
 
@@ -156,24 +159,48 @@ def mask_text(
     return (masked, marks) if with_marks else masked
 
 
+_NOTE_KEYS = frozenset({"remarks", "note", "notes"})
+_JSON_ENTITY = {"name": "person", "aadhaar_masked": "aadhaar", "digits": "account"}
+
+
+def _json_scope(parent: str | None, key: str, pii_keys: set[str]) -> str:
+    """Key a nested value is masked under: a PII parent wins, then a note parent, then the value's own key."""
+    if parent is not None and (parent in pii_keys or (parent in _NOTE_KEYS and key not in pii_keys)):
+        return parent
+    return key
+
+
+def _mask_json_leaf(v: Any, key: str | None, pii_keys: set[str], redact: bool) -> Any:
+    """Mask one scalar: values under a PII key are redacted or partially revealed, note strings get span masking."""
+    if v is None:
+        return None
+    if key in pii_keys:
+        if redact:
+            return "[REDACTED]"
+        kind = detectors.classify_value(v)
+        return partial_value(_JSON_ENTITY.get(kind, kind), v)
+    if key in _NOTE_KEYS and isinstance(v, str):
+        return mask_text(v, typed=redact)
+    return v
+
+
+def _mask_json_node(node: Any, key: str | None, pii_keys: set[str], redact: bool) -> Any:
+    """Walk a parsed JSON value: objects at any depth, arrays of anything (items inherit the array's key)."""
+    if isinstance(node, dict):
+        return {k: _mask_json_node(v, _json_scope(key, k, pii_keys), pii_keys, redact) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_mask_json_node(v, key, pii_keys, redact) for v in node]
+    return _mask_json_leaf(node, key, pii_keys, redact)
+
+
 def mask_json(v: Any, info: dict[str, Any], redact: bool) -> str:
-    """Mask the PII keys of a JSON document (redact or partial) and the PII spans in its note fields."""
+    """Mask the PII keys of a JSON document at any depth (redact or partial) and the PII spans in its note fields.
+    Anything that cannot be parsed or walked (invalid or absurdly deep JSON) is redacted whole: fail closed."""
     try:
-        doc = json.loads(v)
-    except (TypeError, ValueError):
+        doc = _mask_json_node(json.loads(v), None, set(info.get("json_keys", [])), redact)
+    except (TypeError, ValueError, RecursionError) as exc:
+        log.debug("JSON value redacted whole: %s", type(exc).__name__)
         return "[REDACTED]"
-    keys = set(info.get("json_keys", []))
-    if isinstance(doc, dict):
-        for k in list(doc):
-            if k in keys and doc[k] is not None:
-                if redact:
-                    doc[k] = "[REDACTED]"
-                else:
-                    kind = detectors.classify_value(doc[k])
-                    ent = {"name": "person", "aadhaar_masked": "aadhaar", "digits": "account"}.get(kind, kind)
-                    doc[k] = partial_value(ent, doc[k])
-            elif isinstance(doc[k], str) and k in ("remarks", "note", "notes"):
-                doc[k] = mask_text(doc[k], typed=redact)
     return json.dumps(doc, ensure_ascii=False, sort_keys=True)
 
 
