@@ -62,6 +62,10 @@ if not ML_URL.startswith(("http://", "https://")):
 ML_THRESHOLD = float(os.environ.get("PARDADB_ML_THRESHOLD", "0.5"))
 ML_TIMEOUT_S = float(os.environ.get("PARDADB_ML_TIMEOUT", "10"))
 
+# Audit log: rotate the active file past this size; give up waiting for the cross-process lock after this long.
+AUDIT_MAX_BYTES = int(os.environ.get("PARDADB_AUDIT_MAX_BYTES", "50000000"))
+AUDIT_LOCK_TIMEOUT_S = float(os.environ.get("PARDADB_AUDIT_LOCK_TIMEOUT", "5"))
+
 
 def state_path(name: str) -> Path:
     STATE_DIR.mkdir(parents=True, exist_ok=True)
