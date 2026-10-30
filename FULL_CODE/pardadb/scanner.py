@@ -14,6 +14,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from . import config, detectors
+from .masks import json_key
 
 if TYPE_CHECKING:
     from .backends import Backend
@@ -138,6 +139,57 @@ def _rate(counts: Counter[str | None], n: int, *ents: str) -> float:
     return sum(counts[e] for e in ents) / n if n else 0.0
 
 
+JSON_MAX_DEPTH = 8  # nesting levels walked per sampled document
+JSON_MAX_PAIRS = 500  # (key, value) pairs inspected per sampled document
+
+
+def json_pairs(doc: Any) -> list[tuple[str, Any]]:
+    """(key, scalar) pairs of a parsed JSON document at any depth, capped at JSON_MAX_DEPTH levels and
+    JSON_MAX_PAIRS pairs. List items inherit their list's key, and an object key is also reported as a
+    value of its parent key, so {"pan": {"ABCPK1234F": true}} marks "pan" as holding a PAN."""
+    pairs: list[tuple[str, Any]] = []
+    stack: list[tuple[Any, str | None, int]] = [(doc, None, 0)]
+    while stack and len(pairs) < JSON_MAX_PAIRS:
+        node, key, depth = stack.pop()
+        if depth > JSON_MAX_DEPTH:
+            continue
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if key is not None:
+                    pairs.append((key, k))
+                stack.append((v, str(k), depth + 1))
+        elif isinstance(node, list):
+            stack.extend((v, key, depth + 1) for v in node)
+        elif key is not None:
+            pairs.append((key, node))
+    return pairs[:JSON_MAX_PAIRS]
+
+
+def _is_pii_pair(key: str, value: Any) -> bool:
+    """Does `value`, found under JSON key `key`, look like personal data?"""
+    hint, _, negative, _ = header_hint(key)
+    if negative and hint is None:
+        return False  # e.g. dms_ref: a document reference number, not an identity
+    kind = detectors.classify_value(value)
+    return (
+        kind in STRONG_ENTITIES
+        or kind == "aadhaar_masked"
+        or (hint is not None and kind in ("name", "digits", "aadhaar"))
+    )
+
+
+def json_pii_keys(values: list[Any]) -> Counter[str]:
+    """{normalised key: documents where it holds PII} over sampled JSON values, nested objects and lists included."""
+    keys: Counter[str] = Counter()
+    for v in values:
+        try:
+            doc = json.loads(v)
+        except (TypeError, ValueError, RecursionError):
+            continue
+        keys.update({json_key(k) for k, val in json_pairs(doc) if _is_pii_pair(k, val)})
+    return keys
+
+
 def classify_column(table: str, column: str, values: list[Any], null_rate: float) -> dict[str, Any]:
     """Decide one column's tag from its sampled values and header."""
     n = len(values)
@@ -171,25 +223,7 @@ def classify_column(table: str, column: str, values: list[Any], null_rate: float
 
     # JSON documents: scan key paths
     if _rate(counts, n, "json") >= 0.8:
-        keys = Counter()
-        for v in values:
-            try:
-                doc = json.loads(v)
-            except (TypeError, ValueError):
-                continue
-            if not isinstance(doc, dict):
-                continue
-            for k, val in doc.items():
-                kh, _, kneg, _ = header_hint(k)
-                kind = detectors.classify_value(val)
-                if kneg and kh is None:
-                    continue  # e.g. dms_ref: a document reference number, not an identity
-                if (
-                    kind in STRONG_ENTITIES
-                    or kind == "aadhaar_masked"
-                    or (kh and kind in ("name", "digits", "aadhaar"))
-                ):
-                    keys[k] += 1
+        keys = json_pii_keys(values)
         if keys:
             res["json_keys"] = sorted(keys)
             return tag(

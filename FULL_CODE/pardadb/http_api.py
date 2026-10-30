@@ -218,6 +218,9 @@ def make_handler(rt: Runtime) -> type[BaseHTTPRequestHandler]:
             if u.path == "/api/compare":
                 sql = sql_param(body)
                 n = rt.route(rt.backend_name(body), sql)
+                if engine.is_write(sql, rt.engines[n].b.dialect):
+                    # compare runs the SQL once per role: a write would be applied three times
+                    raise BadRequest("compare only runs read queries; send writes to /api/query")
                 return self._send(200, {r: rt.count(rt.engines[n].run(sql, r, f"compare:{r}")) for r in engine.ROLES})
             if u.path == "/api/ml":
                 return self._send(200, self._ml(body))

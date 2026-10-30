@@ -1,3 +1,6 @@
+from collections.abc import Iterator
+from pathlib import Path
+
 import pytest
 
 from pardadb import audit, backends, config, engine, ml, scanner
@@ -153,10 +156,64 @@ def test_writes_blocked_for_every_role(eng, sql):
         assert res["blocked"] and not res["ok"], (role, sql)
 
 
-def test_stacked_statement_is_not_executed(eng, backend):
-    res = eng.run("SELECT 1 AS one; DROP TABLE customers", "admin", record=False)
-    assert not res.get("ok") or res["rows"] == [[1]]
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "SELECT 1 AS one; DROP TABLE customers",
+        "SELECT * FROM customers; DROP TABLE cards",
+        "SELECT 1 AS one; SELECT 2 AS two",
+        "SELECT 1 AS one;; DELETE FROM customers;",
+        "SELECT 1 AS one; /* c */ DROP TABLE customers",
+    ],
+)
+def test_stacked_statements_are_refused_whole(eng: engine.Engine, backend: backends.Backend, sql: str) -> None:
+    for role in engine.ROLES:
+        res = eng.run(sql, role, record=False)
+        assert res["ok"] is False and res["blocked"] is True, (role, res)
+        assert res["reason"].startswith("only one statement per query")
+        assert "rows" not in res
     assert backend.execute("SELECT count(*) FROM customers")[1] == [[12]]
+    assert backend.execute("SELECT count(*) FROM cards")[1] == [[12]]
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "SELECT 1 AS one;",
+        "SELECT 1 AS one;;",
+        "SELECT 1 AS one; -- DROP TABLE customers",
+        "SELECT 1 AS one; /* trailing note */",
+        "-- leading comment\nSELECT 1 AS one;",
+    ],
+)
+def test_trailing_semicolons_and_comments_still_run(eng: engine.Engine, sql: str) -> None:
+    res = eng.run(sql, "support", record=False)
+    assert res["ok"] is True, res
+    assert res["rows"] == [[1]]
+
+
+@pytest.mark.parametrize("sql", ["", ";", "-- only a comment", "/* nothing */ ;"])
+def test_empty_input_is_an_error(eng: engine.Engine, sql: str) -> None:
+    res = eng.run(sql, "support", record=False)
+    assert res["ok"] is False and res["blocked"] is False
+    assert res["error"] == "SQL syntax error: no statement to run"
+
+
+def test_stacked_statements_refused_on_writable_playground(isolated_state: Path) -> None:
+    pb = backends.PlaygroundBackend().connect()
+    try:
+        eng = engine.Engine(pb, scanner.scan(pb))
+        before = pb.execute("SELECT count(*) FROM test_customers")[1]
+        for sql in (
+            "SELECT full_name FROM test_customers; DROP TABLE test_customers",
+            "INSERT INTO test_customers (full_name) VALUES ('x'); DROP TABLE test_customers",
+        ):
+            res = eng.run(sql, "admin", record=False)
+            assert res["blocked"] is True and "only one statement" in res["reason"], res
+        assert "test_customers" in pb.tables()
+        assert pb.execute("SELECT count(*) FROM test_customers")[1] == before
+    finally:
+        pb.conn.close()
 
 
 @pytest.mark.parametrize("fn", ["load_extension('x')", "sleep(5)", "readfile('/etc/passwd')", "pg_sleep(1)"])
@@ -238,3 +295,72 @@ def test_bank_backend_is_physically_read_only(backend):
 
     with pytest.raises(sqlite3.OperationalError):
         backend.execute("DELETE FROM customers")
+
+
+KYC_DOCS = [
+    '{"pan": "ABCPK1234F", "father_name": "Rahul Verma", "src": "BRANCH"}',
+    '{"pan": "BCDPF2345G", "father_name": "Arjun Mehta", "src": "VIDEO"}',
+    '{"pan": "CDEPJ3456H", "father_name": "Rohan Das", "src": "BRANCH"}',
+    '{"pan": "DEFPL4567J", "father_name": "Vikram Singh", "src": "VIDEO"}',
+    '{"pan": "EFGPM5678K", "father_name": "Suresh Kumar", "src": "BRANCH"}',
+]
+
+
+@pytest.fixture
+def kyc_eng(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[engine.Engine]:
+    """Engine over a throwaway read-only SQLite file holding a JSON column (kyc_records.kyc_meta)."""
+    import sqlite3
+
+    path = tmp_path / "kyc.db"
+    con = sqlite3.connect(path)
+    con.execute("CREATE TABLE kyc_records (kyc_id INTEGER PRIMARY KEY, kyc_meta TEXT)")
+    con.executemany("INSERT INTO kyc_records VALUES (?, ?)", list(enumerate(KYC_DOCS, 1)))
+    con.commit()
+    con.close()
+    monkeypatch.setattr(config, "SQLITE_PATH", path)
+    b = backends.SQLiteBackend().connect()
+    yield engine.Engine(b, scanner.scan(b))
+    b.conn.close()
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "SELECT json_extract(kyc_meta, '$.pan') AS p FROM kyc_records ORDER BY kyc_id",
+        "SELECT kyc_meta -> '$.pan' AS p FROM kyc_records ORDER BY kyc_id",
+        "SELECT kyc_meta ->> '$.pan' AS p FROM kyc_records ORDER BY kyc_id",
+    ],
+)
+def test_json_extraction_runs_on_sqlite_and_is_redacted(kyc_eng: engine.Engine, sql: str) -> None:
+    admin = kyc_eng.run(sql, "admin", record=False)
+    assert admin["ok"] is True, admin
+    assert [r[0] for r in admin["rows"]] == ["ABCPK1234F", "BCDPF2345G", "CDEPJ3456H", "DEFPL4567J", "EFGPM5678K"]
+    for role in ("support", "analyst"):
+        res = kyc_eng.run(sql.replace(" ORDER BY kyc_id", ""), role, record=False)
+        assert res["ok"] is True, (role, res)
+        assert res["columns"][0]["strategy"] == "REDACT"
+        assert {r[0] for r in res["rows"]} == {"[REDACTED]"}
+
+
+def test_render_spells_json_extract_for_sqlite_only() -> None:
+    tree = engine.parse_single("SELECT json_extract(m, '$.a') AS a, m ->> '$.b' AS b FROM t", "sqlite")
+    sql = engine.render(tree, "sqlite")
+    assert "->" not in sql
+    assert sql == "SELECT JSON_EXTRACT(m, '$.a') AS a, JSON_EXTRACT(m, '$.b') AS b FROM t"
+    assert engine.render(tree, "mysql") == tree.sql(dialect="mysql")
+
+
+@pytest.mark.parametrize(
+    ("sql", "write"),
+    [
+        ("SELECT 1", False),
+        ("INSERT INTO t VALUES (1)", True),
+        ("UPDATE t SET a = 1", True),
+        ("CREATE TABLE t (a INT)", True),
+        ("DROP TABLE t", True),
+        ("SELECT 1; DROP TABLE t", False),  # stacked: refused by the engine, not treated as one write
+        ("selec * frm", False),
+    ],
+)
+def test_is_write_classifies_single_statements(sql: str, write: bool) -> None:
+    assert engine.is_write(sql, "sqlite") is write

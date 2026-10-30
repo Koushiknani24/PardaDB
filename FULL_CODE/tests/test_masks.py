@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 import os
 import stat
 from pathlib import Path
@@ -236,3 +237,55 @@ def test_mask_json_unparseable_fails_closed(doc: object) -> None:
 def test_apply_json_strategies_per_role(strategy: str, expected: str) -> None:
     doc = '[{"kyc": {"pan": "ABCPK1234F"}, "note": "call 9876543210"}]'
     assert masks.apply(strategy, doc, JSON_INFO) == expected
+
+
+@pytest.mark.parametrize("key", ["PAN", "Pan", " pan ", "\tPAN\n"])
+def test_mask_json_keys_match_case_and_whitespace_insensitively(key: str) -> None:
+    doc = json.dumps({key: "ABCPK1234F", "x": 1})
+    assert json.loads(masks.mask_json(doc, {"json_keys": ["pan"]}, redact=True)) == {key: "[REDACTED]", "x": 1}
+    assert json.loads(masks.mask_json(doc, {"json_keys": [" PAN"]}, redact=False)) == {key: "XXXXXX234F", "x": 1}
+
+
+@pytest.mark.parametrize("key", ["Remarks", "NOTES", " Note "])
+def test_mask_json_note_keys_match_case_insensitively(key: str) -> None:
+    doc = json.dumps({key: "call 9876543210"})
+    assert json.loads(masks.mask_json(doc, {"json_keys": []}, redact=True)) == {key: "call [PHONE]"}
+
+
+def test_mask_json_hides_object_keys_that_are_pii() -> None:
+    doc = '{"pan": {"ABCPK1234F": true, "BCDPF2345G": false}, "kyc": {"value": "x"}}'
+    info = {"json_keys": ["pan"]}
+    redacted = json.loads(masks.mask_json(doc, info, redact=True))  # still valid JSON
+    assert redacted == {"pan": {"[REDACTED]_1": "[REDACTED]", "[REDACTED]_2": "[REDACTED]"}, "kyc": {"value": "x"}}
+    partial = masks.mask_json(doc, info, redact=False)
+    assert set(json.loads(partial)["pan"]) == {"[REDACTED]_1", "[REDACTED]_2"}
+    assert "ABCPK1234F" not in partial and "BCDPF2345G" not in partial
+
+
+@pytest.mark.parametrize(
+    ("doc", "expected"),
+    [
+        pytest.param(
+            '{"pan": {"value": "ABCPK1234F", "Komal Sharma": 1}}',
+            {"pan": {"value": "[REDACTED]", "[REDACTED]_1": "[REDACTED]"}},
+            id="field-name-kept-name-hidden-under-pii-key",
+        ),
+        pytest.param(
+            '{"ABCPK1234F": "x", "9876543210": "y", "a@b.com": "z", "ok": 1}',
+            {"[REDACTED]_1": "x", "[REDACTED]_2": "y", "[REDACTED]_3": "z", "ok": 1},
+            id="identifier-shaped-keys-hidden-anywhere",
+        ),
+        pytest.param(
+            '{"[REDACTED]_1": "keep", "ABCPK1234F": "x"}',
+            {"[REDACTED]_1": "keep", "[REDACTED]_2": "x"},
+            id="generated-keys-never-collide",
+        ),
+        pytest.param(
+            '{"remarks": {"call 9876543210": "done"}}',
+            {"remarks": {"[REDACTED]_1": "done"}},
+            id="free-text-key-under-note-hidden",
+        ),
+    ],
+)
+def test_mask_json_key_redaction(doc: str, expected: dict[str, object]) -> None:
+    assert json.loads(masks.mask_json(doc, {"json_keys": ["pan"]}, redact=True)) == expected

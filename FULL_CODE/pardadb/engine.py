@@ -9,8 +9,10 @@
 
 from __future__ import annotations
 
+import collections
 import json
 import logging
+import threading
 import time
 from typing import Any, TypedDict
 
@@ -27,6 +29,7 @@ log = logging.getLogger(__name__)
 DB_ERRORS = backends.driver_errors()
 
 ROLES = ["admin", "support", "analyst"]
+PLAN_CACHE_SIZE = 256  # (SQL text, role) plans remembered per engine
 ORDER = [
     "REDACT",
     "BUCKET",
@@ -73,6 +76,72 @@ class Blocked(Exception):
     """The query was refused (write, banned function or inference-guard violation)."""
 
 
+WRITE_NODES = (exp.Insert, exp.Update, exp.Delete, exp.Drop, exp.Create, exp.Alter)
+READ_ONLY_MSG = (
+    "write statements are blocked on bank data: PardaDB is read-only by design "
+    "(create your own test tables in the Playground database)"
+)
+
+
+def parse_single(sql: str, dialect: str) -> exp.Expression:
+    """Parse exactly one SQL statement. Trailing semicolons and comment-only fragments are ignored.
+
+    Raises ValueError on a syntax error or empty input, and Blocked when the input holds more
+    than one statement: stacked queries ("SELECT ...; DROP TABLE ...") are refused whole.
+    """
+    try:
+        parsed = sqlglot.parse(sql, read=dialect)
+    except (sqlglot.errors.ParseError, sqlglot.errors.TokenError) as e:
+        raise ValueError(f"SQL syntax error: {str(e).splitlines()[0]}") from None
+    statements = [s for s in parsed if s is not None and not isinstance(s, exp.Semicolon)]
+    if len(statements) > 1:
+        raise Blocked(f"only one statement per query: found {len(statements)}; run them one at a time")
+    if not statements:
+        raise ValueError("SQL syntax error: no statement to run")
+    return statements[0]
+
+
+def is_write(sql: str, dialect: str) -> bool:
+    """True when `sql` is one statement that changes data or schema.
+
+    Input that does not parse, or holds several statements, is not called a write here: the engine
+    refuses it with a proper reason when it runs.
+    """
+    try:
+        tree = parse_single(sql, dialect)
+    except (ValueError, Blocked):
+        return False
+    return isinstance(tree, WRITE_NODES) or tree.find(*WRITE_NODES, exp.Command) is not None
+
+
+def _check_read_only(tree: exp.Expression) -> None:
+    """Refuse writes, commands, SELECT ... INTO and banned functions anywhere in the tree."""
+    if isinstance(tree, WRITE_NODES) or tree.find(*WRITE_NODES) or tree.find(exp.Command):
+        raise Blocked(READ_ONLY_MSG)
+    if not (isinstance(tree, (exp.Select, exp.SetOperation)) or tree.find(exp.Select)):
+        raise Blocked("only read queries are allowed through PardaDB")
+    if tree.find(exp.Into):
+        raise Blocked("SELECT ... INTO is blocked")
+    for f in tree.find_all(exp.Func):
+        name = (f.name if isinstance(f, exp.Anonymous) else f.sql_name()).upper()
+        if name in BANNED_FUNCS:
+            raise Blocked(f"function {name} is blocked")
+
+
+def _sqlite_json_call(node: exp.Expression) -> exp.Expression:
+    """SQLite before 3.38 has no -> / ->> operators: spell JSON extraction as json_extract()."""
+    if isinstance(node, (exp.JSONExtract, exp.JSONExtractScalar)):
+        return exp.Anonymous(this="json_extract", expressions=[node.this, node.expression, *node.expressions])
+    return node
+
+
+def render(tree: exp.Expression, dialect: str) -> str:
+    """SQL text for the backend: the tree in its dialect, with constructs older engines reject rewritten."""
+    if dialect == "sqlite":
+        tree = tree.transform(_sqlite_json_call)
+    return tree.sql(dialect=dialect)
+
+
 def load_policy() -> dict[str, Any]:
     """Role x tag masking policy from policy.json."""
     return json.loads(config.POLICY_PATH.read_text())
@@ -114,13 +183,30 @@ class Engine:
         self.schema = {t: {c: "TEXT" for c in cols} for t, cols in backend.schema().items()}
         # PostgreSQL keeps quoted upper-case names (cards."CARD_NO"); never fold their case
         self.pg = backend.dialect == "postgres"
-        self.sg_schema = (
-            MappingSchema(self.schema, dialect=backend.dialect, normalize=False) if self.pg else self.schema
-        )
+        # Built once per engine: sqlglot would otherwise re-parse every table and column name on
+        # each qualify() / lineage() call. A schema change installs a new Engine (Runtime.install).
+        self.sg_schema = MappingSchema(self.schema, dialect=backend.dialect, normalize=not self.pg)
+        self._plans: collections.OrderedDict[tuple[str, str], tuple[str, list[PlanEntry]]] = collections.OrderedDict()
+        self._plans_lock = threading.Lock()  # the HTTP server runs queries on many threads
 
-    def _lineage(self, name: str, expression: exp.Expression) -> Node:
+    def _lineage(self, name: str, expression: exp.Expression, scope: Scope | None = None) -> Node:
         col = exp.to_identifier(name, quoted=True) if self.pg else name
-        return lineage(col, expression, schema=self.sg_schema, dialect=self.b.dialect)
+        # trim_selects=False: skip sqlglot's per-column copy of the SELECT (only used for its graph labels)
+        return lineage(col, expression, schema=self.sg_schema, dialect=self.b.dialect, scope=scope, trim_selects=False)
+
+    def _output_lineage(self, tree: exp.Expression) -> list[tuple[str, Node]]:
+        """Lineage of every output column of `tree`, qualifying it and building its scope only once.
+
+        Same result as one lineage() call per column, which would re-qualify the whole tree each time.
+        """
+        names = tree.named_selects
+        if not names:
+            return []
+        tree = qualify(
+            tree, schema=self.sg_schema, dialect=self.b.dialect, validate_qualify_columns=False, identify=False
+        )
+        scope = build_scope(tree)
+        return [(name, self._lineage(name, tree, scope)) for name in names]
 
     # ----------------------------------------------------------- policy lookup
     def info(self, table: str, col: str) -> ColumnInfo | None:
@@ -214,31 +300,8 @@ class Engine:
     # ----------------------------------------------------------- planning
     def plan(self, sql: str, role: str) -> tuple[exp.Expression, list[PlanEntry]]:
         """Validate `sql` for `role`; return the qualified, LIMITed tree and one masking decision per output."""
-        try:
-            tree = sqlglot.parse_one(sql, read=self.b.dialect)
-        except sqlglot.errors.ParseError as e:
-            raise ValueError(f"SQL syntax error: {str(e).splitlines()[0]}") from None
-        if tree is not None and (
-            isinstance(tree, (exp.Insert, exp.Update, exp.Delete, exp.Drop, exp.Create, exp.Alter))
-            or tree.find(exp.Insert, exp.Update, exp.Delete, exp.Drop, exp.Create, exp.Alter)
-        ):
-            raise Blocked(
-                "write statements are blocked on bank data: PardaDB is read-only by design "
-                "(create your own test tables in the Playground database)"
-            )
-        if tree is None or not (isinstance(tree, (exp.Select, exp.SetOperation)) or tree.find(exp.Select)):
-            raise Blocked("only read queries are allowed through PardaDB")
-        if tree.find(exp.Command):
-            raise Blocked(
-                "write statements are blocked on bank data: PardaDB is read-only by design "
-                "(create your own test tables in the Playground database)"
-            )
-        if tree.find(exp.Into):
-            raise Blocked("SELECT ... INTO is blocked")
-        for f in tree.find_all(exp.Func):
-            name = (f.name if isinstance(f, exp.Anonymous) else f.sql_name()).upper()
-            if name in BANNED_FUNCS:
-                raise Blocked(f"function {name} is blocked")
+        tree = parse_single(sql, self.b.dialect)
+        _check_read_only(tree)
         try:
             tree = qualify(tree, schema=self.sg_schema, dialect=self.b.dialect)
         except (sqlglot.errors.SqlglotError, KeyError, ValueError) as e:
@@ -252,8 +315,7 @@ class Engine:
         if isinstance(tree, (exp.Select, exp.SetOperation)) and not tree.args.get("limit"):
             tree = tree.limit(config.MAX_ROWS)
         plan: list[PlanEntry] = []
-        for name in tree.named_selects:
-            node = self._lineage(name, tree)
+        for name, node in self._output_lineage(tree):
             srcs = _source_columns(node)
             infos = [i for i in (self.info(t, c) for t, c in srcs) if i]
             if not infos:
@@ -268,6 +330,27 @@ class Engine:
             plan.append({"name": name, "strategy": strat, "info": info, "source": sorted(f"{t}.{c}" for t, c in srcs)})
         return tree, plan
 
+    def planned(self, sql: str, role: str) -> tuple[str, list[PlanEntry]]:
+        """plan() rendered as backend SQL, remembered per (SQL text, role) in a bounded LRU.
+
+        A plan depends only on the SQL, the role and this engine's schema, catalog and policy. Those
+        are fixed for the engine's life: a schema change or re-scan installs a new Engine
+        (Runtime.install), which starts with an empty cache. Blocked and invalid queries are not cached.
+        """
+        key = (sql, role)
+        with self._plans_lock:
+            hit = self._plans.get(key)
+            if hit is not None:
+                self._plans.move_to_end(key)
+                return hit
+        tree, plan = self.plan(sql, role)
+        hit = (render(tree, self.b.dialect), plan)
+        with self._plans_lock:
+            self._plans[key] = hit
+            if len(self._plans) > PLAN_CACHE_SIZE:
+                self._plans.popitem(last=False)
+        return hit
+
     # ----------------------------------------------------------- execution
     def run(self, sql: str, role: str, user: str | None = None, record: bool = True) -> dict[str, Any]:
         """Execute `sql` as `role` and return the masked result, or why it was blocked or failed."""
@@ -278,7 +361,7 @@ class Engine:
             if res is not None:
                 return res
         try:
-            tree, plan = self.plan(sql, role)
+            query, plan = self.planned(sql, role)
         except Blocked as e:
             if record:
                 audit.append({**base, "status": "BLOCKED", "reason": str(e)})
@@ -298,7 +381,7 @@ class Engine:
                 "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
             }
         try:
-            cols, rows = self.b.execute(tree.sql(dialect=self.b.dialect), limit=config.MAX_ROWS)
+            cols, rows = self.b.execute(query, limit=config.MAX_ROWS)
         except DB_ERRORS as e:
             log.warning("query failed on %s: %s", self.b.name, e)
             return {**base, "ok": False, "blocked": False, "error": f"database error: {str(e).splitlines()[0]}"}
@@ -340,7 +423,7 @@ class Engine:
                     "strategy": masks.DISPLAY.get(p["strategy"], p["strategy"]),
                     "tag": (p["info"] or {}).get("tag"),
                     "entity": (p["info"] or {}).get("entity"),
-                    "source": p["source"],
+                    "source": list(p["source"]),  # a copy: the plan itself may be cached
                 }
                 for p in plan
             ],
@@ -356,10 +439,10 @@ class Engine:
     def write(self, sql: str, base: dict[str, Any], t0: float, record: bool) -> dict[str, Any] | None:
         """Playground only: run CREATE / INSERT / UPDATE / DELETE / ALTER / DROP. Returns None for reads."""
         try:
-            tree = sqlglot.parse_one(sql, read=self.b.dialect)
-        except sqlglot.errors.ParseError as e:
-            return {**base, "ok": False, "blocked": False, "error": f"SQL syntax error: {str(e).splitlines()[0]}"}
-        if not isinstance(tree, (exp.Insert, exp.Update, exp.Delete, exp.Create, exp.Alter, exp.Drop)):
+            tree = parse_single(sql, self.b.dialect)
+        except (Blocked, ValueError):
+            return None  # plan() reports the syntax error or the stacked statements, and audits the block
+        if not isinstance(tree, WRITE_NODES):
             return None
         try:
             n = self.b.write(sql)

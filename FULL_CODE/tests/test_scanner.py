@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from pardadb import detectors, scanner
@@ -101,3 +103,38 @@ def test_header_tokens_split_camel_and_snake_case():
     assert scanner.header_tokens("CUSTOMER_ID") == ["customer", "id"]
     assert scanner.header_tokens("custNm") == ["cust", "nm"]
     assert scanner.header_hint("rrn")[2] is True  # negative header
+
+
+def _kyc(doc: dict[str, object]) -> list[str]:
+    return [json.dumps(doc)] * 5
+
+
+@pytest.mark.parametrize(
+    ("doc", "keys"),
+    [
+        pytest.param({"kyc": {"pan": "ABCPK1234F", "ok": True}}, ["pan"], id="nested-object"),
+        pytest.param({"contacts": [{"Mobile": "9876543210"}, {"mobile": "9123456780"}]}, ["mobile"], id="list"),
+        pytest.param([{" PAN ": "ABCPK1234F"}], ["pan"], id="top-level-list-normalised"),
+        pytest.param({"pan": {"ABCPK1234F": True}}, ["pan"], id="key-is-pii-flags-parent"),
+        pytest.param({"Father_Name": "Rahul Verma", "dms_ref": "651238604723"}, ["father_name"], id="top-level"),
+    ],
+)
+def test_json_keys_found_at_any_depth_and_normalised(doc: object, keys: list[str]) -> None:
+    c = scanner.classify_column("kyc_records", "kyc_meta", _kyc(doc), 0.0)
+    assert (c["tag"], c["entity"]) == ("SENSITIVE_JSON", "json")
+    assert c["json_keys"] == keys
+
+
+def test_json_walk_stops_at_depth_cap() -> None:
+    doc: object = {"pan": "ABCPK1234F"}
+    for _ in range(scanner.JSON_MAX_DEPTH + 1):
+        doc = {"wrap": doc}
+    c = scanner.classify_column("t", "meta", _kyc(doc), 0.0)
+    assert c["tag"] is None and "json_keys" not in c
+    shallow = {"wrap": {"wrap": {"pan": "ABCPK1234F"}}}
+    assert scanner.classify_column("t", "meta", _kyc(shallow), 0.0)["json_keys"] == ["pan"]
+
+
+def test_json_walk_caps_pairs_per_document() -> None:
+    doc = {f"k{i}": i for i in range(scanner.JSON_MAX_PAIRS * 3)}
+    assert len(scanner.json_pairs({"root": doc})) == scanner.JSON_MAX_PAIRS

@@ -161,16 +161,37 @@ def mask_text(
 
 _NOTE_KEYS = frozenset({"remarks", "note", "notes"})
 _JSON_ENTITY = {"name": "person", "aadhaar_masked": "aadhaar", "digits": "account"}
+# value kinds that identify a person on their own: such text is hidden even when it is an object key
+_KEY_PII_KINDS = frozenset({"card", "aadhaar", "aadhaar_masked", "pan", "ssn", "phone", "email", "upi"})
+_FIELD_NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,63}")
 
 
-def _json_scope(parent: str | None, key: str, pii_keys: set[str]) -> str:
+def json_key(key: str) -> str:
+    """Form a JSON key is matched in: case-insensitive, surrounding whitespace ignored ("PAN " -> "pan")."""
+    return key.strip().lower()
+
+
+def _json_scope(parent: str | None, key: str, pii_keys: frozenset[str]) -> str:
     """Key a nested value is masked under: a PII parent wins, then a note parent, then the value's own key."""
     if parent is not None and (parent in pii_keys or (parent in _NOTE_KEYS and key not in pii_keys)):
         return parent
     return key
 
 
-def _mask_json_leaf(v: Any, key: str | None, pii_keys: set[str], redact: bool) -> Any:
+def _key_leaks(key: str, parent: str | None, pii_keys: frozenset[str]) -> bool:
+    """True when an object key may itself be personal data, e.g. the PAN in {"pan": {"ABCPK1234F": true}}.
+
+    Keys shaped like an identifier (PAN, card, phone, ...) are hidden anywhere. Under a PII or note key
+    only plain field names ("value", "verified") survive: names, numbers and free text are hidden.
+    """
+    kind = detectors.classify_value(key)
+    if kind in _KEY_PII_KINDS:
+        return True
+    sensitive = parent is not None and (parent in pii_keys or parent in _NOTE_KEYS)
+    return sensitive and (kind != "word" or not _FIELD_NAME.fullmatch(key.strip()))
+
+
+def _mask_json_leaf(v: Any, key: str | None, pii_keys: frozenset[str], redact: bool) -> Any:
     """Mask one scalar: values under a PII key are redacted or partially revealed, note strings get span masking."""
     if v is None:
         return None
@@ -184,10 +205,28 @@ def _mask_json_leaf(v: Any, key: str | None, pii_keys: set[str], redact: bool) -
     return v
 
 
-def _mask_json_node(node: Any, key: str | None, pii_keys: set[str], redact: bool) -> Any:
+def _mask_json_object(
+    node: dict[str, Any], scope: str | None, pii_keys: frozenset[str], redact: bool
+) -> dict[str, Any]:
+    """Mask every member of an object. Keys that may be PII become "[REDACTED]_n", unique within the object."""
+    out: dict[str, Any] = {}
+    hidden = 0
+    for k, v in node.items():
+        nk = json_key(k)
+        value = _mask_json_node(v, _json_scope(scope, nk, pii_keys), pii_keys, redact)
+        if _key_leaks(k, scope, pii_keys):
+            hidden += 1
+            while f"[REDACTED]_{hidden}" in node:
+                hidden += 1
+            k = f"[REDACTED]_{hidden}"
+        out[k] = value
+    return out
+
+
+def _mask_json_node(node: Any, key: str | None, pii_keys: frozenset[str], redact: bool) -> Any:
     """Walk a parsed JSON value: objects at any depth, arrays of anything (items inherit the array's key)."""
     if isinstance(node, dict):
-        return {k: _mask_json_node(v, _json_scope(key, k, pii_keys), pii_keys, redact) for k, v in node.items()}
+        return _mask_json_object(node, key, pii_keys, redact)
     if isinstance(node, list):
         return [_mask_json_node(v, key, pii_keys, redact) for v in node]
     return _mask_json_leaf(node, key, pii_keys, redact)
@@ -195,9 +234,11 @@ def _mask_json_node(node: Any, key: str | None, pii_keys: set[str], redact: bool
 
 def mask_json(v: Any, info: dict[str, Any], redact: bool) -> str:
     """Mask the PII keys of a JSON document at any depth (redact or partial) and the PII spans in its note fields.
+    Keys match case-insensitively and whitespace-trimmed; keys that are themselves PII are replaced.
     Anything that cannot be parsed or walked (invalid or absurdly deep JSON) is redacted whole: fail closed."""
+    pii_keys = frozenset(json_key(k) for k in info.get("json_keys", []))
     try:
-        doc = _mask_json_node(json.loads(v), None, set(info.get("json_keys", [])), redact)
+        doc = _mask_json_node(json.loads(v), None, pii_keys, redact)
     except (TypeError, ValueError, RecursionError) as exc:
         log.debug("JSON value redacted whole: %s", type(exc).__name__)
         return "[REDACTED]"
