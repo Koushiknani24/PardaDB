@@ -1,0 +1,46 @@
+{
+  "description": "Full PardaDB pipeline on the organisers' Saffron Bank SQLite data (ml/eval_pipeline.py).",
+  "date": "2026-10-31",
+  "model_dir": "models/pardadb-pii-int8w",
+  "device": "cpu",
+  "threads": 4,
+  "threshold": 0.5,
+  "name_index_size": 4990,
+  "customer_names": {
+    "n": 918,
+    "model_only": {
+      "name_recall": 0.999,
+      "masked_any_label": 0.999
+    },
+    "with_bank_name_list": {
+      "rules_only": {
+        "name_recall": 0.977,
+        "masked_any_label": 0.977
+      },
+      "product": {
+        "name_recall": 1.0,
+        "masked_any_label": 1.0
+      }
+    },
+    "without_name_list": {
+      "rules_only": {
+        "name_recall": 0.911,
+        "masked_any_label": 0.911
+      },
+      "product": {
+        "name_recall": 0.993,
+        "masked_any_label": 0.993
+      }
+    }
+  },
+  "free_text": {
+    "n_texts": 4664,
+    "rule_spans": 6454,
+    "model_candidate_spans": 1800,
+    "kept_by_precision_filter": 1661,
+    "dropped_by_precision_filter": 139,
+    "extra_spans_over_rules": 329,
+    "texts_with_extra_spans": 324,
+    "model_cpu_ms_per_text": 17.34
+  }
+}

@@ -160,6 +160,50 @@ td[data-v]{cursor:zoom-in}td[data-v]:hover{outline:1px solid var(--accent);outli
 .tagsdd{position:relative}.tagsdd summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;padding:2px 8px;border:1px solid var(--line);border-radius:6px}.tagsdd summary::-webkit-details-marker{display:none}.tagsdd summary i{font-style:normal;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.tagsdd summary b{font-size:12px}.tagsdd[open] summary{border-color:var(--accent)}.tdd-panel{position:absolute;right:0;top:calc(100% + 6px);z-index:50;width:min(860px,94vw);max-height:70vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:12px}.tdd-h{font-weight:700;font-size:13px;margin-bottom:8px}.tdd-t td.w{white-space:normal;min-width:260px}
 #h-ml-btn{padding:4px 10px;font-size:12px;white-space:nowrap}#h-ml-btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 mark.pii.ai{background:rgba(124,58,237,.20);border-bottom:2px solid #7c3aed}.mkb.ai{background:#7c3aed}.cb-m .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:rgba(220,60,50,.35);border-bottom:2px solid var(--red)}.cb-m .sw.det{background:rgba(43,89,195,.3)}.cb-m .sw.ai{background:rgba(124,58,237,.35);border-bottom-color:#7c3aed}.cb-m div{margin:2px 0}
+/* benchmarks tab: chart series slots validated with the dataviz palette checker on both surfaces */
+:root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s1:#3987e5;--s2:#d95926;--s3:#199e70}}
+:root[data-theme="dark"]{--s1:#3987e5;--s2:#d95926;--s3:#199e70}
+.c6{grid-column:span 6}
+.bm-intro{margin:0 0 14px;color:var(--muted);max-width:80ch}
+.bm-cap{margin:-4px 0 12px;color:var(--muted);font-size:13px;max-width:90ch}
+.bm-src{margin-top:12px;padding-top:8px;border-top:1px solid var(--line2);font-size:11.5px;color:var(--dim);overflow-wrap:anywhere}
+.bm-src code{font-size:11.5px;color:var(--muted)}
+.bm-hero{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:12px}
+.bm-hero .stat{flex:1 1 140px}
+.bm-hero .v{font-size:22px}
+.bm-hero .sub{display:block;font-size:12px;color:var(--muted)}
+.bm-none{padding:20px;text-align:center;border:1px dashed var(--line);border-radius:7px;color:var(--muted)}
+.bm-none b{display:block;color:var(--text);font-size:15px;margin-bottom:2px}
+.bm-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px}
+.bm-leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.sw-s1{--c:var(--s1)}.sw-s2{--c:var(--s2)}.sw-s3{--c:var(--s3)}.sw-base{--c:var(--grey)}
+.hb{margin-bottom:10px}
+.bm-src+.hb,.bm-src+.bm-leg{margin-top:16px}
+.hb-l{display:block;font-size:12.5px;margin-bottom:3px}
+.hb-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:2px 0;border-radius:4px}
+.hb-r:hover{background:var(--panel2)}
+.hb-t{height:12px;display:block}
+.hb-f{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--c);min-width:2px}
+.hb-v{font:12px var(--mono);font-variant-numeric:tabular-nums;color:var(--text);white-space:nowrap;min-width:9ch}
+.bm-sc{display:block;width:100%;height:260px;overflow:visible}
+.bm-sc .ax{stroke:var(--line);stroke-width:1}
+.bm-sc .gr{stroke:var(--line2);stroke-width:1}
+.bm-sc text{fill:var(--muted);font:11px var(--sans)}
+.bm-sc text.lab{fill:var(--text);font-weight:600}
+.bm-sc .pt{fill:var(--s1);stroke:var(--panel);stroke-width:2}
+.bm-sc .pt.ch{fill:var(--s3);stroke:var(--text);stroke-width:1.5}
+.bm-sc .hit{fill:transparent;cursor:default}
+.tbl tr.bm-ch td{background:color-mix(in srgb,var(--s3) 10%,var(--panel));font-weight:600}
+.tbl tr.bm-fail td{color:var(--dim)}
+.tbl tr.bm-fail td.w{color:var(--red)}
+.bm-ln{display:block;width:100%;height:54px;margin-top:6px}
+.bm-ln polyline{fill:none;stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.bm-ln .gr{stroke:var(--line2);stroke-width:1;vector-effect:non-scaling-stroke}
+.bm-rng{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--dim)}
+#bm-tip{position:fixed;z-index:60;pointer-events:none;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);max-width:300px}
+@media (max-width:1150px){.c6{grid-column:span 12}}
+@media (max-width:640px){header.top{flex-wrap:wrap;padding:10px 16px}.hstats{margin-left:0;width:100%;overflow-x:auto;gap:14px;padding-bottom:4px}main{padding:12px 16px 32px}nav.tabs{overflow-x:auto;padding:0 8px}nav.tabs button{padding:10px 10px;white-space:nowrap}.bm-sc text{font-size:10px}.bm-hero{gap:10px}}
 </style>
 </head>
 <body>
@@ -192,6 +236,7 @@ mark.pii.ai{background:rgba(124,58,237,.20);border-bottom:2px solid #7c3aed}.mkb
   <button role="tab" id="t-query" data-tab="query" aria-controls="p-query" aria-selected="false" tabindex="-1">Query</button>
   <button role="tab" id="t-audit" data-tab="audit" aria-controls="p-audit" aria-selected="false" tabindex="-1">Audit</button>
   <button role="tab" id="t-integrity" data-tab="integrity" aria-controls="p-integrity" aria-selected="false" tabindex="-1">Integrity</button>
+  <button role="tab" id="t-benchmarks" data-tab="benchmarks" aria-controls="p-benchmarks" aria-selected="false" tabindex="-1">Benchmarks</button>
 </nav>
 <div class="down" id="down" role="status" hidden>PardaDB not reachable, retrying&hellip;</div>
 <main id="main">
@@ -310,6 +355,28 @@ mark.pii.ai{background:rgba(124,58,237,.20);border-bottom:2px solid #7c3aed}.mkb
   <div class="tools"><label class="fl" for="in-be">Backend</label><select id="in-be" class="be-sel"></select><button class="btn pri" type="button" id="in-run">Verify raw data unchanged</button><span class="sp"></span><span class="hint" id="in-note">Hashes every table before and after masking to prove the source data is never modified.</span></div>
   <div id="in-out"></div>
 </section>
+</section>
+<!-- BENCHMARKS -->
+<section class="tabpanel" id="p-benchmarks" role="tabpanel" aria-labelledby="t-benchmarks" hidden>
+<p class="bm-intro">Every number on this page is read from a measurement report or from this running PardaDB process. Nothing is typed in by hand: each card names the file it came from and how it was measured.</p>
+<div class="grid">
+  <section class="card c12" aria-labelledby="bm-h-cmp"><h2 id="bm-h-cmp">Model compression</h2>
+    <p class="bm-cap">We shrank the AI model and re-measured the accuracy of every version we tried. The highlighted one is what PardaDB ships.</p>
+    <div id="bm-cmp"><div class="empty">Loading&hellip;</div></div></section>
+  <section class="card c6" aria-labelledby="bm-h-ft"><h2 id="bm-h-ft">Fine-tuning vs base model</h2>
+    <p class="bm-cap">We trained the open model further on Indian banking text. Higher bars mean fewer mistakes (F1: 1.0 is perfect).</p>
+    <div id="bm-ft"><div class="empty">Loading&hellip;</div></div></section>
+  <section class="card c6" aria-labelledby="bm-h-rva"><h2 id="bm-h-rva">Rules vs AI on the organisers' data</h2>
+    <p class="bm-cap">Out of real customer names hidden inside free text, how many each approach finds (recall: 100% means none missed). PardaDB combines both.</p>
+    <div id="bm-rva"><div class="empty">Loading&hellip;</div></div></section>
+  <section class="card c12" aria-labelledby="bm-h-eng"><h2 id="bm-h-eng">Engine and resources <span class="b c-green">live</span><span class="r dim sm" id="bm-eng-t"></span></h2>
+    <p class="bm-cap">What this PardaDB process is doing right now: scan results per database, queries served, and the CPU and memory it uses.</p>
+    <div id="bm-eng"><div class="empty">Waiting for status&hellip;</div></div></section>
+  <section class="card c12" aria-labelledby="bm-h-soak"><h2 id="bm-h-soak">Long-run soak test</h2>
+    <p class="bm-cap">PardaDB left running under steady load for a long time, to check that memory stays flat and nothing slows down.</p>
+    <div id="bm-soak"><div class="empty">Loading&hellip;</div></div></section>
+</div>
+<div id="bm-tip" role="tooltip" hidden></div>
 </section>
 </main>
 
@@ -519,7 +586,7 @@ function fillBackendSelects(bes, active) {
 const backendOf = (sel) => (sel && sel.value) || (S.status && S.status.active_backend) || 'sqlite';
 
 /* ---------- tabs ---------- */
-const TABS = ['monitor', 'explorer', 'catalog', 'query', 'audit', 'integrity'];
+const TABS = ['monitor', 'explorer', 'catalog', 'query', 'audit', 'integrity', 'benchmarks'];
 function showTab(name, focus, noLoad) {
   if (!TABS.includes(name)) name = 'monitor';
   S.tab = name;
@@ -531,6 +598,7 @@ function showTab(name, focus, noLoad) {
   });
   $$('.tabpanel').forEach((p) => { p.hidden = p.id !== 'p-' + name; });
   try { history.replaceState(null, '', '#' + name); } catch (e) { /* ignore */ }
+  if (name !== 'benchmarks') benchStop();
   if (!noLoad) loadFor(name);
 }
 function loadFor(name) {
@@ -539,6 +607,7 @@ function loadFor(name) {
   else if (name === 'catalog') loadCatalog();
   else if (name === 'query') initQuery();
   else if (name === 'audit') loadAudit();
+  else if (name === 'benchmarks') loadBench();
 }
 $('#tabs').addEventListener('click', (e) => { const b = e.target.closest('[role=tab]'); if (b) showTab(b.dataset.tab); });
 $('#tabs').addEventListener('keydown', (e) => {
@@ -904,6 +973,213 @@ $('#in-run').addEventListener('click', async (e) => {
   } catch (err) { out.innerHTML = errBox(err.message, 'Integrity check failed'); }
   finally { btn.disabled = false; }
 });
+
+/* ---------- benchmarks ---------- */
+const BM = { data: null, cats: {}, cpu: [], rss: [], timer: 0, resize: 0 };
+const BM_SAMPLE_MS = 5000, BM_MAX = 60;
+const pctF = (v) => num(v) == null ? '–' : (v * 100).toFixed(1) + '%';
+const srcLine = (files, cond) => `<div class="bm-src">Source: ${files.map((f) => `<code>${esc(f)}</code>`).join(', ')}${cond ? ' &middot; ' + esc(cond) : ''}</div>`;
+const legendHTML = (series) => `<div class="bm-leg">${series.map((s) => `<span><i class="sw-${s.cls}"></i>${esc(s.label)}</span>`).join('')}</div>`;
+const okSec = (sec) => sec && sec.status === 'ok' && sec.data;
+
+function notMeasured(sec) {
+  const bad = sec && sec.status === 'invalid';
+  const why = bad ? esc(sec.detail) : `No report yet at <code>${esc(sec ? sec.source : '?')}</code>; it appears here once the measurement has run.`;
+  return `<div class="bm-none"><b>${bad ? 'Report unreadable' : 'Not measured yet'}</b><span class="sm">${why}</span></div>`;
+}
+
+/* Horizontal bars: rows [{label, vals: {key: value}}], one bar per series with a visible value label. */
+function hbars(rows, series, fmtV) {
+  return rows.map((r) => `<div class="hb"><span class="hb-l">${esc(r.label)}</span>`
+    + series.filter((s) => num(r.vals[s.key]) != null).map((s) => {
+      const v = r.vals[s.key], txt = fmtV(v, r);
+      return `<div class="hb-r" data-tip="${esc(r.label + ' · ' + s.label + ': ' + txt)}"><span class="hb-t"><span class="hb-f sw-${s.cls}" style="width:${Math.max(0, Math.min(1, v)) * 100}%"></span></span><span class="hb-v">${esc(txt)}</span></div>`;
+    }).join('') + '</div>').join('');
+}
+
+/* Weights size (x) against bank F1 (y) for every variant that predicts something. */
+function scatterSVG(rows, width) {
+  const W = Math.max(280, width), H = 260, L = 50, R = 18, T = 16, B = 38;
+  const xMax = Math.ceil(Math.max.apply(null, rows.map((r) => r.weights_mb)) / 50) * 50;
+  const yLo = Math.floor((Math.min.apply(null, rows.map((r) => r.bank_f1)) - 0.005) * 100) / 100, yHi = 1;
+  const yStep = yHi - yLo > 0.03 ? 0.01 : 0.005;
+  const x = (v) => L + v / xMax * (W - L - R), y = (v) => T + (yHi - v) / (yHi - yLo) * (H - T - B);
+  let g = '';
+  for (let v = 0; v <= xMax; v += 50) g += `<line class="gr" x1="${x(v)}" x2="${x(v)}" y1="${T}" y2="${H - B}"/><text x="${x(v)}" y="${H - B + 16}" text-anchor="middle">${v}</text>`;
+  for (let v = yLo; v <= yHi + 1e-9; v += yStep) g += `<line class="gr" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(3)}</text>`;
+  g += `<line class="ax" x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}"/><text x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle">weights on disk (MB, smaller is better)</text>`
+    + `<text transform="translate(12 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">bank F1 (higher is better)</text>`;
+  const pts = rows.slice().sort((a, b) => a.chosen - b.chosen).map((r) => {
+    const tip = `${r.variant} (${r.format}): ${fx(r.weights_mb, 1)} MB, bank F1 ${fx(r.bank_f1, 3)}, ${fx(r.cpu_ms_per_text, 1)} ms/text${r.verified ? ', verified' : ''}`;
+    const lab = r.chosen || r.format === 'fp32' ? `<text class="lab" x="${x(r.weights_mb) + (r.chosen ? 10 : -10)}" y="${y(r.bank_f1) - 10}" text-anchor="${r.chosen ? 'start' : 'end'}">${esc(r.variant)}${r.chosen ? ' (chosen)' : ''}</text>` : '';
+    return `<circle class="pt${r.chosen ? ' ch' : ''}" cx="${x(r.weights_mb)}" cy="${y(r.bank_f1)}" r="${r.chosen ? 7 : 5}"/>${lab}<circle class="hit" cx="${x(r.weights_mb)}" cy="${y(r.bank_f1)}" r="12" tabindex="0" data-tip="${esc(tip)}"/>`;
+  }).join('');
+  return `<svg class="bm-sc" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Model size against bank F1 for ${rows.length} variants; the variants table below lists every value">${g}${pts}</svg>`;
+}
+
+function variantsTable(rows) {
+  const head = ['Variant', 'Format', 'Weights MB', 'Bank F1', 'Hand-written F1', 'Name recall', 'Narration recall', 'CPU ms / text', 'Peak RAM MB', 'Checked', 'Notes'];
+  const body = rows.map((r) => {
+    const flag = r.chosen ? badge('chosen', 'teal') : r.failed ? badge('failed', 'red') : '';
+    return `<tr class="${r.chosen ? 'bm-ch' : r.failed ? 'bm-fail' : ''}"><td class="t">${esc(r.variant)} ${flag}</td><td class="t">${esc(r.format)}</td>`
+      + [fx(r.weights_mb, 1), fx(r.bank_f1, 3), fx(r.golden_f1, 3), fx(r.saffron_name_recall, 3), fx(r.narration_recall, 3), fx(r.cpu_ms_per_text, 1), fx(r.peak_rss_mb, 0)].map((v) => `<td class="t">${v}</td>`).join('')
+      + `<td>${r.verified ? badge('re-measured', 'green') : '<span class="dim sm">single run</span>'}</td><td class="w">${esc(r.notes || '')}</td></tr>`;
+  }).join('');
+  return `<div class="tw" style="max-height:none"><table class="tbl"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function renderCompression(sec) {
+  const el = $('#bm-cmp');
+  if (!okSec(sec)) { el.innerHTML = notMeasured(sec); return; }
+  const d = sec.data, h = d.headline, plotted = d.variants.filter((r) => !r.failed), failed = d.variants.filter((r) => r.failed);
+  el.innerHTML = `<div class="bm-hero"><div class="stat"><span class="k">Model size</span><span class="v">${fx(h.from_mb, 1)} MB &rarr; ${fx(h.to_mb, 1)} MB</span><span class="sub">${esc(h.from_variant)} &rarr; ${esc(h.to_variant)}, ${fx(h.times_smaller, 1)}&times; smaller</span></div>`
+    + `<div class="stat"><span class="k">Accuracy (bank F1)</span><span class="v">${fx(h.from_f1, 3)} &rarr; ${fx(h.to_f1, 3)}</span><span class="sub">${h.to_f1 >= h.from_f1 ? 'no accuracy lost' : 'accuracy change ' + fx(h.to_f1 - h.from_f1, 3)}</span></div></div>`
+    + `<div id="bm-sc-wrap">${scatterSVG(plotted, el.clientWidth)}</div>`
+    + (failed.length ? `<p class="sm muted">Not plotted (predicts nothing): ${failed.map((r) => `${esc(r.variant)}, bank F1 ${fx(r.bank_f1, 3)}`).join('; ')}.</p>` : '')
+    + variantsTable(d.variants)
+    + srcLine([sec.source], `${d.device.toUpperCase()}, ${d.threads} threads, threshold ${d.threshold}. ${d.conditions}`);
+}
+
+function renderFineTune(base, ft) {
+  const el = $('#bm-ft');
+  if (!okSec(base) || !okSec(ft)) { el.innerHTML = notMeasured(okSec(base) ? ft : base); return; }
+  const b = base.data, f = ft.data, rows = [];
+  const add = (label, key, labelsKey) => {
+    rows.push({ label: label + ' (overall)', vals: { base: b[key], ft: f[key] } });
+    Object.keys(f[labelsKey]).forEach((lab) => rows.push({ label: `${label}: ${lab}`, vals: { base: b[labelsKey][lab], ft: f[labelsKey][lab] } }));
+  };
+  add('Bank test set', 'bank_f1', 'bank_labels');
+  add('Hand-written test set', 'golden_f1', 'golden_labels');
+  const series = [{ key: 'base', label: 'Base model', cls: 'base' }, { key: 'ft', label: 'Fine-tuned (PardaDB)', cls: 's2' }];
+  el.innerHTML = legendHTML(series) + hbars(rows, series, (v) => 'F1 ' + fx(v, 3))
+    + srcLine([base.source, ft.source], `${f.device.toUpperCase()}, threshold ${f.threshold}; n = ${fmt(f.bank_n)} labelled entities (bank), ${fmt(f.golden_n)} (hand-written); base = ${b.model}`);
+}
+
+function renderRva(pipe, saff) {
+  const el = $('#bm-rva');
+  const series = [{ key: 'rules', label: 'Rules only', cls: 's1' }, { key: 'model', label: 'AI model only', cls: 's2' }, { key: 'product', label: 'PardaDB (rules + AI + filter)', cls: 's3' }];
+  const missed = (n) => (v) => `${pctF(v)} · ≈${Math.round((1 - v) * n)} missed`;
+  let html = legendHTML(series);
+  if (okSec(pipe)) {
+    const p = pipe.data, ft = p.free_text;
+    const w = p.with_bank_name_list, wo = p.without_name_list;
+    html += hbars([
+      { label: `Customer names in tickets and loan remarks, names the bank does not already list (n = ${fmt(p.n)})`, vals: { rules: wo.rules_only.name_recall, model: p.model_only.name_recall, product: wo.product.name_recall } },
+      { label: `Same cases, rules also given the bank's own name list (as the running product does; it contains these names)`, vals: { rules: w.rules_only.name_recall, model: p.model_only.name_recall, product: w.product.name_recall } },
+    ], series, missed(p.n))
+      + `<div class="bm-hero"><div class="stat"><span class="k">Extra finds by the AI</span><span class="v">${fmt(ft.extra_spans_over_rules)}</span><span class="sub">names or addresses rules missed, in ${fmt(ft.texts_with_extra_spans)} of ${fmt(ft.n_texts)} texts</span></div>`
+      + `<div class="stat"><span class="k">Dropped by precision filter</span><span class="v">${fmt(ft.dropped_by_precision_filter)}</span><span class="sub">of ${fmt(ft.model_candidate_spans)} AI suggestions (${pctF(ft.dropped_by_precision_filter / ft.model_candidate_spans)})</span></div></div>`
+      + srcLine([pipe.source], `${p.date}, ${p.model_dir}, ${p.device.toUpperCase()} ${p.threads} threads, runtime threshold ${p.threshold}, extra-finds counted with the bank's name list, AI ${fx(ft.model_cpu_ms_per_text, 1)} ms/text`);
+  } else html += notMeasured(pipe);
+  if (okSec(saff)) {
+    const s = saff.data;
+    html += hbars([{ label: `Counterparty name in transaction narrations (n = ${fmt(s.narration_cases)})`, vals: { rules: s.rules_only.narration_recall, model: s.fine_tuned.narration_recall } }], series, missed(s.narration_cases))
+      + `<p class="sm muted">Without the bank's name list, rules alone find ${pctF(s.rules_only.name_recall)} of the ${fmt(s.name_cases)} customer names; the fine-tuned model finds ${pctF(s.fine_tuned.name_recall)}.</p>`
+      + srcLine([saff.source], 'ml/eval_saffron.py; rules here use context patterns only (no name list)');
+  } else html += notMeasured(saff);
+  el.innerHTML = html;
+}
+
+function lineSVG(arr, label) {
+  if (arr.length < 2) return `<div class="dim sm" style="margin-top:6px">collecting samples&hellip;</div>`;
+  let mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr);
+  if (mx - mn < 1e-6) { mn -= 1; mx += 1; }
+  const pts = arr.map((v, i) => `${(i / (arr.length - 1) * 100).toFixed(2)},${(38 - (v - mn) / (mx - mn) * 36).toFixed(2)}`).join(' ');
+  return `<svg class="bm-ln" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="${esc(label)}"><line class="gr" x1="0" x2="100" y1="39" y2="39"/><polyline points="${pts}"/></svg>`
+    + `<div class="bm-rng"><span>min ${fx(Math.min.apply(null, arr), 1)}</span><span>max ${fx(Math.max.apply(null, arr), 1)}</span></div>`;
+}
+
+function engineTable(s) {
+  const bes = Array.isArray(s.backends) ? s.backends : [];
+  const body = bes.map((b) => {
+    const c = BM.cats[b.name], sm = (c && c.summary) || {};
+    const st = b.status === 'connected' ? badge('connected', 'green') : badge(b.status || 'unknown', b.status === 'unreachable' ? 'red' : 'grey');
+    return `<tr><td>${esc(b.label || b.name)}</td><td>${st}</td><td class="t">${fmt(b.tables)}</td><td class="t">${fmt(b.rows)}</td>`
+      + `<td class="t">${c ? fx(c.elapsed_s, 2) + ' s' : '–'}</td><td class="t">${fmt(sm.tagged)}</td><td class="t">${fmt(sm.review)}</td><td class="t">${fmt(sm.clean)}</td></tr>`;
+  }).join('');
+  return `<div class="tw" style="max-height:none"><table class="tbl"><thead><tr><th>Database</th><th>Status</th><th>Tables</th><th>Rows</th><th>Scan time</th><th>Sensitive (auto)</th><th>For review</th><th>Clean</th></tr></thead><tbody>${body || '<tr><td colspan="8" class="muted">No databases</td></tr>'}</tbody></table></div>`;
+}
+
+function renderEngine() {
+  const s = S.status, el = $('#bm-eng');
+  if (!s) return;
+  const p = s.process || {}, st = s.stats || {}, lq = st.last_query || {}, mlI = s.ml || {};
+  const tile = (k, v, sub) => `<div class="stat"><span class="k">${k}</span><span class="v">${v}</span>${sub || ''}</div>`;
+  el.innerHTML = engineTable(s)
+    + `<div class="bm-hero" style="margin-top:12px">${tile('Queries served', fmt(st.queries))}${tile('Blocked by guard', fmt(st.blocked))}${tile('Cells masked', fmt(st.masked_cells))}${tile('Last query', lq.ms == null ? '–' : fx(lq.ms, 1) + ' ms', `<span class="sub">${esc(lq.status || 'no query yet')}</span>`)}</div>`
+    + `<div class="bm-hero">${tile('CPU (PardaDB process)', fx(p.cpu_percent, 1) + '%', lineSVG(BM.cpu, 'CPU percent while this tab is open'))}${tile('Memory (RSS)', fx(p.rss_mb, 1) + ' MB', lineSVG(BM.rss, 'Resident memory in MB while this tab is open'))}`
+    + tile('Threads / uptime', `${fmt(p.threads)} / ${dur(s.uptime_s)}`, `<span class="sub">AI model: ${esc(mlI.status || 'off')}${mlI.rss_mb != null ? ', sidecar ' + fx(mlI.rss_mb, 0) + ' MB' : ''}</span>`) + '</div>'
+    + srcLine(['GET /api/status', 'GET /api/catalog'], `live, sampled every ${BM_SAMPLE_MS / 1000} s while this tab is open (${BM.rss.length} samples)`);
+  setText($('#bm-eng-t'), 'updated ' + new Date().toLocaleTimeString());
+}
+
+function renderSoak(sec) {
+  const el = $('#bm-soak');
+  if (!okSec(sec)) { el.innerHTML = notMeasured(sec); return; }
+  const d = sec.data, isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
+  const flat = Object.entries(d).flatMap(([k, v]) => (isObj(v) ? Object.entries(v).map(([k2, v2]) => [k + ' ' + k2, v2]) : [[k, v]]));
+  const kv = flat.filter(([, v]) => ['number', 'string', 'boolean'].includes(typeof v));
+  const series = Object.entries(d).filter(([, v]) => Array.isArray(v) && v.length > 1 && v.every((x) => x && num(x.rss_mb) != null));
+  el.innerHTML = `<dl class="kv">${kv.map(([k, v]) => `<div><dt>${esc(k.replace(/_/g, ' '))}</dt><dd>${esc(typeof v === 'number' ? fmt(v) : v)}</dd></div>`).join('')}</dl>`
+    + series.map(([k, v]) => `<div class="stat" style="margin-top:12px"><span class="k">${esc(k.replace(/_/g, ' '))}: memory (RSS MB)</span>${lineSVG(v.map((x) => +x.rss_mb), 'Memory over the soak run')}</div>`).join('')
+    + srcLine([sec.source], '');
+}
+
+async function loadBenchCatalogs() {
+  const bes = ((S.status && S.status.backends) || []).filter((b) => b.status === 'connected');
+  await Promise.all(bes.map(async (b) => {
+    try { BM.cats[b.name] = await api('/api/catalog?backend=' + encodeURIComponent(b.name)); } catch (e) { delete BM.cats[b.name]; }
+  }));
+}
+
+function benchTick() {
+  clearTimeout(BM.timer);
+  if (S.tab !== 'benchmarks' || document.hidden) return;
+  const p = (S.status && S.status.process) || {};
+  if (num(p.cpu_percent) != null) { BM.cpu.push(+p.cpu_percent); if (BM.cpu.length > BM_MAX) BM.cpu.shift(); }
+  if (num(p.rss_mb) != null) { BM.rss.push(+p.rss_mb); if (BM.rss.length > BM_MAX) BM.rss.shift(); }
+  renderEngine();
+  BM.timer = setTimeout(benchTick, BM_SAMPLE_MS);
+}
+function benchStop() { clearTimeout(BM.timer); BM.timer = 0; }
+
+async function loadBench() {
+  let d = null;
+  try { d = await api('/api/benchmarks'); } catch (e) { d = { error: e.message }; }
+  BM.data = d && !d.error ? d : null;
+  if (BM.data) {
+    renderCompression(d.compression);
+    renderFineTune(d.base_model, d.fine_tuned);
+    renderRva(d.pipeline, d.saffron);
+    renderSoak(d.soak);
+  } else {
+    ['#bm-cmp', '#bm-ft', '#bm-rva', '#bm-soak'].forEach((k) => { $(k).innerHTML = errBox((d && d.error) || 'no response', 'Benchmarks not available from this PardaDB'); });
+  }
+  await loadBenchCatalogs();
+  benchTick();
+}
+
+document.addEventListener('visibilitychange', () => { if (document.hidden) benchStop(); else if (S.tab === 'benchmarks') benchTick(); });
+window.addEventListener('resize', () => {
+  clearTimeout(BM.resize);
+  BM.resize = setTimeout(() => { if (S.tab === 'benchmarks' && BM.data) renderCompression(BM.data.compression); }, 200);
+});
+(function benchTooltips() {
+  const tip = $('#bm-tip'), root = $('#p-benchmarks');
+  const show = (e) => {
+    const t = e.target.closest && e.target.closest('[data-tip]');
+    if (!t) { tip.hidden = true; return; }
+    tip.textContent = t.dataset.tip;
+    tip.hidden = false;
+    const r = t.getBoundingClientRect(), x = e.clientX || r.left + r.width / 2, y = e.clientY || r.top;
+    tip.style.left = Math.min(window.innerWidth - tip.offsetWidth - 8, x + 12) + 'px';
+    tip.style.top = Math.max(8, y - tip.offsetHeight - 10) + 'px';
+  };
+  root.addEventListener('mousemove', show);
+  root.addEventListener('focusin', show);
+  root.addEventListener('mouseleave', () => { tip.hidden = true; });
+  root.addEventListener('focusout', () => { tip.hidden = true; });
+})();
 
 /* ---------- theme ---------- */
 const THEMES = ['auto', 'light', 'dark'];
