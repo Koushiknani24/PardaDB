@@ -1,0 +1,15 @@
+{
+  "roles": ["admin", "support", "analyst"],
+  "tags": {
+    "PII_HIGH":               {"admin": "FULL", "support": "PARTIAL",       "analyst": "REDACT"},
+    "PII_MEDIUM":             {"admin": "FULL", "support": "PARTIAL",       "analyst": "HASH"},
+    "PII_QUASI":              {"admin": "FULL", "support": "PARTIAL",       "analyst": "GENERALIZE"},
+    "FINANCIAL_CONFIDENTIAL": {"admin": "FULL", "support": "REDACT",        "analyst": "BUCKET"},
+    "PII_FREE_TEXT":          {"admin": "FULL", "support": "SPANS_PARTIAL", "analyst": "SPANS_TYPED"},
+    "SENSITIVE_JSON":         {"admin": "FULL", "support": "JSON_PARTIAL",  "analyst": "JSON_REDACT"},
+    "INTERNAL_ID":            {"admin": "FULL", "support": "FULL",          "analyst": "HASH"}
+  },
+  "entity_overrides": {
+    "account": {"analyst": "HASH"}
+  }
+}
