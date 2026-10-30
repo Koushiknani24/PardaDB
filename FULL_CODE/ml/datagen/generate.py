@@ -73,9 +73,8 @@ def to_gliner(chars: dict) -> dict:
     end_index = {m.end(): i for i, m in enumerate(tokens)}
     ner = []
     for e in chars["entities"]:
-        assert e["start"] in start_index and e["end"] in end_index, (
-            f"entity {chars['text'][e['start'] : e['end']]!r} does not align with word boundaries"
-        )
+        if e["start"] not in start_index or e["end"] not in end_index:
+            raise ValueError(f"entity {chars['text'][e['start'] : e['end']]!r} does not align with word boundaries")
         ner.append([start_index[e["start"]], end_index[e["end"]], e["label"]])
     return {"tokenized_text": [m.group() for m in tokens], "ner": ner}
 

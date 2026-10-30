@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="PardaDB finds personal data in a bank's SQL databases by itself and masks query results for each role at the moment a query runs. The raw data never changes.">
+<title>PardaDB · Smart Data Masking</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<script>
+/* Apply the saved theme before first paint. Same key and values as the dashboard. */
+try { var t = localStorage.getItem('pardadb-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<style>
+@font-face{font-family:"Pixelify Sans";src:url(/assets/fonts/pixelify-sans-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Pixelify Sans";src:url(/assets/fonts/pixelify-sans-700.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Silkscreen";src:url(/assets/fonts/silkscreen-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Silkscreen";src:url(/assets/fonts/silkscreen-700.woff2) format("woff2");font-weight:700;font-display:swap}
+
+/* ---------- tokens: copied from the dashboard (index.html) + pixel extras ---------- */
+:root{--bg:#f4f5f7;--panel:#fff;--panel2:#f1f3f6;--line:#dde1e8;--line2:#eaedf2;--text:#1a2230;--muted:#5b6677;--dim:#8b95a4;--accent:#2b59c3;--on-accent:#fff;
+--red:#b42318;--teal:#0f766e;--olive:#687a14;--violet:#6b3fc4;--blue:#1d64c8;--indigo:#4338ca;--grey:#667085;--green:#16803c;--amber:#b25e09;
+--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--pixel:"Pixelify Sans",var(--mono);--bit:"Silkscreen",var(--mono);
+--edge:#1a2230;--shade:#1a2230;--grid:rgba(26,34,48,.055);
+--mk-r:rgba(180,35,24,.11);--mk-v:rgba(107,63,196,.13);--mk-b:rgba(43,89,195,.11);--mk-a:rgba(178,94,9,.13)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--panel:#161b22;--panel2:#1c222b;--line:#2a323d;--line2:#222932;--text:#e3e8ef;--muted:#9aa5b4;--dim:#6b7686;--accent:#6d9cff;--on-accent:#0b1220;
+--red:#f47a6e;--teal:#3cc7b9;--olive:#b3c25a;--violet:#b197fc;--blue:#74a9ff;--indigo:#9b9ff7;--grey:#98a2b3;--green:#5bc98b;--amber:#f0b44c;
+--edge:#4a5568;--shade:#000;--grid:rgba(227,232,239,.04);--mk-r:rgba(244,122,110,.15);--mk-v:rgba(177,151,252,.17);--mk-b:rgba(109,156,255,.15);--mk-a:rgba(240,180,76,.15)}}
+:root[data-theme="dark"]{--bg:#0f1318;--panel:#161b22;--panel2:#1c222b;--line:#2a323d;--line2:#222932;--text:#e3e8ef;--muted:#9aa5b4;--dim:#6b7686;--accent:#6d9cff;--on-accent:#0b1220;
+--red:#f47a6e;--teal:#3cc7b9;--olive:#b3c25a;--violet:#b197fc;--blue:#74a9ff;--indigo:#9b9ff7;--grey:#98a2b3;--green:#5bc98b;--amber:#f0b44c;
+--edge:#4a5568;--shade:#000;--grid:rgba(227,232,239,.04);--mk-r:rgba(244,122,110,.15);--mk-v:rgba(177,151,252,.17);--mk-b:rgba(109,156,255,.15);--mk-a:rgba(240,180,76,.15)}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box;border-radius:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+code,pre,kbd{font-family:var(--mono)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:16px;top:-60px;z-index:50;background:var(--accent);color:var(--on-accent);padding:8px 14px;font:700 14px var(--mono)}
+.skip:focus{top:12px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+svg.px,svg.pa{display:block;flex:none}
+
+/* ---------- type ---------- */
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 18px;font:700 12.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.eyebrow::before{content:"";width:10px;height:10px;background:currentColor;flex:none}
+.eyebrow b{color:var(--muted);font-weight:700}
+h1,h2{font-family:var(--pixel);font-weight:700;letter-spacing:-.005em;margin:0;text-wrap:balance}
+h1{font-size:clamp(40px,6.2vw,80px);line-height:1}
+h2{font-size:clamp(30px,3.7vw,48px);line-height:1.06;max-width:22ch}
+h3{font:700 17px/1.3 var(--mono);margin:0}
+.lede{font-size:clamp(17px,1.5vw,19px);line-height:1.6;color:var(--muted);max-width:60ch;margin:18px 0 0}
+.lede strong{color:var(--text);font-weight:600}
+.hl{color:var(--accent)}
+
+/* ---------- pixel primitives ---------- */
+.box{background:var(--panel);border:2px solid var(--edge);box-shadow:5px 5px 0 var(--shade)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 20px;font:400 15px/1 var(--bit);letter-spacing:.02em;text-decoration:none;color:var(--text);background:var(--panel);border:2px solid var(--edge);box-shadow:4px 4px 0 var(--shade);cursor:pointer;transition:transform .08s steps(2),box-shadow .08s steps(2);white-space:nowrap}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--shade)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--shade)}
+.btn.pri{background:var(--accent);color:var(--on-accent)}
+.btn.sm{min-height:38px;padding:0 14px;font-size:13px;box-shadow:3px 3px 0 var(--shade)}
+.btn.sm:hover{box-shadow:5px 5px 0 var(--shade)}
+.chip{display:inline-block;font:700 11px/1 var(--mono);letter-spacing:.04em;padding:4px 6px;border:1.5px solid currentColor;white-space:nowrap}
+mark.m{color:inherit;padding:1px 3px;border-bottom:2px solid}
+mark.r{background:var(--mk-r);border-color:var(--red)}
+mark.v{background:var(--mk-v);border-color:var(--violet)}
+mark.b{background:var(--mk-b);border-color:var(--accent)}
+mark.a{background:var(--mk-a);border-color:var(--amber);border-bottom-style:dashed}
+.cur{display:inline-block;width:.6em;height:1.1em;background:currentColor;vertical-align:-.2em;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- nav ---------- */
+.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:2px solid var(--edge)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 20px/1 var(--bit);letter-spacing:-.01em}
+.logo svg{color:var(--text)}
+.links{display:flex;gap:4px;margin-left:auto}
+.links a{font:600 13.5px/1 var(--mono);text-decoration:none;color:var(--muted);padding:10px 10px;border:2px solid transparent}
+.links a:hover{color:var(--text);border-color:var(--line)}
+.tools{display:flex;gap:10px;align-items:center}
+.links+.tools{margin-left:12px}
+.themebtn{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;font:600 13px/1 var(--mono);color:var(--text);background:var(--panel);border:2px solid var(--line);cursor:pointer}
+.themebtn:hover{border-color:var(--edge)}
+.sw{width:14px;height:14px;border:2px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:72px 0 88px;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;border-bottom:2px solid var(--edge)}
+.hero h1 .l2{display:block;color:var(--accent)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:start;margin-top:40px}
+.hero .lede{margin-top:0}
+.ctas{display:flex;flex-wrap:wrap;gap:16px;margin:32px 0 0}
+.facts{list-style:none;padding:0;margin:36px 0 0;display:grid;gap:10px;font:14px/1.45 var(--mono);color:var(--muted)}
+.facts li{display:flex;gap:10px;align-items:flex-start}
+.facts li::before{content:"";flex:none;width:8px;height:8px;margin-top:6px;background:var(--green)}
+.facts b{color:var(--text);font-weight:600}
+
+/* console = the live role demo */
+.console{background:var(--panel);border:2px solid var(--edge);box-shadow:10px 10px 0 var(--shade);min-width:0}
+.c-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:2px solid var(--edge);background:var(--panel2);font:12.5px/1 var(--mono);color:var(--muted)}
+.c-bar i{width:10px;height:10px;border:2px solid var(--edge)}
+.c-bar span{margin-left:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-bar .live{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--green);font-weight:700;letter-spacing:.08em}
+.c-bar .live::before{content:"";width:8px;height:8px;background:currentColor;animation:blink 1.4s steps(1) infinite}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid var(--edge)}
+.seg button{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:6px 8px;border:0;border-right:2px solid var(--edge);background:var(--panel);color:var(--muted);font:400 14px/1 var(--bit);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button:hover{color:var(--text);background:var(--panel2)}
+.seg button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.seg .bar{position:absolute;left:0;bottom:0;height:4px;width:0;background:var(--accent)}
+.seg button[aria-pressed="true"] .bar{animation:fill 4.2s steps(14) forwards}
+.console:hover .bar,.console:focus-within .bar,.console.manual .bar{animation-play-state:paused}
+.console.manual .bar{animation:none!important}
+@keyframes fill{to{width:100%}}
+.c-sql{padding:14px 16px;border-bottom:1px dashed var(--line);font:13px/1.55 var(--mono);color:var(--muted);overflow-wrap:anywhere}
+.c-sql b{color:var(--accent);font-weight:700}
+.c-sql .kw{color:var(--text);font-weight:700}
+.rt{width:100%;border-collapse:collapse;font:13.5px/1.35 var(--mono)}
+.rt th{font:700 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 16px 10px;border-bottom:2px solid var(--line)}
+.rt td{padding:9px 16px;border-bottom:1px dashed var(--line);vertical-align:middle}
+.rt tr:last-child td{border-bottom:0}
+.rt .col{color:var(--text);font-weight:600;white-space:nowrap}
+.rt .tag{color:var(--muted);font-size:11.5px;overflow-wrap:anywhere}
+.rt .val{white-space:nowrap}
+.rule{font:700 10.5px/1 var(--mono);letter-spacing:.06em;padding:3px 5px;border:1.5px solid currentColor;white-space:nowrap;display:inline-block;min-width:7.5ch;text-align:center}
+.rule.full{color:var(--accent)}.rule.mask{color:var(--red)}.rule.clean{color:var(--grey)}
+.c-who{display:flex;gap:14px;align-items:center;padding:14px 16px;border-top:2px solid var(--edge);background:var(--panel2);min-height:76px}
+.c-who svg{color:var(--text)}
+.c-who p{margin:0;font-size:14.5px;line-height:1.45}
+.c-who b{font-family:var(--mono)}
+.c-foot{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 16px;border-top:1px dashed var(--line);font:12px/1.4 var(--mono);color:var(--muted)}
+.c-foot .ok{color:var(--green);font-weight:700}
+
+/* ---------- stat strip ---------- */
+.strip{border-bottom:2px solid var(--edge);background:var(--panel)}
+.strip ul{list-style:none;margin:0 auto;padding:0;display:grid;grid-template-columns:repeat(5,1fr)}
+.strip li{padding:28px 20px 26px;border-right:2px solid var(--line)}
+.strip li:first-child{border-left:2px solid var(--line)}
+.num{display:block;font:400 clamp(26px,2.7vw,34px)/1 var(--bit);letter-spacing:-.02em;color:var(--text)}
+.num small{font-size:.55em;color:var(--muted)}
+.strip span:not(.num){display:block;margin-top:10px;font-size:14px;line-height:1.4;color:var(--muted)}
+.strip p{margin:0;padding:10px 0 12px;font:12px var(--mono);color:var(--muted);text-align:center;border-top:1px dashed var(--line)}
+
+/* ---------- sections ---------- */
+section.sec{padding:104px 0;border-bottom:2px solid var(--edge)}
+section.alt{background:var(--panel)}
+.head{display:grid;grid-template-columns:minmax(0,1fr);margin-bottom:48px}
+.two{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:56px;align-items:start}
+
+/* problem */
+.who{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:0;border:2px solid var(--edge);background:var(--panel)}
+.who li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:center;padding:14px 16px;border-bottom:1px dashed var(--line)}
+.who li:last-child{border-bottom:0}
+.who b{display:block;font:700 14px var(--mono)}
+.who span{font-size:14.5px;color:var(--muted)}
+.who svg{color:var(--text)}
+.bad{border:2px solid var(--red);background:var(--mk-r);padding:16px 18px;margin-top:24px;font-size:15px}
+.bad b{color:var(--red);font-family:var(--mono)}
+
+/* steps */
+.steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;counter-reset:s}
+.step{position:relative;display:flex;flex-direction:column;padding:22px 20px 20px}
+.step:not(:last-child)::after{content:"";position:absolute;right:-26px;top:44px;width:24px;height:4px;background:repeating-linear-gradient(90deg,var(--edge) 0 4px,transparent 4px 8px)}
+.step .n{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;font:400 14px/1 var(--bit);color:var(--muted)}
+.step .n svg{color:var(--text)}
+.step h3{font:700 26px/1.1 var(--pixel);margin-bottom:10px}
+.step p{margin:0 0 18px;font-size:15px;color:var(--muted);flex:1}
+.step code{display:block;font-size:12px;line-height:1.5;color:var(--text);background:var(--panel2);border:1px solid var(--line);padding:8px 10px;overflow-wrap:anywhere}
+
+/* features */
+.feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:2px solid var(--edge);border-left:2px solid var(--edge)}
+.feat{padding:26px 22px 24px;border-right:2px solid var(--edge);border-bottom:2px solid var(--edge);background:var(--bg)}
+.feat svg{color:var(--accent);margin-bottom:16px}
+.feat h3{font-size:15.5px;margin-bottom:8px}
+.feat p{margin:0;font-size:14.5px;line-height:1.55;color:var(--muted)}
+
+/* roles table */
+.roles{width:100%;border-collapse:collapse;font:14px/1.4 var(--mono);background:var(--panel)}
+.roles-box{border:2px solid var(--edge);box-shadow:6px 6px 0 var(--shade)}
+.roles th,.roles td{padding:13px 16px;text-align:left;border-bottom:1px dashed var(--line);vertical-align:middle}
+.roles thead th{border-bottom:2px solid var(--edge);background:var(--panel2);vertical-align:bottom}
+.roles thead th:first-child{font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rh{display:flex;gap:12px;align-items:center}
+.rh b{display:block;font:400 16px/1.2 var(--bit)}
+.rh span{display:block;font:500 12.5px/1.35 var(--sans);color:var(--muted)}
+.roles tbody th{font-weight:700;white-space:nowrap}
+.roles tbody th small{display:block;font-weight:400;font-size:11.5px;color:var(--muted)}
+.roles td{white-space:nowrap}
+.roles tbody tr:last-child>*{border-bottom:0}
+.legend{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-top:40px}
+.lg{border:2px solid var(--line);padding:16px;background:var(--panel)}
+.lg .rule{margin-bottom:12px}
+.lg p{margin:0;font-size:14px;line-height:1.5;color:var(--muted)}
+.lg code{display:block;margin-top:10px;font-size:12.5px;color:var(--text);overflow-wrap:anywhere}
+
+/* terminal (dark in both themes, like a real console) */
+.term{--t-bg:#0d1117;--t-fg:#e3e8ef;--t-dim:#9aa5b4;--t-red:#f47a6e;--t-green:#5bc98b;--t-blue:#74a9ff;--t-violet:#b197fc;--t-amber:#f0b44c;background:var(--t-bg);color:var(--t-fg);border:2px solid var(--edge);box-shadow:6px 6px 0 var(--shade);min-width:0}
+.t-bar{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:2px solid #2a323d;font:12.5px/1 var(--mono);color:var(--t-dim)}
+.t-bar i{width:10px;height:10px;border:2px solid #4a5568}
+.t-bar span{margin-left:6px}
+.t-bar .btn{margin-left:auto;background:#161b22;color:var(--t-fg);border-color:#4a5568;box-shadow:none;min-height:30px;padding:0 10px;font-size:12px}
+.t-bar .btn:hover{transform:none;border-color:var(--t-fg)}
+.term pre{margin:0;padding:16px 18px;font:13.5px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.term .p{color:var(--t-blue)}.term .c{color:var(--t-dim)}.term .x{color:var(--t-red);font-weight:700}.term .o{color:var(--t-green);font-weight:700}.term .s{color:var(--t-amber)}
+
+/* safety */
+.safe{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px}
+.s7{grid-column:span 7}.s5{grid-column:span 5}.s4{grid-column:span 4}
+.card{padding:24px 22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card .ic{display:flex;align-items:center;gap:12px}
+.card .ic svg{color:var(--text)}
+.card p{margin:0;font-size:15px;color:var(--muted)}
+.card .term{box-shadow:none;margin-top:6px}
+.chain{display:flex;align-items:center;gap:0;margin-top:6px;font:12px/1.35 var(--mono)}
+.blk{flex:1;min-width:0;border:2px solid var(--edge);padding:8px 9px;background:var(--panel2)}
+.blk b{display:block;font-size:12.5px}
+.blk span{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lnk{flex:none;width:14px;height:4px;background:var(--edge)}
+.fp{font:12.5px/1.6 var(--mono);border:2px solid var(--line);padding:10px 12px;background:var(--panel2);overflow-wrap:anywhere}
+.fp .ok{color:var(--green);font-weight:700}
+
+/* ai */
+.ticket{padding:0}
+.t-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between;padding:12px 16px;border-bottom:2px solid var(--edge);background:var(--panel2);font:12.5px var(--mono);color:var(--muted)}
+.mini{display:inline-flex;border:2px solid var(--edge)}
+.mini button{border:0;background:var(--panel);color:var(--muted);font:700 12px/1 var(--mono);padding:9px 12px;cursor:pointer;letter-spacing:.04em}
+.mini button+button{border-left:2px solid var(--edge)}
+.mini button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.t-body{padding:20px 18px;font-size:17px;line-height:1.85}
+.t-body .ai{transition:background .1s}
+.ticket:not(.on) .t-body mark.v{background:var(--mk-a);border-color:var(--amber);border-bottom-style:dashed}
+.t-out{border-top:1px dashed var(--line);padding:14px 18px;font:13.5px/1.7 var(--mono);color:var(--muted);overflow-wrap:anywhere}
+.t-out b{color:var(--text)}
+.t-key{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 18px;border-top:2px solid var(--edge);font:12.5px var(--mono);color:var(--muted)}
+.t-key mark{font-size:12px}
+.meter{margin-top:28px;display:grid;gap:18px}
+.meter div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:end;font:13.5px var(--mono)}
+.meter b{font:400 22px/1 var(--bit)}
+.cells{grid-column:1/-1;height:18px;border:2px solid var(--edge);padding:2px;background:var(--panel)}
+.cells i{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--c) 0 calc(5% - 2px),transparent calc(5% - 2px) 5%)}
+.small{font-size:13.5px;color:var(--muted);margin-top:18px}
+
+/* dev */
+.dev{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+.ep{width:100%;border-collapse:collapse;font:13.5px/1.45 var(--mono);background:var(--panel)}
+.ep-box{border:2px solid var(--edge);margin-top:28px;box-shadow:6px 6px 0 var(--shade)}
+.ep th,.ep td{text-align:left;padding:11px 16px;border-bottom:1px dashed var(--line);vertical-align:top}
+.ep thead th{font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--edge);background:var(--panel2)}
+.ep tr:last-child td{border-bottom:0}
+.ep td:first-child{width:90px}
+.ep td:nth-child(2){font-weight:700;white-space:nowrap}
+.ep td:last-child{font-family:var(--sans);color:var(--muted);font-size:14.5px}
+.get{color:var(--green)}.post{color:var(--accent)}
+.works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:28px}
+.works .card{gap:14px}
+.pills{display:flex;flex-wrap:wrap;gap:10px}
+.pills span{font:700 13px/1 var(--mono);padding:9px 11px;border:2px solid var(--edge);background:var(--panel2)}
+
+/* cta + footer */
+.cta{padding:96px 0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;border-bottom:2px solid var(--edge)}
+.cta .box{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:36px;align-items:center;padding:40px 40px;box-shadow:10px 10px 0 var(--shade)}
+.cta .box>svg{color:var(--text)}
+.cta h2{max-width:none}
+.cta p{margin:10px 0 0;color:var(--muted);font-size:17px}
+footer{padding:28px 0 40px;font:13px/1.6 var(--mono);color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+footer a{color:var(--text)}
+footer .r{margin-left:auto}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .links{display:none}.tools{margin-left:auto}
+  .hero-grid{grid-template-columns:minmax(0,1fr);gap:48px}
+  .strip ul{grid-template-columns:repeat(3,1fr)}
+  .strip li:nth-child(4){border-left:2px solid var(--line)}
+  .strip li:nth-child(n+4){border-top:2px solid var(--line)}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step:nth-child(2)::after{display:none}
+  .feats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .legend{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .s7,.s5{grid-column:span 12}.s4{grid-column:span 6}.s4:last-child{grid-column:span 12}
+  .two,.dev{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:820px){
+  .roles thead{display:none}
+  .roles,.roles tbody,.roles tr,.roles th,.roles td{display:block}
+  .roles tbody tr{border-bottom:2px solid var(--edge);padding:6px 0}
+  .roles tbody tr:last-child{border-bottom:0}
+  .roles tbody th{border:0;padding:10px 16px 4px}
+  .roles td{display:grid;grid-template-columns:9ch minmax(0,1fr);gap:10px;align-items:center;border:0;padding:5px 16px;white-space:normal;overflow-wrap:anywhere}
+  .roles td::before{content:attr(data-l);font:400 12px var(--bit);color:var(--muted)}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  .top .wrap{height:58px;gap:10px}
+  .logo{font-size:17px}
+  .themebtn .tl{display:none}
+  .top .btn.sm{padding:0 12px}
+  .hero{padding:44px 0 56px}
+  .hero-grid{margin-top:24px}
+  .ctas .btn{flex:1 1 100%}
+  .console{box-shadow:6px 6px 0 var(--shade)}
+  .rt .tag{display:none}
+  .rt th,.rt td{padding-left:12px;padding-right:12px}
+  .rt .val{white-space:normal;overflow-wrap:anywhere}
+  .c-sql{font-size:12px}
+  .seg button{font-size:12.5px;gap:6px}
+  .seg button svg{display:none}
+  .strip ul{grid-template-columns:repeat(2,1fr)}
+  .strip li{padding:20px 16px;border-left:0!important;border-top:0!important}
+  .strip li:nth-child(odd){border-left:0}
+  .strip li:nth-child(even){border-right:0}
+  .strip li:nth-child(n+3){border-top:2px solid var(--line)!important}
+  .strip li:last-child{grid-column:1/-1;border-right:0}
+  section.sec{padding:72px 0}
+  .head{margin-bottom:32px}
+  .steps,.feats,.legend,.works{grid-template-columns:minmax(0,1fr)}
+  .step::after{display:none}
+  .s4,.s4:last-child{grid-column:span 12}
+  .cta{padding:64px 0}
+  .cta .box{grid-template-columns:minmax(0,1fr);padding:28px 22px;gap:22px}
+  .ep td:first-child{width:auto}
+  .ep thead{display:none}
+  .ep tr{display:grid;grid-template-columns:auto minmax(0,1fr);border-bottom:1px dashed var(--line)}
+  .ep td{border:0;padding:10px 14px 2px}
+  .ep td:last-child{grid-column:1/-1;padding:2px 14px 12px}
+  .ep tr:last-child{border-bottom:0}
+  .ep td:nth-child(2){white-space:normal;overflow-wrap:anywhere}
+  .chain{flex-direction:column;align-items:stretch}
+  .lnk{width:4px;height:12px;margin:0 auto}
+  footer .r{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="PardaDB home"><svg class="px" width="28" height="28" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h8v1h-8zM1 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM1 4h10v1h-10zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM1 7h10v1h-10zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM1 10h1v1h-1zM10 10h1v1h-1zM2 11h8v1h-8z"/><path fill="var(--accent)" d="M1 5h10v1h-10zM1 6h10v1h-10z"/></svg><span>PardaDB</span></a>
+    <nav class="links" aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#roles">Roles</a>
+      <a href="#safety">Safety</a>
+      <a href="#ai">AI</a>
+      <a href="#dev">For developers</a>
+    </nav>
+    <div class="tools">
+      <button class="themebtn" id="theme" type="button" aria-label="Colour theme: Auto. Click to change."><span class="sw" aria-hidden="true"></span><span class="tl" id="theme-l">Auto</span></button>
+      <a class="btn pri sm" href="/dashboard">Demo <svg class="pa" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- ======================= HERO ======================= -->
+<section class="hero" id="top" aria-labelledby="h1">
+  <div class="wrap">
+    <p class="eyebrow">Smart data masking <b>for banks</b></p>
+    <h1 id="h1">Each role sees only what it needs.<span class="l2">The data never changes.</span></h1>
+    <div class="hero-grid">
+      <div>
+        <p class="lede">PardaDB sits between your staff and the bank&rsquo;s SQL databases. It <strong>finds personal data by itself</strong> (card numbers, Aadhaar, PAN, phone numbers, names, balances) and <strong>hides it the moment a query runs</strong>, based on who is asking. Nothing is copied. Nothing is rewritten.</p>
+        <div class="ctas">
+          <a class="btn pri" href="/dashboard"><svg class="pa" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/></svg> Open the demo</a>
+          <a class="btn" href="#how">How it works</a>
+        </div>
+        <ul class="facts">
+          <li><span><b>Zero setup per column.</b> 120 columns classified on its own.</span></li>
+          <li><span><b>Same answer on SQLite, MySQL and PostgreSQL.</b></span></li>
+          <li><span><b>Runs fully offline</b> inside the bank network.</span></li>
+        </ul>
+      </div>
+
+      <figure class="console" id="demo" aria-label="Live example: the same customer row seen by three roles" style="margin:0">
+        <div class="c-bar"><i></i><i></i><i></i><span>pardadb &middot; saffron_bank</span><b class="live">LIVE</b></div>
+        <div class="seg" role="group" aria-label="View the row as">
+          <button type="button" data-role="admin" aria-pressed="true"><svg class="px" width="18" height="18" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg>Admin<span class="bar"></span></button>
+          <button type="button" data-role="support" aria-pressed="false"><svg class="px" width="18" height="18" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h5v1h-5zM2 1h1v1h-1zM8 1h1v1h-1zM1 2h1v1h-1zM3 2h5v1h-5zM9 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM7 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM9 4h1v1h-1zM4 5h3v1h-3zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM4 7h3v1h-3z"/></svg>Support<span class="bar"></span></button>
+          <button type="button" data-role="analyst" aria-pressed="false"><svg class="px" width="18" height="18" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M9 0h1v1h-1zM8 1h2v1h-2zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM9 6h1v1h-1zM9 7h1v1h-1z"/></svg>Analyst<span class="bar"></span></button>
+        </div>
+        <div class="c-sql"><b id="c-role">admin</b>&gt; <span class="kw">SELECT</span> cust_nm, mob_no, dob_dt, pan_no, card_no, curr_bal, city <span class="kw">FROM</span> customers &hellip; <span class="kw">WHERE</span> customer_id = 'C10427';<span class="cur" aria-hidden="true"></span></div>
+        <table class="rt">
+          <thead><tr><th scope="col">Column</th><th scope="col" class="tag">Found as</th><th scope="col">Rule</th><th scope="col">Value</th></tr></thead>
+          <tbody id="c-rows" aria-live="polite">
+            <tr><td class="col">cust_nm</td><td class="tag">PII_MEDIUM</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">Ritika Sharma</mark></td></tr>
+            <tr><td class="col">mob_no</td><td class="tag">PII_MEDIUM</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">+919000012345</mark></td></tr>
+            <tr><td class="col">dob_dt</td><td class="tag">PII_QUASI</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">1991-04-12</mark></td></tr>
+            <tr><td class="col">pan_no</td><td class="tag">PII_HIGH</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">ABCPS1234K</mark></td></tr>
+            <tr><td class="col">card_no</td><td class="tag">PII_HIGH</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">4111111111116916</mark></td></tr>
+            <tr><td class="col">curr_bal</td><td class="tag">FINANCIAL_CONFIDENTIAL</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">452300</mark></td></tr>
+            <tr><td class="col">city</td><td class="tag">not personal</td><td><span class="rule clean">FULL</span></td><td class="val">Pune</td></tr>
+          </tbody>
+        </table>
+        <div class="c-who" id="c-who"><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg><p><b>Admin</b> &middot; security and DBA team. Sees real values, and every look is still written to the audit log.</p></div>
+        <div class="c-foot"><span id="c-count">0 of 7 columns masked</span><span>raw row <span class="ok">unchanged &#10003;</span></span><span>audit <span id="c-aud">#1042</span> chained</span></div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PROOF STRIP ======================= -->
+<section class="strip" aria-label="Measured results">
+  <ul class="wrap">
+    <li><span class="num">129,260</span><span>rows scanned in about half a second</span></li>
+    <li><span class="num">120</span><span>columns in 9 tables, labelled automatically</span></li>
+    <li><span class="num">~40<small> MB</small></span><span>of memory while running</span></li>
+    <li><span class="num">3<small> DBs</small></span><span>SQLite, MySQL and PostgreSQL, identical output</span></li>
+    <li><span class="num">0.993</span><span>name recall with the optional AI (0.911 rules only)</span></li>
+  </ul>
+  <p>Measured on the Saffron Bank test dataset &middot; all customer data on this page is made up</p>
+</section>
+
+<!-- ======================= PROBLEM ======================= -->
+<section class="sec" id="why" aria-labelledby="why-h">
+  <div class="wrap two">
+    <div>
+      <p class="eyebrow">01 <b>The problem</b></p>
+      <h2 id="why-h">Inside a bank, too many people can read every customer&rsquo;s secrets.</h2>
+      <p class="lede">A normal database shows everyone everything. A support agent who only needs the last four digits of a card sees the whole number. An analyst who only needs age groups sees birthdays, names and balances.</p>
+      <p class="bad"><b>Today&rsquo;s fixes break.</b> Masked copies of the database go stale and double the storage. Hand-written views miss new columns. And nobody can prove afterwards who looked at what.</p>
+    </div>
+    <div>
+      <p class="eyebrow">What each person actually needs</p>
+      <ul class="who">
+        <li><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg><div><b>Admin</b><span>Real values, for fixing problems. Fully audited.</span></div></li>
+        <li><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h5v1h-5zM2 1h1v1h-1zM8 1h1v1h-1zM1 2h1v1h-1zM3 2h5v1h-5zM9 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM7 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM9 4h1v1h-1zM4 5h3v1h-3zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM4 7h3v1h-3z"/></svg><div><b>Support</b><span>Enough to recognise a caller: first name, last four digits.</span></div></li>
+        <li><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M9 0h1v1h-1zM8 1h2v1h-2zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM9 6h1v1h-1zM9 7h1v1h-1z"/></svg><div><b>Analyst</b><span>Patterns, not people: tokens, age bands, balance ranges.</span></div></li>
+      </ul>
+      <p class="small">PardaDB gives each of them exactly that, from the same live tables, with no copy to keep in sync.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= HOW ======================= -->
+<section class="sec alt" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">02 <b>How it works</b></p>
+      <h2 id="how-h">Four steps. No changes to your data.</h2>
+      <p class="lede">Point PardaDB at a database. It does the rest on its own, and you can check every decision it made.</p>
+    </div>
+    <ol class="steps">
+      <li class="step box"><div class="n">Step 01<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h5v1h-5zM1 1h1v1h-1zM7 1h1v1h-1zM0 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM8 3h1v1h-1zM0 4h1v1h-1zM8 4h1v1h-1zM0 5h1v1h-1zM8 5h1v1h-1zM1 6h1v1h-1zM7 6h1v1h-1zM2 7h5v1h-5zM8 7h1v1h-1zM9 8h1v1h-1zM10 9h1v1h-1zM11 10h1v1h-1z"/><path fill="var(--accent)" d="M3 3h3v1h-3zM3 4h3v1h-3z"/></svg></div><h3>Scan</h3><p>Reads a small sample from every column and recognises personal data by its shape, its checksum and the column name.</p><code>129,260 rows &middot; ~0.5 s</code></li>
+      <li class="step box"><div class="n">Step 02<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h7v1h-7zM0 1h1v1h-1zM7 1h1v1h-1zM0 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM9 3h1v1h-1zM0 4h1v1h-1zM10 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM10 7h1v1h-1zM0 8h1v1h-1zM9 8h1v1h-1zM0 9h1v1h-1zM8 9h1v1h-1zM0 10h8v1h-8z"/><path fill="var(--accent)" d="M2 2h2v1h-2zM2 3h2v1h-2z"/></svg></div><h3>Tag</h3><p>Gives each column a label such as <em>high-risk ID</em> or <em>financial</em>, with the evidence shown next to it.</p><code>PII_HIGH &middot; PII_MEDIUM &middot; FINANCIAL_CONFIDENTIAL</code></li>
+      <li class="step box"><div class="n">Step 03<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 1h4v1h-4zM2 2h2v1h-2zM8 2h2v1h-2zM1 3h1v1h-1zM5 3h2v1h-2zM10 3h1v1h-1zM0 4h1v1h-1zM4 4h4v1h-4zM11 4h1v1h-1zM0 7h1v1h-1zM4 7h4v1h-4zM11 7h1v1h-1zM1 8h1v1h-1zM5 8h2v1h-2zM10 8h1v1h-1zM2 9h2v1h-2zM8 9h2v1h-2zM4 10h4v1h-4z"/><path fill="var(--accent)" d="M0 5h12v1h-12zM0 6h12v1h-12z"/></svg></div><h3>Mask</h3><p>When someone runs a query, the answer is masked for their role on its way out. The stored data is never touched.</p><code>policy.json: tag &times; role &rarr; rule</code></li>
+      <li class="step box"><div class="n">Step 04<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h12v1h-12zM0 1h1v1h-1zM11 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h1v1h-1zM8 10h1v1h-1zM4 11h4v1h-4z"/><path fill="var(--accent)" d="M10 2h1v1h-1zM9 3h2v1h-2zM2 4h1v1h-1zM8 4h2v1h-2zM2 5h2v1h-2zM7 5h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2zM4 7h3v1h-3zM5 8h1v1h-1z"/></svg></div><h3>Prove</h3><p>Every query is written to a tamper-evident log, and fingerprints show the tables are exactly as they were.</p><code>hash-chained audit &middot; SHA-256</code></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ======================= FEATURES ======================= -->
+<section class="sec" id="features" aria-labelledby="feat-h">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">03 <b>What you get</b></p>
+      <h2 id="feat-h">Everything a bank needs to share data safely.</h2>
+    </div>
+    <div class="feats">
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 2h8v2H6V2zM4 6V4h2v2H4zm0 8H2V6h2v8zm2 2H4v-2h2v2zm8 0v2H6v-2h8zm2-2h-2v2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm0-8h2v8h-2V6zm0 0V4h-2v2h2z"/></svg><h3>Finds PII by itself</h3><p>Cards (Luhn-checked), Aadhaar, PAN, SSN, phones, email, UPI, names, addresses, balances.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M11 0H5v2H3v6h2v2h6V8H5V2h6V0zm0 2h2v6h-2V2zM0 14h2v4h12v2H0v-6zm2 0h12v-2H2v2zm14 0h-2v6h2v-6zM15 0h4v2h-4V0zm4 8h-4v2h4V8zm0-6h2v6h-2V2zm5 12h-2v4h-4v2h6v-6zm-6-2h4v2h-4v-2z"/></svg><h3>Masks per role</h3><p>Full, partial, token, range or redacted, decided per column and role at query time.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 2H2v12h2V4h16v10h2V2zM6 14H4v2h2v-2zm0 2h2v2h2v2H8v-2H6v-2zm4 4v2h4v-2h2v-2h-2v2h-4zm10-6h-2v2h-2v2h2v-2h2v-2z"/></svg><h3>Inference guard</h3><p>Stops queries that try to work out hidden values by filtering or sorting on them.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15 2H9v2H7v4H4v14h16V8h-3V4h-2V2zm0 2v4H9V4h6zm-6 6h9v10H6V10h3zm4 3h-2v4h2v-4z"/></svg><h3>Read-only by design</h3><p>Every write to bank data is blocked. Databases are opened read-only.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 7h10v4h5v2h-5v4H7v-4H2v-2h5V7zm2 2v6h6V9H9z"/></svg><h3>Tamper-evident audit</h3><p>Each query record carries the hash of the one before. Edit one and the chain breaks.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h18v18H3V3zm16 16V5H5v14h14z"/></svg><h3>Integrity proof</h3><p>SHA-256 fingerprints before and after show the tables did not change.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h8v2H3v12h8V5h2v12h8V5h-8V3h10v16H13v2h-2v-2H1V3h2zm16 7h-4v2h4v-2zm-4-3h4v2h-4V7zm2 6h-2v2h2v-2z"/></svg><h3>Free text and JSON</h3><p>Masks PII inside support tickets, notes and JSON fields, not just whole columns.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h18v18H3V3zm2 2v6h14V5H5zm14 8H5v6h14v-6zM7 7h2v2H7V7zm2 8H7v2h2v-2z"/></svg><h3>Three databases, one result</h3><p>SQLite, MySQL and PostgreSQL through one interface, with identical output.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ROLES ======================= -->
+<section class="sec alt" id="roles" aria-labelledby="roles-h">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">04 <b>Roles</b></p>
+      <h2 id="roles-h">Three roles. Three views of the same row.</h2>
+      <p class="lede">These are the rules PardaDB applies to the Saffron Bank data. Values are made up; formats are exactly what the product returns.</p>
+    </div>
+    <div class="roles-box">
+      <table class="roles">
+        <thead><tr>
+          <th scope="col">Column</th>
+          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg><div><b>Admin</b><span>Security &amp; DBA</span></div></div></th>
+          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h5v1h-5zM2 1h1v1h-1zM8 1h1v1h-1zM1 2h1v1h-1zM3 2h5v1h-5zM9 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM7 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM9 4h1v1h-1zM4 5h3v1h-3zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM4 7h3v1h-3z"/></svg><div><b>Support</b><span>Customer service</span></div></div></th>
+          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M9 0h1v1h-1zM8 1h2v1h-2zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM9 6h1v1h-1zM9 7h1v1h-1z"/></svg><div><b>Analyst</b><span>Reports &amp; trends</span></div></div></th>
+        </tr></thead>
+        <tbody>
+          <tr><th scope="row">card_no<small>card number</small></th><td data-l="Admin"><mark class="m b">4111111111116916</mark></td><td data-l="Support"><mark class="m r">4111-XXXX-XXXX-6916</mark></td><td data-l="Analyst"><mark class="m r">[REDACTED]</mark></td></tr>
+          <tr><th scope="row">cust_nm<small>customer name</small></th><td data-l="Admin"><mark class="m b">Ritika Sharma</mark></td><td data-l="Support"><mark class="m r">Ritika S*****</mark></td><td data-l="Analyst"><mark class="m r">tok_5a1c9e07b3d2</mark></td></tr>
+          <tr><th scope="row">mob_no<small>phone</small></th><td data-l="Admin"><mark class="m b">+919000012345</mark></td><td data-l="Support"><mark class="m r">+91 XXXXXX2345</mark></td><td data-l="Analyst"><mark class="m r">tok_c08e41f6a9b7</mark></td></tr>
+          <tr><th scope="row">pan_no<small>tax ID</small></th><td data-l="Admin"><mark class="m b">ABCPS1234K</mark></td><td data-l="Support"><mark class="m r">XXXXXX234K</mark></td><td data-l="Analyst"><mark class="m r">[REDACTED]</mark></td></tr>
+          <tr><th scope="row">dob_dt<small>date of birth</small></th><td data-l="Admin"><mark class="m b">1991-04-12</mark></td><td data-l="Support"><mark class="m r">1991</mark></td><td data-l="Analyst"><mark class="m r">30-39</mark></td></tr>
+          <tr><th scope="row">curr_bal<small>balance (&#8377;)</small></th><td data-l="Admin"><mark class="m b">452300</mark></td><td data-l="Support"><mark class="m r">[REDACTED]</mark></td><td data-l="Analyst"><mark class="m r">1L-10L</mark></td></tr>
+          <tr><th scope="row">city<small>not personal</small></th><td data-l="Admin">Pune</td><td data-l="Support">Pune</td><td data-l="Analyst">Pune</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend" aria-label="Masking rules">
+      <div class="lg"><span class="rule full">FULL</span><p>The real value. Shown highlighted in blue.</p><code>4111111111116916</code></div>
+      <div class="lg"><span class="rule mask">PARTIAL</span><p>Just enough to recognise it, e.g. the last four digits.</p><code>4111-XXXX-XXXX-6916</code></div>
+      <div class="lg"><span class="rule mask">HASH</span><p>A token. Same person, same token; it cannot be turned back.</p><code>tok_5a1c9e07b3d2</code></div>
+      <div class="lg"><span class="rule mask">BUCKET</span><p>A range or band instead of the exact number or date.</p><code>1L-10L &middot; 30-39</code></div>
+      <div class="lg"><span class="rule mask">REDACT</span><p>Hidden completely for this role.</p><code>[REDACTED]</code></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SAFETY ======================= -->
+<section class="sec" id="safety" aria-labelledby="safe-h">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">05 <b>Safety</b></p>
+      <h2 id="safe-h">Hard to trick. Impossible to change. Easy to prove.</h2>
+      <p class="lede">Masking the output is not enough if someone can guess the hidden value with clever questions. PardaDB checks every query before it runs, and fails closed.</p>
+    </div>
+    <div class="safe">
+      <article class="card box s7">
+        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h6v1h-6zM2 1h1v1h-1zM9 1h1v1h-1zM1 2h1v1h-1zM10 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h6v1h-6z"/><path fill="var(--accent)" d="M8 2h2v1h-2zM7 3h2v1h-2zM6 4h2v1h-2zM5 5h2v1h-2zM4 6h2v1h-2zM3 7h2v1h-2zM2 8h2v1h-2z"/></svg><h3>Inference guard</h3></div>
+        <p>Asking &ldquo;which cards start with 4111?&rdquo; would reveal digits that Support is not allowed to see. So would sorting by phone number. Those queries are refused, with the reason.</p>
+        <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>support &amp; analyst queries</span></div>
+<pre><span class="p">support&gt;</span> SELECT * FROM cards WHERE CARD_NO LIKE <span class="s">'4111%'</span>;
+<span class="x">BLOCKED</span> inference guard: role 'support' cannot filter on cards.card_no (PII_HIGH); that would reveal masked values
+
+<span class="p">analyst&gt;</span> SELECT cust_nm FROM customers ORDER BY mob_no;
+<span class="x">BLOCKED</span> inference guard: role 'analyst' cannot sort on customers.mob_no (PII_MEDIUM); that would reveal masked values
+
+<span class="p">analyst&gt;</span> SELECT city, COUNT(*) FROM customers GROUP BY city;
+<span class="o">OK</span> <span class="c">non-personal columns: allowed</span></pre></div>
+      </article>
+      <article class="card box s5">
+        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 0h4v1h-4zM3 1h1v1h-1zM8 1h1v1h-1zM2 2h1v1h-1zM9 2h1v1h-1zM2 3h1v1h-1zM9 3h1v1h-1zM0 4h12v1h-12zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM0 10h1v1h-1zM11 10h1v1h-1zM0 11h12v1h-12z"/><path fill="var(--accent)" d="M5 6h2v1h-2zM5 7h2v1h-2zM6 8h1v1h-1z"/></svg><h3>Read-only</h3></div>
+        <p>PardaDB can never change bank data. Databases are opened read-only, and every write statement is refused before it reaches them, even for Admin.</p>
+        <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>admin</span></div>
+<pre><span class="p">admin&gt;</span> UPDATE accounts SET curr_bal = 0;
+<span class="x">BLOCKED</span> write statements are blocked on bank data: PardaDB is read-only by design</pre></div>
+      </article>
+      <article class="card box s4">
+        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 2h3v1h-3zM8 2h3v1h-3zM0 3h1v1h-1zM2 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM0 4h1v1h-1zM2 4h7v1h-7zM10 4h1v1h-1zM0 5h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM0 6h3v1h-3zM8 6h3v1h-3z"/><path fill="var(--accent)" d="M1 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM9 4h1v1h-1zM1 5h1v1h-1zM9 5h1v1h-1z"/></svg><h3>Audit chain</h3></div>
+        <p>Every query is recorded: who, which role, what SQL, what was masked. Each record holds the hash of the one before, so a quiet edit breaks the chain.</p>
+        <div class="chain" aria-label="Three linked audit records">
+          <div class="blk"><b>#1041</b><span>prev 3b07&hellip;</span></div><i class="lnk"></i>
+          <div class="blk"><b>#1042</b><span>prev 9f3c&hellip;</span></div><i class="lnk"></i>
+          <div class="blk"><b>#1043</b><span>prev c41a&hellip;</span></div>
+        </div>
+      </article>
+      <article class="card box s4">
+        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h12v1h-12zM0 1h1v1h-1zM11 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h1v1h-1zM8 10h1v1h-1zM4 11h4v1h-4z"/><path fill="var(--accent)" d="M10 2h1v1h-1zM9 3h2v1h-2zM2 4h1v1h-1zM8 4h2v1h-2zM2 5h2v1h-2zM7 5h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2zM4 7h3v1h-3zM5 8h1v1h-1z"/></svg><h3>Integrity proof</h3></div>
+        <p>SHA-256 fingerprints of every table, taken before and after, show nothing changed. One click in the dashboard.</p>
+        <div class="fp">cards &nbsp;before 7d1e&hellip;a90c<br>cards &nbsp;after&nbsp; 7d1e&hellip;a90c <span class="ok">&#10003; unchanged</span></div>
+      </article>
+      <article class="card box s4">
+        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 8h12v1h-12zM0 9h1v1h-1zM11 9h1v1h-1zM0 10h1v1h-1zM2 10h2v1h-2zM11 10h1v1h-1zM0 11h12v1h-12z"/><path fill="var(--accent)" d="M0 0h1v1h-1zM10 0h1v1h-1zM1 1h1v1h-1zM9 1h1v1h-1zM2 2h1v1h-1zM8 2h1v1h-1zM3 3h1v1h-1zM7 3h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM5 5h1v1h-1zM4 6h1v1h-1zM6 6h1v1h-1zM3 7h1v1h-1zM7 7h1v1h-1z"/></svg><h3>Runs offline</h3></div>
+        <p>No cloud service, no tracking, nothing sent out. Built to run inside a bank network; even this page loads nothing from the internet.</p>
+        <div class="pills"><span>no CDN</span><span>no telemetry</span><span>~40 MB RAM</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= AI ======================= -->
+<section class="sec alt" id="ai" aria-labelledby="ai-h">
+  <div class="wrap two">
+    <div>
+      <p class="eyebrow">06 <b>Optional AI</b></p>
+      <h2 id="ai-h">Rules catch the obvious. A small AI model catches the rest.</h2>
+      <p class="lede">Card and phone numbers have a fixed shape, so rules find them reliably. Names and addresses written inside a support ticket do not. An optional small model, running on the same machine, finds those too.</p>
+      <div class="meter" aria-label="Customer-name recall">
+        <div><span>Rules only</span><b>0.911</b><span class="cells" style="--c:var(--red)"><i style="width:91.1%"></i></span></div>
+        <div><span>Rules + AI model</span><b>0.993</b><span class="cells" style="--c:var(--violet)"><i style="width:99.3%"></i></span></div>
+      </div>
+      <p class="small">Customer-name recall on the Saffron Bank data. Off by default; start it with <code>pardadb start --ml</code> or the <em>Activate AI</em> button in the dashboard.</p>
+    </div>
+    <div class="ticket box on" id="ticket">
+      <div class="t-head"><span>support_tickets.ticket_text</span>
+        <div class="mini" role="group" aria-label="Detection mode"><button type="button" data-ai="0" aria-pressed="false">Rules only</button><button type="button" data-ai="1" aria-pressed="true">Rules + AI</button></div>
+      </div>
+      <p class="t-body">Customer <mark class="m v">Ritika Sharma</mark> called from <mark class="m r">+91 90000 12345</mark>. She says card <mark class="m r">4111 1111 1111 6916</mark> was charged twice and wants the new card sent to <mark class="m v">14 Lake View Road, Baner, Pune</mark>.</p>
+      <div class="t-out" aria-live="polite"><b>analyst sees&gt;</b> <span id="t-out">Customer [NAME] called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to [ADDRESS].</span></div>
+      <div class="t-key"><span><mark class="m r">red</mark> found by rules</span><span><mark class="m v">violet</mark> found by AI</span><span id="t-leak" hidden><mark class="m a">amber</mark> missed: would leak</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= DEV ======================= -->
+<section class="sec" id="dev" aria-labelledby="dev-h">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">07 <b>For developers</b></p>
+      <h2 id="dev-h">One command to start. A plain REST API to build on.</h2>
+      <p class="lede">A single Python process. Use the web dashboard, the full-screen terminal UI, the <code>pardadb</code> CLI, or call the API from your own tools.</p>
+    </div>
+    <div class="dev">
+      <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>quick start &middot; shell</span><button class="btn" type="button" data-copy="cli" aria-label="Copy the CLI commands"><svg class="pa" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z"/></svg>Copy</button></div>
+<pre id="cli"><span class="c"># connect, scan, open dashboard + terminal UI</span>
+<span class="p">$</span> pardadb
+<span class="c"># scan once and print the PII catalog</span>
+<span class="p">$</span> pardadb scan --db mysql
+<span class="c"># run a query as a role</span>
+<span class="p">$</span> pardadb query --role support --sql "SELECT * FROM cards LIMIT 5"
+<span class="c"># same query, all three roles side by side</span>
+<span class="p">$</span> pardadb compare --sql "SELECT cust_nm, mob_no FROM customers"
+<span class="c"># SHA-256 proof that nothing changed</span>
+<span class="p">$</span> pardadb verify --db postgres</pre></div>
+      <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>REST &middot; curl</span><button class="btn" type="button" data-copy="api" aria-label="Copy the API example"><svg class="pa" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z"/></svg>Copy</button></div>
+<pre id="api"><span class="c"># health, backends and scan progress</span>
+<span class="p">$</span> curl -s localhost:8765/api/status
+
+<span class="c"># run a masked query as a role (or "user")</span>
+<span class="p">$</span> curl -s -X POST localhost:8765/api/query \
+    -H 'Content-Type: application/json' \
+    -d '{"sql":"SELECT card_no FROM cards LIMIT 3","role":"support"}'
+
+<span class="c"># the same SQL for admin, support and analyst</span>
+<span class="p">$</span> curl -s -X POST localhost:8765/api/compare \
+    -d '{"sql":"SELECT cust_nm FROM customers LIMIT 3"}'</pre></div>
+    </div>
+    <div class="ep-box">
+      <table class="ep">
+        <thead><tr><th scope="col">Method</th><th scope="col">Endpoint</th><th scope="col">What it does</th></tr></thead>
+        <tbody>
+          <tr><td class="get">GET</td><td>/api/status</td><td>Connected databases, scan progress, memory and uptime.</td></tr>
+          <tr><td class="get">GET</td><td>/api/catalog</td><td>Every column with its tag, confidence and evidence.</td></tr>
+          <tr><td class="get">GET</td><td>/api/browse</td><td>Page through a table, masked for a role.</td></tr>
+          <tr><td class="get">GET</td><td>/api/audit</td><td>The hash-chained query log and whether the chain is intact.</td></tr>
+          <tr><td class="post">POST</td><td>/api/query</td><td>Run SQL as a <code>role</code> or <code>user</code>: <code>{"sql", "role"|"user"}</code>.</td></tr>
+          <tr><td class="post">POST</td><td>/api/compare</td><td>Run the same SQL for all three roles.</td></tr>
+          <tr><td class="post">POST</td><td>/api/integrity</td><td>SHA-256 fingerprints of every table.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="works">
+      <div class="card box"><div class="ic"><svg class="pa" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h18v18H3V3zm2 2v6h14V5H5zm14 8H5v6h14v-6zM7 7h2v2H7V7zm2 8H7v2h2v-2z"/></svg><h3>Works with</h3></div><div class="pills"><span>SQLite</span><span>MySQL 8</span><span>PostgreSQL 16</span></div><p>One interface, identical masked output on all three.</p></div>
+      <div class="card box"><div class="ic"><svg class="pa" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 1h2v8h8v4h-2v-2h-8V5h-2V3h2V1zM8 7V5h2v2H8zM6 9V7h2v2H6zm-2 2V9h2v2H4zm10 8v2h-2v2h-2v-8H2v-4h2v2h8v6h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm0 0h2v-2h-2v2z"/></svg><h3>Four ways in</h3></div><div class="pills"><span>Web dashboard</span><span>Terminal UI</span><span>CLI</span><span>REST API</span></div><p>Rules live in one readable file: <code>policy.json</code>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CTA ======================= -->
+<section class="cta" aria-labelledby="cta-h">
+  <div class="wrap">
+    <div class="box">
+      <svg class="px" width="96" height="96" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h8v1h-8zM1 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM1 4h10v1h-10zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM1 7h10v1h-10zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM1 10h1v1h-1zM10 10h1v1h-1zM2 11h8v1h-8z"/><path fill="var(--accent)" d="M1 5h10v1h-10zM1 6h10v1h-10z"/></svg>
+      <div>
+        <h2 id="cta-h">See it on a whole (made-up) bank.</h2>
+        <p>9 tables, 120 columns, 129,260 rows. Switch roles, try to trick the guard, check the audit chain.</p>
+      </div>
+      <a class="btn pri" href="/dashboard"><svg class="pa" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/></svg> Open the demo</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Back to top"><svg class="px" width="20" height="20" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h8v1h-8zM1 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM1 4h10v1h-10zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM1 7h10v1h-10zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM1 10h1v1h-1zM10 10h1v1h-1zM2 11h8v1h-8z"/><path fill="var(--accent)" d="M1 5h10v1h-10zM1 6h10v1h-10z"/></svg><span style="font-size:15px">PardaDB</span></a>
+    <span>Team AVNI &middot; TalentAP Mega Hackathon 2026 &middot; B1 Smart Data Masking</span>
+    <span class="r"><a href="/dashboard">Open the demo</a> &middot; <a href="/assets/LICENSES.md">Licences</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- theme: same mechanism and localStorage key as the dashboard ---------- */
+  const THEMES = ['auto', 'light', 'dark'], KEY = 'pardadb-theme', tb = $('#theme');
+  function applyTheme(t) {
+    if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
+    const label = t[0].toUpperCase() + t.slice(1);
+    $('#theme-l').textContent = label;
+    tb.setAttribute('aria-label', 'Colour theme: ' + label + '. Click to change.');
+    tb.title = 'Theme: ' + label;
+  }
+  let theme = 'auto';
+  try { theme = localStorage.getItem(KEY) || 'auto'; } catch (e) { /* storage blocked */ }
+  if (!THEMES.includes(theme)) theme = 'auto';
+  applyTheme(theme);
+  tb.addEventListener('click', () => {
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    applyTheme(theme);
+    try { localStorage.setItem(KEY, theme); } catch (e) { /* storage blocked */ }
+  });
+  window.addEventListener('storage', (e) => { if (e.key === KEY) { theme = THEMES.includes(e.newValue) ? e.newValue : 'auto'; applyTheme(theme); } });
+
+  /* ---------- hero: same row, three roles ---------- */
+  const ROWS = [ // column, tag, admin value, [support rule, value], [analyst rule, value]
+    ['cust_nm', 'PII_MEDIUM', 'Ritika Sharma', ['PARTIAL', 'Ritika S*****'], ['HASH', 'tok_5a1c9e07b3d2']],
+    ['mob_no', 'PII_MEDIUM', '+919000012345', ['PARTIAL', '+91 XXXXXX2345'], ['HASH', 'tok_c08e41f6a9b7']],
+    ['dob_dt', 'PII_QUASI', '1991-04-12', ['PARTIAL', '1991'], ['GENERALIZE', '30-39']],
+    ['pan_no', 'PII_HIGH', 'ABCPS1234K', ['PARTIAL', 'XXXXXX234K'], ['REDACT', '[REDACTED]']],
+    ['card_no', 'PII_HIGH', '4111111111116916', ['PARTIAL', '4111-XXXX-XXXX-6916'], ['REDACT', '[REDACTED]']],
+    ['curr_bal', 'FINANCIAL_CONFIDENTIAL', '452300', ['REDACT', '[REDACTED]'], ['BUCKET', '1L-10L']],
+    ['city', 'not personal', 'Pune', ['FULL', 'Pune'], ['FULL', 'Pune']],
+  ];
+  const WHO = {
+    admin: ['Admin', 'security and DBA team. Sees real values, and every look is still written to the audit log.'],
+    support: ['Support', 'customer service. Sees just enough to recognise a caller: first name, last four digits.'],
+    analyst: ['Analyst', 'reports and trends. Sees patterns, not people: tokens, age bands and balance ranges.'],
+  };
+  const ORDER = ['admin', 'support', 'analyst'];
+  const AVATAR = {};
+  ORDER.forEach((r) => { AVATAR[r] = $('.seg [data-role="' + r + '"] svg').outerHTML.replace(/width="18" height="18"/, 'width="36" height="36"'); });
+  const con = $('#demo'), tbody = $('#c-rows'), btns = $$('.seg button');
+  const GLYPHS = '#X%@$&*0123456789ABCDEF';
+  let role = 'admin', audit = 1042, scrambleTimer = 0;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function cells(r) {
+    return ROWS.map(([col, tag, raw, sup, ana]) => {
+      const clean = tag === 'not personal';
+      const [rule, val] = r === 'admin' ? ['FULL', raw] : (r === 'support' ? sup : ana);
+      const cls = clean ? 'clean' : (rule === 'FULL' ? 'full' : 'mask');
+      const mk = clean ? '' : (rule === 'FULL' ? 'b' : 'r');
+      return { col, tag, rule, val, cls, mk };
+    });
+  }
+  function render(r, animate) {
+    const data = cells(r);
+    tbody.innerHTML = data.map((d) => '<tr><td class="col">' + d.col + '</td><td class="tag">' + esc(d.tag) + '</td><td><span class="rule ' + d.cls + '">' + d.rule
+      + '</span></td><td class="val">' + (d.mk ? '<mark class="m ' + d.mk + '" data-v="' + esc(d.val) + '">' + esc(d.val) + '</mark>' : esc(d.val)) + '</td></tr>').join('');
+    const masked = data.filter((d) => d.cls === 'mask').length;
+    $('#c-count').textContent = masked + ' of ' + data.length + ' columns masked';
+    $('#c-role').textContent = r;
+    $('#c-aud').textContent = '#' + (audit++);
+    $('#c-who').innerHTML = AVATAR[r] + '<p><b>' + WHO[r][0] + '</b> &middot; ' + WHO[r][1] + '</p>';
+    if (animate && !reduced.matches) scramble();
+  }
+  function scramble() { // brief pixel "decode" of the new values
+    clearInterval(scrambleTimer);
+    const marks = $$('mark[data-v]', tbody);
+    let f = 0;
+    scrambleTimer = setInterval(() => {
+      f++;
+      marks.forEach((m) => {
+        const v = m.dataset.v, keep = Math.floor(v.length * f / 6);
+        m.textContent = f >= 6 ? v : v.slice(0, keep) + Array.from(v.slice(keep), (c) => (c === ' ' || c === '-') ? c : GLYPHS[(Math.random() * GLYPHS.length) | 0]).join('');
+      });
+      if (f >= 6) clearInterval(scrambleTimer);
+    }, 45);
+  }
+  function setRole(r, animate) {
+    role = r;
+    btns.forEach((b) => {
+      const on = b.dataset.role === r;
+      b.setAttribute('aria-pressed', String(on));
+      const bar = b.querySelector('.bar'); // restart the step progress bar
+      bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = '';
+    });
+    render(r, animate);
+  }
+  btns.forEach((b) => {
+    b.addEventListener('click', () => { con.classList.add('manual'); setRole(b.dataset.role, true); });
+    // the progress bar drives the auto-cycle, so hover/focus pauses both together
+    b.querySelector('.bar').addEventListener('animationend', () => {
+      if (con.classList.contains('manual') || b.dataset.role !== role) return;
+      setRole(ORDER[(ORDER.indexOf(role) + 1) % ORDER.length], true);
+    });
+  });
+  render('admin', false);
+
+  /* ---------- AI ticket toggle ---------- */
+  const ticket = $('#ticket');
+  const OUT = {
+    1: 'Customer [NAME] called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to [ADDRESS].',
+    0: 'Customer <mark class="m a">Ritika Sharma</mark> called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to <mark class="m a">14 Lake View Road, Baner, Pune</mark>.',
+  };
+  $$('.mini button', ticket).forEach((b) => b.addEventListener('click', () => {
+    const on = b.dataset.ai === '1';
+    $$('.mini button', ticket).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    ticket.classList.toggle('on', on);
+    $('#t-out').innerHTML = OUT[on ? 1 : 0];
+    $('#t-leak').hidden = on;
+  }));
+
+  /* ---------- copy buttons ---------- */
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise((ok, bad) => { // plain-http fallback (e.g. a LAN address)
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? ok() : bad(); } catch (e) { bad(e); } finally { ta.remove(); }
+    });
+  }
+  $$('[data-copy]').forEach((b) => {
+    const label = b.lastChild;
+    b.addEventListener('click', () => {
+      const text = $('#' + b.dataset.copy).textContent.trim().replace(/^\$ /gm, '');
+      copyText(text).then(() => { label.textContent = 'Copied'; }, () => { label.textContent = 'Select & copy'; })
+        .finally(() => setTimeout(() => { label.textContent = 'Copy'; }, 1600));
+    });
+  });
+})();
+</script>
+</body>
+</html>

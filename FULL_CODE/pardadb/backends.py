@@ -66,6 +66,19 @@ class Backend:
     def quote(self, ident: str) -> str:
         return '"' + ident.replace('"', '""') + '"'
 
+    def sql(self, template: str, limit: int | None = None, **identifiers: str) -> str:
+        """Fill a constant SQL template with table/column names, always quoted for this dialect.
+
+        Only identifiers go in here (never values: those use driver parameters), so a name read
+        from the database catalog cannot change the meaning of the statement. `{random}` becomes
+        this dialect's random function and `{limit}` a whole number.
+        """
+        fill = {key: self.quote(name) for key, name in identifiers.items()}
+        fill["random"] = self.random_sql()
+        if limit is not None:
+            fill["limit"] = int(limit)
+        return template.format(**fill)
+
     def tables(self) -> list[str]:
         raise NotImplementedError
 
@@ -74,7 +87,7 @@ class Backend:
         raise NotImplementedError
 
     def row_count(self, table: str) -> int:
-        return self.execute(f"SELECT COUNT(*) FROM {self.quote(table)}")[1][0][0]
+        return self.execute(self.sql("SELECT COUNT(*) FROM {t}", t=table))[1][0][0]
 
     def random_sql(self) -> str:
         return "RANDOM()"
@@ -94,25 +107,22 @@ class Backend:
 
     def sample(self, table: str, column: str, n: int = 200) -> list:
         """Random non-null sample: scan cost depends on n, not on table size."""
-        q = self.quote
-        sql = (
-            f"SELECT {q(column)} FROM {q(table)} WHERE {q(column)} IS NOT NULL "
-            f"ORDER BY {self.random_sql()} LIMIT {int(n)}"
+        sql = self.sql(
+            "SELECT {c} FROM {t} WHERE {c} IS NOT NULL ORDER BY {random} LIMIT {limit}", limit=n, c=column, t=table
         )
         return [r[0] for r in self.execute(sql)[1]]
 
     def null_rate(self, table: str, column: str, total: int) -> float:
         if not total:
             return 1.0
-        q = self.quote
-        n = self.execute(f"SELECT COUNT({q(column)}) FROM {q(table)}")[1][0][0]
+        n = self.execute(self.sql("SELECT COUNT({c}) FROM {t}", c=column, t=table))[1][0][0]
         return round(1 - n / total, 3)
 
     def fingerprint(self, table: str) -> tuple[str, int]:
         """SHA-256 over every raw row in primary-key order: proves the data never changed."""
         cols = [c for c, _ in self.columns(table)]
         cur = self.conn.cursor()
-        cur.execute(f"SELECT * FROM {self.quote(table)} ORDER BY {self.quote(cols[0])}")
+        cur.execute(self.sql("SELECT * FROM {t} ORDER BY {c}", t=table, c=cols[0]))
         h, n = hashlib.sha256(), 0
         while True:
             rows = cur.fetchmany(2000)
@@ -149,7 +159,7 @@ class SQLiteBackend(Backend):
         ]
 
     def columns(self, table):
-        return [(r[1], r[2]) for r in self.execute(f"PRAGMA table_info({self.quote(table)})")[1]]
+        return [(r[1], r[2]) for r in self.execute(self.sql("PRAGMA table_info({t})", t=table))[1]]
 
 
 class MySQLBackend(Backend):

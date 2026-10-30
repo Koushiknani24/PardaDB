@@ -61,7 +61,8 @@ def main():
     train = compose(read_jsonl(ROOT / "dataset" / "train.jsonl"), 0.25, rng)
     dev = read_jsonl(ROOT / "dataset" / "dev.jsonl")
     random.shuffle(train)
-    assert torch.cuda.is_available(), "CUDA not available"
+    if not torch.cuda.is_available():
+        raise SystemExit("training needs a CUDA GPU (fp16); none was found")
     out_dir = ROOT / "models" / "checkpoints" / args.name
     print(f"train={len(train)} dev={len(dev)} gpu={torch.cuda.get_device_name(0)} out={out_dir}", flush=True)
 

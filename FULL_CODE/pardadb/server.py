@@ -420,7 +420,7 @@ class Runtime:
         names = []
         for c in cat["columns"]:
             if c["entity"] == "person":
-                q = f"SELECT DISTINCT {b.quote(c['column'])} FROM {b.quote(c['table'])}"
+                q = b.sql("SELECT DISTINCT {c} FROM {t}", c=c["column"], t=c["table"])
                 names += [r[0] for r in b.execute(q)[1] if r[0]]
         self.name_index[n] = detectors.NameIndex(names)
         self.catalogs[n] = cat

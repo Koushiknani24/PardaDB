@@ -30,10 +30,10 @@ extend-exclude = ["ml/.venv", "data"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "S", "SIM"]
-ignore = ["S101", "S311", "S608"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S"]
+"tests/*" = ["S101"]  # pytest uses plain assert
+"ml/*" = ["S311"]  # seeded random numbers generate synthetic training text, not secrets
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
