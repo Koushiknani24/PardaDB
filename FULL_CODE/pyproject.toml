@@ -18,7 +18,7 @@ pardadb = "pardadb.cli:main"
 packages = ["pardadb"]
 
 [tool.setuptools.package-data]
-pardadb = ["policy.json", "dashboard/index.html", "dashboard/landing.html", "dashboard/assets/*", "data/name_words.txt", "data/span_filter.json"]
+pardadb = ["policy.json", "dashboard/index.html", "dashboard/landing.html", "dashboard/assets/*", "resources/name_words.txt", "resources/span_filter.json"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]

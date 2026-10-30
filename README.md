@@ -155,7 +155,7 @@ Bank databases are never written: SQLite opens with `mode=ro` and `query_only`, 
 
 ## Pre-built and third-party code
 
-- **Written by our team before Day 1, for this hackathon:** `ml/datagen/` (the India-first synthetic text generator and its name and organisation lists) and `ml/golden/` (the hand-written test set). `pardadb/data/name_words.txt` is built from those name lists.
+- **Written by our team before Day 1, for this hackathon:** `ml/datagen/` (the India-first synthetic text generator and its name and organisation lists) and `ml/golden/` (the hand-written test set). `pardadb/resources/name_words.txt` is built from those name lists.
 - **Open-source libraries** (versions pinned in `uv.lock` and `ml/requirements.lock.txt`): sqlglot (MIT), PyMySQL (MIT), pg8000 (BSD-3-Clause), rich (MIT), textual (MIT); for the AI add-on gliner (Apache-2.0), PyTorch (BSD-3-Clause), transformers (Apache-2.0), safetensors (Apache-2.0); for development pytest (MIT) and ruff (MIT).
 - **Model:** GLiNER-PII edge by Knowledgator (Apache-2.0).
 - **Landing-page assets:** listed with source and licence in `FULL_CODE/pardadb/dashboard/assets/LICENSES.md`.

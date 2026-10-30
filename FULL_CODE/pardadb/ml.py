@@ -28,7 +28,7 @@ LABELS = {"person": "person", "address": "address"}  # organisations (merchants,
 # The model is good at names and addresses but sometimes tags typos ("cusst", "earlierrr"),
 # banking words ("Chargeback", "courier") or Hinglish words ("nahi aaya"). These checks keep
 # only spans that look like a real name or address.
-_DATA = Path(__file__).resolve().parent / "data"
+_DATA = Path(__file__).resolve().parent / "resources"
 _FILTER = json.loads((_DATA / "span_filter.json").read_text())
 NAME_WORDS = frozenset((_DATA / "name_words.txt").read_text().split())
 STOP = frozenset(_FILTER["stop_words"])
