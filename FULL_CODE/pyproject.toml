@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pardadb"
+version = "2.0.0"
+description = "Automatic PII discovery and role-based dynamic masking for SQL databases"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = ["sqlglot>=25,<27", "pymysql>=1.1", "pg8000>=1.30", "rich>=13", "textual>=1.0"]
+
+[project.scripts]
+pardadb = "pardadb.cli:main"
+
+[tool.setuptools]
+packages = ["pardadb"]
+
+[tool.setuptools.package-data]
+pardadb = ["policy.json", "dashboard/index.html", "dashboard/landing.html", "dashboard/assets/*", "data/name_words.txt", "data/span_filter.json"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["ml/.venv", "data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM"]
+ignore = ["S101", "S311", "S608"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,7 +1,33 @@
-.venv/
-__pycache__/
+# secrets
+.env
+# problem pack data, databases and dumps (never committed)
+data/
+/FULL_CODE/data
+*.db
 *.sqlite
-catalog.json
-audit.jsonl
-.hmac_key
-.mysql_reader
+*.sqlite3
+*.sql.gz
+# model weights and generated training data
+models/
+FULL_CODE/ml/data/
+*.bin
+*.safetensors
+# runtime state: catalog, audit log, HMAC key, playground database
+.state/
+# Python (no trailing slash: also matches symlinked folders)
+.venv
+.cache
+venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+# JS (none used, listed per the guidelines)
+node_modules/
+# OS / editor junk
+.DS_Store
+*.log
+*.zip
