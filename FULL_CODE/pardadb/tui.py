@@ -9,6 +9,7 @@ import contextlib
 import json
 import shlex
 import webbrowser
+from typing import Any
 
 with contextlib.suppress(ImportError):  # arrow keys and history for input(); absent on Windows
     import readline  # noqa: F401
@@ -68,44 +69,51 @@ HELP = [
 
 
 class TUI:
-    def __init__(self, rt: server.Runtime, url: str):
+    """Line-based REPL over a running Runtime: each `c_<word>` method is the command `<word>`."""
+
+    def __init__(self, rt: server.Runtime, url: str) -> None:
         self.rt, self.url = rt, url
         self.con = Console(highlight=False)
-        self.role, self.user = "admin", None
+        self.role: str = "admin"
+        self.user: str | None = None
         self.wide = False
-        self.colmode = "fit"  # fit | all | sensitive | [names]
-        self.last = None  # last query/browse result
-        self.browse_args = None  # (table, offset, filter)
+        self.colmode: str | list[str] = "fit"  # fit | all | sensitive | [names]
+        self.last: dict[str, Any] | None = None  # last query/browse result
+        self.browse_args: tuple[str, int, str | None, str | None] | None = None  # (table, offset, filter col, value)
         self.seen = 0
 
     # ------------------------------------------------------------ helpers
     @property
-    def db(self):
+    def db(self) -> str | None:
         return self.rt.active
 
-    def eng(self):
+    def eng(self) -> engine.Engine | None:
         return self.rt.engines.get(self.db)
 
-    def flush_events(self):
+    def flush_events(self) -> None:
+        """Print monitoring events that arrived since the last prompt."""
         evs = [e for e in self.rt.events if e["seq"] > self.seen]
         for e in evs:
             self.con.print(f"[dim]{e['ts']}[/] [{LEVEL.get(e['level'], 'white')}]{e['msg']}[/]")
         if evs:
             self.seen = evs[-1]["seq"]
 
-    def prompt(self):
+    def prompt(self) -> str:
+        """Readline prompt; \\x01/\\x02 wrap the colour codes so readline measures the width correctly."""
         who = f"{self.user} ({self.role})" if self.user else self.role
         st = self.rt.scan["state"]
         busy = " · scanning" if st == "scanning" else ""
         return f"\x01\x1b[1;34m\x02pardadb\x01\x1b[0m\x02 [{self.db or 'no db'}{busy}] {who} › "
 
-    def cell(self, v):
+    def cell(self, v: Any) -> str:
+        """Escape a value for rich markup and truncate it unless wide mode is on."""
         if v is None:
             return "[dim]NULL[/]"
         s = str(v).replace("[", "\\[")
         return s if self.wide or len(s) <= 30 else s[:29] + "…"
 
-    def show_result(self, res, title):
+    def show_result(self, res: dict[str, Any], title: str) -> None:
+        """Render a query/browse result (or its block/error) and remember it for `open` and `cols`."""
         self.last = res
         if not res.get("ok"):
             if res.get("blocked"):
@@ -154,7 +162,7 @@ class TUI:
             f"{res.get('elapsed_ms')} ms · `open <row> <column>` shows a cell in full[/]"
         )
 
-    def pick_columns(self, cols, rows):
+    def pick_columns(self, cols: list[dict[str, Any]], rows: list[list[Any]]) -> list[int]:
         """Columns to show: chosen list, sensitive only, all, or as many as fit the terminal."""
         n = len(cols)
         if isinstance(self.colmode, list):
@@ -174,7 +182,7 @@ class TUI:
             used += w
         return idx
 
-    def c_cols(self, *args):
+    def c_cols(self, *args: str) -> None:
         arg = " ".join(args).strip().lower()
         self.colmode = (
             "fit"
@@ -187,7 +195,8 @@ class TUI:
         if self.last and self.last.get("ok"):
             self.show_result(self.last, "last result")
 
-    def run_sql(self, sql):
+    def run_sql(self, sql: str) -> None:
+        """Run SQL as the current role on the backend the runtime routes it to."""
         e = self.eng()
         if not e:
             return self.con.print("[yellow]No scanned database yet; wait for the scan to finish.[/]")
@@ -196,7 +205,7 @@ class TUI:
         self.show_result(res, f"{self.user or self.role} on {n}")
 
     # ------------------------------------------------------------ commands
-    def c_status(self, *_):
+    def c_status(self, *_: str) -> None:
         s = self.rt.status()
         p, sc, st = s["process"], s["scan"], s["stats"]
         tb = Table(box=box.SIMPLE, title="Databases")
@@ -223,11 +232,11 @@ class TUI:
             + (f" · last query {lq.get('ms')} ms ({lq.get('status')})" if lq else "")
         )
 
-    def c_events(self, n="20", *_):
+    def c_events(self, n: str = "20", *_: str) -> None:
         for e in list(self.rt.events)[-int(n) :]:
             self.con.print(f"[dim]{e['ts']}[/] [{LEVEL.get(e['level'], 'white')}]{e['msg']}[/]")
 
-    def c_use(self, name=None, *_):
+    def c_use(self, name: str | None = None, *_: str) -> None:
         if name not in self.rt.engines:
             ok = [n for n in self.rt.engines]
             return self.con.print(
@@ -236,18 +245,18 @@ class TUI:
         self.rt.active = name
         self.con.print(f"[green]using {name}[/]")
 
-    def c_role(self, role=None, *_):
+    def c_role(self, role: str | None = None, *_: str) -> None:
         if role not in engine.ROLES:
             return self.con.print(f"[yellow]roles: {', '.join(engine.ROLES)}[/]")
         self.role, self.user = role, None
 
-    def c_user(self, name=None, *_):
+    def c_user(self, name: str | None = None, *_: str) -> None:
         u = next((u for u in self.rt.users if u["username"] == name), None)
         if not u:
             return self.c_users()
         self.user, self.role = u["username"], u["role"]
 
-    def c_users(self, *_):
+    def c_users(self, *_: str) -> None:
         tb = Table(box=box.SIMPLE)
         for c in ("username", "name", "role"):
             tb.add_column(c)
@@ -255,7 +264,7 @@ class TUI:
             tb.add_row(u["username"], u["display_name"], u["role"])
         self.con.print(tb)
 
-    def c_tables(self, *_):
+    def c_tables(self, *_: str) -> None:
         if not self.eng():
             return self.con.print("[yellow]not scanned yet[/]")
         tb = Table(box=box.SIMPLE, title=f"Tables on {self.db}")
@@ -270,7 +279,8 @@ class TUI:
             )
         self.con.print(tb)
 
-    def c_browse(self, table=None, *rest, offset=0):
+    def c_browse(self, table: str | None = None, *rest: str, offset: int = 0) -> None:
+        """Show one 15-row page of a table; a `col=value` argument filters through the guard."""
         if not table:
             return self.con.print("[yellow]browse <table> [column=value][/]")
         fcol = fval = None
@@ -281,28 +291,29 @@ class TUI:
         res = self.eng().browse(table, self.role, self.user, offset, 15, fcol, fval)
         self.show_result(self.rt.count(res), f"{table} as {self.user or self.role} · rows {offset + 1}-{offset + 15}")
 
-    def c_next(self, *_, step=15):
+    def c_next(self, *_: str, step: int = 15) -> None:
         if not self.browse_args:
             return self.con.print("[yellow]browse a table first[/]")
         t, off, fc, fv = self.browse_args
         off = max(0, off + step)
         self.c_browse(t, *([f"{fc}={fv}"] if fc else []), offset=off)
 
-    def c_prev(self, *_):
+    def c_prev(self, *_: str) -> None:
         self.c_next(step=-15)
 
-    def c_compare(self, *sql):
+    def c_compare(self, *sql: str) -> None:
         q = " ".join(sql)
         if not q or not self.eng():
             return self.con.print("[yellow]compare <SQL>[/]")
         for r in engine.ROLES:
             self.show_result(self.rt.count(self.eng().run(q, r, f"tui:{r}")), r.upper())
 
-    def c_presets(self, *_):
+    def c_presets(self, *_: str) -> None:
         for i, p in enumerate(server.PRESETS):
             self.con.print(f"[bold]{i:>2}[/] {p['title']} [dim]— {p['expect']}[/]")
 
-    def c_p(self, n=None, *_):
+    def c_p(self, n: str | None = None, *_: str) -> None:
+        """Run demo preset number n, or list the presets when n is missing or invalid."""
         try:
             p = server.PRESETS[int(n)]
         except (TypeError, ValueError, IndexError):
@@ -310,7 +321,8 @@ class TUI:
         self.con.print(f"[dim]{p['sql']}[/]")
         self.run_sql(p["sql"])
 
-    def c_open(self, row=None, col=None, *_):
+    def c_open(self, row: str | None = None, col: str | None = None, *_: str) -> None:
+        """Show one cell of the last result in full, highlighting detected PII spans."""
         res = self.last
         if not res or not res.get("ok"):
             return self.con.print("[yellow]run a query or browse first[/]")
@@ -326,7 +338,7 @@ class TUI:
             body = Text(str(v))
             for a, b, _ent, masked in marks:
                 body.stylize("bold white on red" if masked else "bold black on cyan", a, b)
-            kinds = {}
+            kinds: dict[str, int] = {}
             for m in marks:
                 kinds[m[2]] = kinds.get(m[2], 0) + 1
             how = "masked" if marks[0][3] else "detected (Admin sees them in full)"
@@ -344,11 +356,11 @@ class TUI:
             v = json.dumps(json.loads(v), indent=2, ensure_ascii=False)
         self.con.print(Panel(str(v), title=title, border_style="cyan"))
 
-    def c_wide(self, *_):
+    def c_wide(self, *_: str) -> None:
         self.wide = not self.wide
         self.con.print(f"wide cells {'on' if self.wide else 'off'}")
 
-    def c_catalog(self, *args):
+    def c_catalog(self, *args: str) -> None:
         cat = self.rt.catalogs.get(self.db)
         if not cat:
             return self.con.print("[yellow]not scanned yet[/]")
@@ -370,12 +382,12 @@ class TUI:
                 )
         self.con.print(tb)
 
-    def c_scan(self, *_):
+    def c_scan(self, *_: str) -> None:
         if self.db not in self.rt.conns:
             return self.con.print("[yellow]no database[/]")
         self.rt.run_scan(self.db)
 
-    def c_policy(self, *_):
+    def c_policy(self, *_: str) -> None:
         tb = Table(box=box.SIMPLE, title="Policy: tag x role")
         tb.add_column("tag")
         for r in engine.ROLES:
@@ -384,7 +396,7 @@ class TUI:
             tb.add_row(f"[{TAG.get(tag, 'white')}]{tag}[/]", *[roles[r] for r in engine.ROLES])
         self.con.print(tb)
 
-    def c_audit(self, n="15", *_):
+    def c_audit(self, n: str = "15", *_: str) -> None:
         a = audit.read(int(n))
         self.con.print(
             "[green]hash chain intact[/]" if a["chain_ok"] else "[bold red]hash chain BROKEN[/]",
@@ -405,7 +417,7 @@ class TUI:
             )
         self.con.print(tb)
 
-    def c_verify(self, *_):
+    def c_verify(self, *_: str) -> None:
         res = self.rt.integrity(self.db)
         tb = Table(box=box.SIMPLE, title=f"Integrity · {self.db}")
         for c in ("table", "rows", "before", "after", "unchanged"):
@@ -420,11 +432,11 @@ class TUI:
             )
         self.con.print(tb)
 
-    def c_dash(self, *_):
+    def c_dash(self, *_: str) -> None:
         webbrowser.open(self.url)
         self.con.print(f"opened {self.url}")
 
-    def c_help(self, *_):
+    def c_help(self, *_: str) -> None:
         tb = Table(box=box.SIMPLE, title="PardaDB commands")
         tb.add_column("command", style="bold")
         tb.add_column("what it does")
@@ -435,7 +447,8 @@ class TUI:
     # ------------------------------------------------------------ loop
     ALIASES = {"s": "status", "t": "tables", "q": "sql", "c": "compare", "?": "help", "h": "help"}
 
-    def loop(self):
+    def loop(self) -> None:
+        """Read-eval loop until quit/EOF; plain SQL runs directly, other words dispatch to `c_<word>`."""
         self.con.print(
             f"[bold]Terminal control is ready.[/] Dashboard: {self.url} · type [bold]help[/] for commands, "
             f"or just type SQL."

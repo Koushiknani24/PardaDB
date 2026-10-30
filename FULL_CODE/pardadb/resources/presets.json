@@ -1,0 +1,170 @@
+[
+  {
+    "category": "SELECT (read and mask)",
+    "title": "Customer look-up",
+    "expect": "Names, phones and balances masked differently per role",
+    "sql": "SELECT c.cust_nm, c.mob_no, c.dob_dt, c.pincode, a.account_no, a.curr_bal FROM customers c JOIN accounts a ON a.customer_id = c.customer_id LIMIT 10"
+  },
+  {
+    "category": "SELECT (read and mask)",
+    "title": "Cards",
+    "expect": "Support sees 4111-XXXX-XXXX-1111, Analyst sees nothing",
+    "sql": "SELECT CARD_NO, NAME_ON_CARD, CARD_TYPE, CREDIT_LIMIT FROM cards LIMIT 10"
+  },
+  {
+    "category": "SELECT (read and mask)",
+    "title": "KYC (Aadhaar, PAN, JSON)",
+    "expect": "Pre-masked Aadhaar handled; JSON keys masked",
+    "sql": "SELECT customer_id, aadhaar_no, pan_no, kyc_meta FROM kyc_records LIMIT 10"
+  },
+  {
+    "category": "SELECT (read and mask)",
+    "title": "Hidden PAN column (col_7)",
+    "expect": "A column with a meaningless name is still protected",
+    "sql": "SELECT app_id, loan_type, declared_income_inr, col_7, remarks FROM loan_applications WHERE col_7 IS NOT NULL LIMIT 10"
+  },
+  {
+    "category": "SELECT (read and mask)",
+    "title": "Support tickets (free text)",
+    "expect": "PII inside Hinglish text masked span by span",
+    "sql": "SELECT ticket_id, category, ticket_text, notes FROM support_tickets LIMIT 10"
+  },
+  {
+    "category": "SELECT (read and mask)",
+    "title": "Transactions",
+    "expect": "Narrations and counterparties masked, amounts bucketed",
+    "sql": "SELECT txn_ts, amount_inr, channel, counterparty, narration FROM transactions LIMIT 10"
+  },
+  {
+    "category": "SELECT (read and mask)",
+    "title": "NRI customers (SSN)",
+    "expect": "SSN in three formats, US phones",
+    "sql": "SELECT customer_id, ssn, us_phone, us_zip, residency_status FROM international_customers LIMIT 10"
+  },
+  {
+    "category": "SELECT (read and mask)",
+    "title": "Analytics on tokens",
+    "expect": "Analyst can still count per customer via tokens",
+    "sql": "SELECT customer_id, COUNT(*) AS accounts FROM accounts GROUP BY customer_id ORDER BY accounts DESC LIMIT 10"
+  },
+  {
+    "category": "Bypass and probe attempts",
+    "title": "Rename with an alias",
+    "expect": "Masked: lineage follows the alias",
+    "sql": "SELECT x FROM (SELECT CARD_NO AS x FROM cards) t LIMIT 5"
+  },
+  {
+    "category": "Bypass and probe attempts",
+    "title": "Cut with SUBSTR",
+    "expect": "Redacted: derived from a masked column",
+    "sql": "SELECT SUBSTR(CARD_NO, 1, 12) AS first_digits FROM cards LIMIT 5"
+  },
+  {
+    "category": "Bypass and probe attempts",
+    "title": "UNION two PAN columns",
+    "expect": "Masked: both branches are tagged",
+    "sql": "SELECT col_7 AS pan FROM loan_applications WHERE col_7 IS NOT NULL UNION SELECT pan_no FROM kyc_records LIMIT 5"
+  },
+  {
+    "category": "Bypass and probe attempts",
+    "title": "WHERE on a card number",
+    "expect": "Blocked for Support and Analyst",
+    "sql": "SELECT customer_id FROM cards WHERE CARD_NO LIKE '4111%'"
+  },
+  {
+    "category": "Bypass and probe attempts",
+    "title": "ORDER BY balance",
+    "expect": "Blocked: sorting reveals rank",
+    "sql": "SELECT customer_id, acct_type FROM accounts ORDER BY curr_bal DESC LIMIT 5"
+  },
+  {
+    "category": "Writes on bank data (blocked)",
+    "title": "DELETE bank rows",
+    "expect": "Blocked: read-only by design",
+    "sql": "DELETE FROM accounts"
+  },
+  {
+    "category": "Writes on bank data (blocked)",
+    "title": "UPDATE a balance",
+    "expect": "Blocked: read-only by design",
+    "sql": "UPDATE accounts SET curr_bal = 0 WHERE account_no = '53545092010380'"
+  },
+  {
+    "category": "Writes on bank data (blocked)",
+    "title": "INSERT a fake customer",
+    "expect": "Blocked: read-only by design",
+    "sql": "INSERT INTO customers (customer_id, cust_nm) VALUES ('CIF-HACKER01', 'Mallory')"
+  },
+  {
+    "category": "Writes on bank data (blocked)",
+    "title": "DROP a table",
+    "expect": "Blocked: read-only by design",
+    "sql": "DROP TABLE transactions"
+  },
+  {
+    "category": "Playground: CREATE",
+    "title": "Create your own table",
+    "expect": "A new test table; PardaDB scans it automatically",
+    "sql": "CREATE TABLE my_complaints (id INTEGER PRIMARY KEY AUTOINCREMENT, cust_nm TEXT, mob_no TEXT, complaint TEXT)"
+  },
+  {
+    "category": "Playground: INSERT",
+    "title": "Insert into your table",
+    "expect": "Your own values and free text",
+    "sql": "INSERT INTO my_complaints (cust_nm, mob_no, complaint) VALUES ('Ritika Sharma', '+91-90000 12345', 'Bhai mera card 5555 5555 5555 4444 block karo, Aadhaar 2345 6789 0123 hai. Regards, Ritika Sharma')"
+  },
+  {
+    "category": "Playground: INSERT",
+    "title": "Insert a ticket",
+    "expect": "Free text into the sample tickets table",
+    "sql": "INSERT INTO test_tickets (customer_name, channel, ticket_text) VALUES ('Arjun Mehta', 'App Chat', 'PAN DEFPA4567J update karna hai, account 98765432109876. Call me on 9000054321')"
+  },
+  {
+    "category": "Playground: INSERT",
+    "title": "Insert a customer",
+    "expect": "A new row with every PII type",
+    "sql": "INSERT INTO test_customers (full_name, mobile, email, card_no, aadhaar, pan, balance, notes) VALUES ('Neha Kulkarni', '+91 99999 55555', 'neha.k@mail.example', '4111 1111 1111 1111', '4567 8901 2345', 'EFGPN5678K', 87000.25, 'Asked to call on 9999955555 after 5 pm')"
+  },
+  {
+    "category": "Playground: SELECT",
+    "title": "Read your table",
+    "expect": "Masked per role once the re-scan finishes",
+    "sql": "SELECT * FROM my_complaints ORDER BY id DESC"
+  },
+  {
+    "category": "Playground: SELECT",
+    "title": "Read tickets",
+    "expect": "Inserted free text masked span by span",
+    "sql": "SELECT * FROM test_tickets ORDER BY id DESC"
+  },
+  {
+    "category": "Playground: SELECT",
+    "title": "Read customers",
+    "expect": "Sample customers masked per role",
+    "sql": "SELECT * FROM test_customers ORDER BY id DESC"
+  },
+  {
+    "category": "Playground: UPDATE / DELETE",
+    "title": "Update a ticket",
+    "expect": "Change free text; read it again masked",
+    "sql": "UPDATE test_tickets SET ticket_text = 'New number is 9000077777, old card 4012 8888 8888 1881 band karo' WHERE id = 1"
+  },
+  {
+    "category": "Playground: UPDATE / DELETE",
+    "title": "Delete a ticket",
+    "expect": "Removes one test row",
+    "sql": "DELETE FROM test_tickets WHERE id = 3"
+  },
+  {
+    "category": "Playground: ALTER / DROP",
+    "title": "Add a column",
+    "expect": "Schema change: the new column is scanned automatically",
+    "sql": "ALTER TABLE test_customers ADD COLUMN alt_mobile TEXT"
+  },
+  {
+    "category": "Playground: ALTER / DROP",
+    "title": "Drop your table",
+    "expect": "Removes my_complaints from the playground",
+    "sql": "DROP TABLE my_complaints"
+  }
+]

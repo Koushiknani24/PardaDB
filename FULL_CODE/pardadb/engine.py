@@ -12,10 +12,11 @@ from __future__ import annotations
 import json
 import logging
 import time
+from typing import Any, TypedDict
 
 import sqlglot
 from sqlglot import exp
-from sqlglot.lineage import lineage
+from sqlglot.lineage import Node, lineage
 from sqlglot.optimizer.qualify import qualify
 from sqlglot.optimizer.scope import Scope, build_scope
 from sqlglot.schema import MappingSchema
@@ -55,23 +56,37 @@ BANNED_FUNCS = {
 }
 
 
+ColumnInfo = dict[str, Any]  # one scanner catalog entry: table, column, tag, entity, json_keys, ...
+SourceColumn = tuple[str, str]  # (table, column)
+
+
+class PlanEntry(TypedDict):
+    """Masking decision for one output column of a query."""
+
+    name: str
+    strategy: str
+    info: ColumnInfo | None
+    source: list[str]
+
+
 class Blocked(Exception):
-    pass
+    """The query was refused (write, banned function or inference-guard violation)."""
 
 
-def load_policy() -> dict:
+def load_policy() -> dict[str, Any]:
+    """Role x tag masking policy from policy.json."""
     return json.loads(config.POLICY_PATH.read_text())
 
 
-def _source_columns(node):
-    out = set()
+def _source_columns(node: Node) -> set[SourceColumn]:
+    out: set[SourceColumn] = set()
     for n in node.walk():
         if not n.downstream and isinstance(n.source, exp.Table):
             out.add((n.source.name, n.name.split(".")[-1].strip('"`')))
     return out
 
 
-def _is_direct(node):
+def _is_direct(node: Node) -> bool:
     """True when every hop from output to source is a bare column or a rename."""
     for n in node.walk():
         e = n.expression
@@ -82,7 +97,15 @@ def _is_direct(node):
 
 
 class Engine:
-    def __init__(self, backend, catalog: dict | None, policy: dict | None = None, names=None):
+    """Plans, guards, executes and masks queries against one backend."""
+
+    def __init__(
+        self,
+        backend: backends.Backend,
+        catalog: dict[str, Any] | None,
+        policy: dict[str, Any] | None = None,
+        names: detectors.NameIndex | None = None,
+    ) -> None:
         self.b = backend
         self.catalog = catalog or {"columns": []}
         self.idx = scanner.index(self.catalog)
@@ -95,22 +118,24 @@ class Engine:
             MappingSchema(self.schema, dialect=backend.dialect, normalize=False) if self.pg else self.schema
         )
 
-    def _lineage(self, name, expression):
+    def _lineage(self, name: str, expression: exp.Expression) -> Node:
         col = exp.to_identifier(name, quoted=True) if self.pg else name
         return lineage(col, expression, schema=self.sg_schema, dialect=self.b.dialect)
 
     # ----------------------------------------------------------- policy lookup
-    def info(self, table, col):
+    def info(self, table: str, col: str) -> ColumnInfo | None:
+        """Catalog entry for a tagged column, or None when it holds no PII."""
         return self.idx.get((table.lower(), col.lower()))
 
-    def strategy(self, role, info):
+    def strategy(self, role: str, info: ColumnInfo | None) -> str:
+        """Masking strategy `role` gets for a column: entity overrides win over the tag default."""
         if not info:
             return "FULL"
         over = self.policy.get("entity_overrides", {}).get(info.get("entity") or "", {})
         return over.get(role) or self.policy["tags"][info["tag"]][role]
 
     # ----------------------------------------------------------- inference guard
-    def _resolve(self, col, scope):
+    def _resolve(self, col: exp.Column, scope: Scope) -> set[SourceColumn]:
         if not col.table and col.name in scope.expression.named_selects:
             # ORDER BY / GROUP BY an output alias, e.g. ORDER BY n where n = COUNT(*)
             return _source_columns(self._lineage(col.name, scope.expression))
@@ -124,13 +149,13 @@ class Engine:
                 log.info("lineage failed for %s: %s", col.sql(), e)  # fall through: fail closed
         raise Blocked(f"cannot resolve column {col.sql()} for the inference guard; query refused")
 
-    def _base_hash(self, col, scope, role):
+    def _base_hash(self, col: exp.Column, scope: Scope, role: str) -> bool:
         src = scope.sources.get(col.table)
         if not isinstance(src, exp.Table):
             return False
         return self.strategy(role, self.info(src.name, col.name)) == "HASH"
 
-    def _hash_safe(self, col, clause, scope, role):
+    def _hash_safe(self, col: exp.Column, clause: exp.Expression, scope: Scope, role: str) -> bool:
         if not self._base_hash(col, scope, role):
             return False
         if isinstance(clause, exp.Group) and col.parent is clause:
@@ -140,7 +165,7 @@ class Engine:
             return isinstance(other, exp.Column) and self._base_hash(other, scope, role)
         return False
 
-    def _guard(self, tree, role):
+    def _guard(self, tree: exp.Expression, role: str) -> None:
         for setop in tree.find_all(exp.SetOperation):
             order = setop.args.get("order")
             outputs = setop.named_selects
@@ -187,7 +212,8 @@ class Engine:
                             )
 
     # ----------------------------------------------------------- planning
-    def plan(self, sql: str, role: str):
+    def plan(self, sql: str, role: str) -> tuple[exp.Expression, list[PlanEntry]]:
+        """Validate `sql` for `role`; return the qualified, LIMITed tree and one masking decision per output."""
         try:
             tree = sqlglot.parse_one(sql, read=self.b.dialect)
         except sqlglot.errors.ParseError as e:
@@ -225,7 +251,7 @@ class Engine:
             self._guard(tree, role)
         if isinstance(tree, (exp.Select, exp.SetOperation)) and not tree.args.get("limit"):
             tree = tree.limit(config.MAX_ROWS)
-        plan = []
+        plan: list[PlanEntry] = []
         for name in tree.named_selects:
             node = self._lineage(name, tree)
             srcs = _source_columns(node)
@@ -243,7 +269,8 @@ class Engine:
         return tree, plan
 
     # ----------------------------------------------------------- execution
-    def run(self, sql: str, role: str, user: str | None = None, record: bool = True) -> dict:
+    def run(self, sql: str, role: str, user: str | None = None, record: bool = True) -> dict[str, Any]:
+        """Execute `sql` as `role` and return the masked result, or why it was blocked or failed."""
         t0 = time.perf_counter()
         base = {"user": user, "role": role, "backend": self.b.name, "sql": sql}
         if getattr(self.b, "writable", False):
@@ -326,7 +353,7 @@ class Engine:
             "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
         }
 
-    def write(self, sql, base, t0, record):
+    def write(self, sql: str, base: dict[str, Any], t0: float, record: bool) -> dict[str, Any] | None:
         """Playground only: run CREATE / INSERT / UPDATE / DELETE / ALTER / DROP. Returns None for reads."""
         try:
             tree = sqlglot.parse_one(sql, read=self.b.dialect)
@@ -358,7 +385,16 @@ class Engine:
             "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
         }
 
-    def browse(self, table: str, role: str, user=None, offset=0, limit=25, filter_col=None, filter_val=None) -> dict:
+    def browse(
+        self,
+        table: str,
+        role: str,
+        user: str | None = None,
+        offset: int = 0,
+        limit: int = 25,
+        filter_col: str | None = None,
+        filter_val: str | None = None,
+    ) -> dict[str, Any]:
         """Page through a table as `role`. Filters go through the same inference guard."""
         if table not in self.schema:
             return {"ok": False, "blocked": False, "error": f"unknown table {table}"}

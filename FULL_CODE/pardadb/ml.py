@@ -15,7 +15,9 @@ import threading
 import time
 import urllib.request
 from collections import OrderedDict
+from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
 from . import config
 
@@ -45,7 +47,7 @@ def _name_token(tok: str) -> bool:
     return core[0].isupper() and (core[1:].islower() or core.isupper() or "'" in core or "-" in core)
 
 
-def refine(text: str, s: int, e: int, label: str, score: float):
+def refine(text: str, s: int, e: int, label: str, score: float) -> tuple[int, int] | None:
     """Return (start, end) of a cleaned span, or None to drop it."""
     seg = text[s:e]
     if label == "address":
@@ -78,7 +80,7 @@ def refine(text: str, s: int, e: int, label: str, score: float):
     return toks[0][0], toks[-1][1]
 
 
-def _call(path: str, payload: dict | None = None, timeout: float = config.ML_TIMEOUT_S) -> dict:
+def _call(path: str, payload: dict[str, Any] | None = None, timeout: float = config.ML_TIMEOUT_S) -> dict[str, Any]:
     """GET (no payload) or POST JSON to the sidecar and return its JSON reply."""
     data = None if payload is None else json.dumps(payload).encode()
     # URL comes from config.ML_URL, which is checked to be http(s) at start-up.
@@ -88,10 +90,12 @@ def _call(path: str, payload: dict | None = None, timeout: float = config.ML_TIM
 
 
 class MLClient:
-    def __init__(self):
+    """Starts, health-checks and queries the sidecar, with an LRU cache of span results."""
+
+    def __init__(self) -> None:
         self.lock = threading.Lock()
-        self.cache: OrderedDict[str, list] = OrderedDict()
-        self.info = {
+        self.cache: OrderedDict[str, list[tuple[int, int, str]]] = OrderedDict()
+        self.info: dict[str, Any] = {
             "status": "off",
             "device": None,
             "params_m": None,
@@ -101,7 +105,7 @@ class MLClient:
             "last_ms": None,
         }
         self.next_check = 0.0
-        self.proc = None
+        self.proc: subprocess.Popen[bytes] | None = None
         self.enabled = True  # the user can switch the model off from the TUI or dashboard
 
     # ------------------------------------------------------------ lifecycle
@@ -133,7 +137,7 @@ class MLClient:
         self.info["status"] = "failed to start"
         return False
 
-    def stop(self, shutdown_external: bool = False):
+    def stop(self, shutdown_external: bool = False) -> None:
         """Stop the sidecar we started; with `shutdown_external`, also ask an external one to exit."""
         self.enabled = False
         if self.proc and self.proc.poll() is None:
@@ -145,6 +149,7 @@ class MLClient:
         self.info.update(status="off", device=None, rss_mb=None)
 
     def health(self) -> bool:
+        """Ping the sidecar and refresh `info`; False when disabled or unreachable."""
         if not self.enabled:
             return False
         try:
@@ -158,6 +163,7 @@ class MLClient:
 
     @property
     def ready(self) -> bool:
+        """True when the sidecar is usable; re-checks a down sidecar at most every 30 s."""
         if not self.enabled:
             return False
         if self.info["status"] != "ready" and time.monotonic() >= self.next_check:
@@ -166,9 +172,10 @@ class MLClient:
         return self.info["status"] == "ready"
 
     # ------------------------------------------------------------ inference
-    def spans_for(self, texts) -> dict:
+    def spans_for(self, texts: Iterable[str]) -> dict[str, list[tuple[int, int, str]]]:
         """{text: [(start, end, entity), ...]} for every text, using the cache and one batched call."""
-        out, todo = {}, []
+        out: dict[str, list[tuple[int, int, str]]] = {}
+        todo: list[str] = []
         with self.lock:
             for t in texts:
                 if t in self.cache:

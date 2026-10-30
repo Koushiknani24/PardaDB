@@ -10,8 +10,12 @@ import hashlib
 import json
 import sqlite3
 import time
+from typing import Any
 
 from . import config
+
+Row = list[Any]
+Schema = dict[str, dict[str, str]]  # {table: {column: declared type}}
 
 # The database playground lives in FULL_CODE/db/ as plain SQL so the schema is reviewable.
 PLAYGROUND_SQL = (config.REPO / "db" / "playground_schema.sql", config.REPO / "db" / "playground_seed.sql")
@@ -35,7 +39,8 @@ def driver_errors() -> tuple[type[BaseException], ...]:
     return tuple(errors)
 
 
-def normalise(v):
+def normalise(v: Any) -> Any:
+    """Driver value -> plain JSON-friendly value, identical across SQLite, MySQL and PostgreSQL."""
     if isinstance(v, decimal.Decimal):
         v = float(v)
     if isinstance(v, float):
@@ -52,15 +57,17 @@ def normalise(v):
 
 
 class Backend:
+    """Base adapter: subclasses supply connect(), tables(), columns() and dialect quirks."""
+
     name = label = dialect = ""
     detail = ""
 
-    def __init__(self):
-        self.conn = None
-        self._schema = None
+    def __init__(self) -> None:
+        self.conn: Any = None  # DB-API connection of whichever driver the subclass uses
+        self._schema: Schema | None = None
 
     # -- interface -------------------------------------------------------
-    def connect(self):
+    def connect(self) -> Backend:
         raise NotImplementedError
 
     def quote(self, ident: str) -> str:
@@ -93,19 +100,20 @@ class Backend:
         return "RANDOM()"
 
     # -- shared ----------------------------------------------------------
-    def execute(self, sql: str, params=(), limit: int | None = None):
+    def execute(self, sql: str, params: tuple[Any, ...] = (), limit: int | None = None) -> tuple[list[str], list[Row]]:
+        """Run one statement; return (column names, normalised rows), at most `limit` rows when given."""
         cur = self.conn.cursor()
         cur.execute(sql, params) if params else cur.execute(sql)
         cols = [d[0] for d in cur.description] if cur.description else []
         rows = cur.fetchmany(limit) if limit else cur.fetchall()
         return cols, [[normalise(v) for v in r] for r in rows]
 
-    def schema(self) -> dict:
+    def schema(self) -> Schema:
         if self._schema is None:
             self._schema = {t: {c: (ty or "TEXT") for c, ty in self.columns(t)} for t in self.tables()}
         return self._schema
 
-    def sample(self, table: str, column: str, n: int = 200) -> list:
+    def sample(self, table: str, column: str, n: int = 200) -> list[Any]:
         """Random non-null sample: scan cost depends on n, not on table size."""
         sql = self.sql(
             "SELECT {c} FROM {t} WHERE {c} IS NOT NULL ORDER BY {random} LIMIT {limit}", limit=n, c=column, t=table
@@ -142,7 +150,7 @@ class Backend:
 class SQLiteBackend(Backend):
     name, label, dialect = "sqlite", "SQLite", "sqlite"
 
-    def connect(self):
+    def connect(self) -> SQLiteBackend:
         path = config.SQLITE_PATH
         self.detail = f"{path.name} (read-only)"
         # mode=ro: the engine physically cannot modify the file
@@ -150,7 +158,7 @@ class SQLiteBackend(Backend):
         self.conn.execute("PRAGMA query_only = ON")
         return self
 
-    def tables(self):
+    def tables(self) -> list[str]:
         return [
             r[0]
             for r in self.execute(
@@ -158,14 +166,14 @@ class SQLiteBackend(Backend):
             )[1]
         ]
 
-    def columns(self, table):
+    def columns(self, table: str) -> list[tuple[str, str]]:
         return [(r[1], r[2]) for r in self.execute(self.sql("PRAGMA table_info({t})", t=table))[1]]
 
 
 class MySQLBackend(Backend):
     name, label, dialect = "mysql", "MySQL 8", "mysql"
 
-    def connect(self):
+    def connect(self) -> MySQLBackend:
         import pymysql
 
         c = config.MYSQL
@@ -182,13 +190,13 @@ class MySQLBackend(Backend):
         self.conn.cursor().execute("SET SESSION TRANSACTION READ ONLY")
         return self
 
-    def quote(self, ident):
+    def quote(self, ident: str) -> str:
         return "`" + ident.replace("`", "``") + "`"
 
-    def random_sql(self):
+    def random_sql(self) -> str:
         return "RAND()"
 
-    def tables(self):
+    def tables(self) -> list[str]:
         return [
             r[0]
             for r in self.execute(
@@ -198,7 +206,7 @@ class MySQLBackend(Backend):
             )[1]
         ]
 
-    def columns(self, table):
+    def columns(self, table: str) -> list[tuple[str, str]]:
         return [
             (r[0], r[1])
             for r in self.execute(
@@ -212,7 +220,7 @@ class MySQLBackend(Backend):
 class PostgresBackend(Backend):
     name, label, dialect = "postgres", "PostgreSQL 16", "postgres"
 
-    def connect(self):
+    def connect(self) -> PostgresBackend:
         import pg8000.dbapi
 
         c = config.POSTGRES
@@ -222,7 +230,7 @@ class PostgresBackend(Backend):
         self.conn.cursor().execute("SET default_transaction_read_only = on")
         return self
 
-    def tables(self):
+    def tables(self) -> list[str]:
         return [
             r[0]
             for r in self.execute(
@@ -231,7 +239,7 @@ class PostgresBackend(Backend):
             )[1]
         ]
 
-    def columns(self, table):
+    def columns(self, table: str) -> list[tuple[str, str]]:
         return [
             (r[0], r[1])
             for r in self.execute(
@@ -249,7 +257,7 @@ class PlaygroundBackend(SQLiteBackend):
     name, label, dialect = "playground", "Playground (writable)", "sqlite"
     writable = True
 
-    def connect(self):
+    def connect(self) -> PlaygroundBackend:
         path = config.state_path("playground.db")
         fresh = not path.exists()
         self.detail = f"{path.name} (your test tables)"
@@ -261,6 +269,7 @@ class PlaygroundBackend(SQLiteBackend):
         return self
 
     def write(self, sql: str) -> int:
+        """Run one write statement and commit; returns the affected row count (-1 for DDL)."""
         cur = self.conn.cursor()
         cur.execute(sql)
         self.conn.commit()
@@ -268,7 +277,7 @@ class PlaygroundBackend(SQLiteBackend):
         return cur.rowcount
 
 
-BACKENDS = {
+BACKENDS: dict[str, type[Backend]] = {
     "sqlite": SQLiteBackend,
     "mysql": MySQLBackend,
     "postgres": PostgresBackend,
@@ -277,4 +286,5 @@ BACKENDS = {
 
 
 def connect(name: str) -> Backend:
+    """Instantiate and connect the backend registered under `name`."""
     return BACKENDS[name]().connect()

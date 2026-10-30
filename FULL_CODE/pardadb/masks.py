@@ -10,13 +10,17 @@ import json
 import os
 import re
 import secrets
+from typing import Any
 
 from . import config, detectors
 
-_KEY = None
+Span = tuple[int, int, str]  # (start, end, entity) inside a text value
+
+_KEY: bytes | None = None
 
 
 def hmac_key() -> bytes:
+    """Token key: PARDADB_HMAC_KEY if set, else a random key created once in the state dir."""
     global _KEY
     if _KEY is None:
         env = os.environ.get("PARDADB_HMAC_KEY")
@@ -32,17 +36,18 @@ def hmac_key() -> bytes:
     return _KEY
 
 
-def token(entity: str, v) -> str:
+def token(entity: str, v: Any) -> str:
     """Keyed HMAC of the canonical value: same person -> same token, joins and GROUP BY still work."""
     raw = f"{entity}:{detectors.canonical(entity, v)}".encode()
     return "tok_" + hmac.new(hmac_key(), raw, hashlib.sha256).hexdigest()[:12]
 
 
-def _last4_mask(d: str, fill="X") -> str:
+def _last4_mask(d: str, fill: str = "X") -> str:
     return fill * max(len(d) - 4, 0) + d[-4:]
 
 
-def partial_value(entity: str, v) -> str:
+def partial_value(entity: str, v: Any) -> str:
+    """Entity-aware partial reveal, e.g. a card keeps its first and last four digits."""
     s = str(v).strip()
     if entity == "card":
         d = detectors.digits(s)
@@ -80,7 +85,8 @@ def age_on(born: dt.date, today: dt.date) -> int:
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
 
-def generalize(entity: str, v, today: dt.date | None = None):
+def generalize(entity: str, v: Any, today: dt.date | None = None) -> str:
+    """Coarsen a value: date of birth to a 10-year age band, postal code to its prefix, gender to M/F."""
     s = str(v).strip()
     if entity == "dob":
         try:
@@ -97,7 +103,8 @@ def generalize(entity: str, v, today: dt.date | None = None):
     return "[REDACTED]"
 
 
-def bucket(v):
+def bucket(v: Any) -> str:
+    """Amount range label in Indian units (K, lakh, crore); non-numbers are redacted."""
     try:
         n = float(v)
     except (TypeError, ValueError):
@@ -122,11 +129,19 @@ SPAN_LABEL = {
 }
 
 
-def mask_text(text: str, typed: bool, names=None, with_marks: bool = False, extra=None):
+def mask_text(
+    text: str,
+    typed: bool,
+    names: detectors.NameIndex | None = None,
+    with_marks: bool = False,
+    extra: list[Span] | None = None,
+) -> str | tuple[str, list[list[int | str]]]:
     """Mask each PII span inside free text. With `with_marks`, also return
     [start, end, entity] of every masked span in the *output* text."""
     spans = detectors.find_spans(text, names, extra)
-    out, pos, marks, length = [], 0, [], 0
+    out: list[str] = []
+    marks: list[list[int | str]] = []
+    pos = length = 0
     for s, e, ent in spans:
         out.append(text[pos:s])
         length += s - pos
@@ -141,7 +156,8 @@ def mask_text(text: str, typed: bool, names=None, with_marks: bool = False, extr
     return (masked, marks) if with_marks else masked
 
 
-def mask_json(v, info, redact: bool):
+def mask_json(v: Any, info: dict[str, Any], redact: bool) -> str:
+    """Mask the PII keys of a JSON document (redact or partial) and the PII spans in its note fields."""
     try:
         doc = json.loads(v)
     except (TypeError, ValueError):
@@ -161,7 +177,7 @@ def mask_json(v, info, redact: bool):
     return json.dumps(doc, ensure_ascii=False, sort_keys=True)
 
 
-def apply(strategy: str, v, info: dict | None, ctx: dict | None = None):
+def apply(strategy: str, v: Any, info: dict[str, Any] | None, ctx: dict[str, Any] | None = None) -> Any:
     """Apply one strategy to one value."""
     if v is None or strategy == "FULL":
         return v

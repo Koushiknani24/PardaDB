@@ -20,6 +20,8 @@ import threading
 import time
 import urllib.request
 import webbrowser
+from collections.abc import Sequence
+from typing import Any
 
 from rich import box
 from rich.console import Console
@@ -40,18 +42,20 @@ TAG = {
 }
 
 
-def banner():
+def banner() -> None:
     con.print(
         f"[bold white on #1f4687] PardaDB [/] [dim]v{__version__} · automatic PII discovery and "
         f"role-based masking · raw data is never changed[/]"
     )
 
 
-def log(level, msg):
+def log(level: str, msg: str) -> None:
+    """Print one timestamped console line coloured by event level (ok, info, warn, block)."""
     con.print(f"[dim]{time.strftime('%H:%M:%S')}[/] [{LEVEL.get(level, 'white')}]{msg}[/]")
 
 
-def cmd_start(a):
+def cmd_start(a: argparse.Namespace) -> int:
+    """Serve the dashboard, boot the runtime in the background, then hand the terminal to a UI or a heartbeat log."""
     banner()
     use_tui = sys.stdin.isatty() and not a.no_tui
     rt = server.Runtime([d.strip() for d in a.db.split(",") if d.strip()], log=None if use_tui else log)
@@ -116,7 +120,8 @@ def cmd_start(a):
     return 0
 
 
-def _engine(dbname):
+def _engine(dbname: str) -> engine.Engine:
+    """Engine for one database, reusing the saved catalog so one-shot commands skip a full scan."""
     b = backends.connect(dbname)
     cat = scanner.load(dbname)
     if cat is None:
@@ -125,7 +130,7 @@ def _engine(dbname):
     return engine.Engine(b, cat)
 
 
-def cmd_scan(a):
+def cmd_scan(a: argparse.Namespace) -> int:
     banner()
     b = backends.connect(a.db)
     cat = scanner.scan(b, lambda kind, table, done, total, **kw: kind == "table" and log("info", f"scanned {table}"))
@@ -149,7 +154,7 @@ def cmd_scan(a):
     return 0
 
 
-def _print_result(res, title):
+def _print_result(res: dict[str, Any], title: str) -> None:
     if not res.get("ok"):
         con.print(
             f"[bold red]{title}: {'BLOCKED' if res.get('blocked') else 'ERROR'}[/] "
@@ -164,21 +169,21 @@ def _print_result(res, title):
     con.print(tb)
 
 
-def cmd_query(a):
+def cmd_query(a: argparse.Namespace) -> int:
     users = {u["username"]: u["role"] for u in server.load_users()}
     role = users.get(a.user, a.role or "analyst")
     _print_result(_engine(a.db).run(a.sql, role, a.user), f"{a.user or role} on {a.db}")
     return 0
 
 
-def cmd_compare(a):
+def cmd_compare(a: argparse.Namespace) -> int:
     e = _engine(a.db)
     for role in engine.ROLES:
         _print_result(e.run(a.sql, role, f"cli:{role}"), role.upper())
     return 0
 
 
-def cmd_verify(a):
+def cmd_verify(a: argparse.Namespace) -> int:
     b = backends.connect(a.db)
     tb = Table(title=f"SHA-256 fingerprints: {b.label}", box=box.SIMPLE_HEAVY)
     tb.add_column("table")
@@ -191,7 +196,8 @@ def cmd_verify(a):
     return 0
 
 
-def cmd_status(a):
+def cmd_status(a: argparse.Namespace) -> int:
+    """Query the HTTP status endpoint of an already running PardaDB."""
     try:
         with urllib.request.urlopen(f"http://127.0.0.1:{a.port}/api/status", timeout=3) as r:
             s = json.load(r)
@@ -207,7 +213,8 @@ def cmd_status(a):
     return 0
 
 
-def main(argv=None):
+def main(argv: Sequence[str] | None = None) -> int:
+    """Parse the command line, dispatch to a subcommand and return its exit code."""
     ap = argparse.ArgumentParser(prog="pardadb", description="Automatic PII discovery and role-based dynamic masking.")
     sub = ap.add_subparsers(dest="cmd")
     p = sub.add_parser("start", help="connect, scan, serve the dashboard and keep monitoring")

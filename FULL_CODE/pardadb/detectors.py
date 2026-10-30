@@ -12,6 +12,10 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Iterable
+from typing import Any
+
+Span = tuple[int, int, str]  # (start, end, entity) inside a text
 
 ORG_DOMAIN = "saffronbank.example"
 
@@ -127,7 +131,7 @@ def luhn(d: str) -> bool:
     return total % 10 == 0
 
 
-def classify_value(v) -> str | None:
+def classify_value(v: Any) -> str | None:
     """Best entity guess for a single cell value (no column context)."""
     if v is None:
         return None
@@ -186,7 +190,7 @@ def classify_value(v) -> str | None:
 # ---------------------------------------------------------------- canonical forms
 
 
-def canonical(entity: str, v) -> str:
+def canonical(entity: str, v: Any) -> str:
     """One canonical string per real-world value, so formats never split a token."""
     s = str(v).strip()
     if entity in ("card", "aadhaar", "ssn", "account"):
@@ -267,11 +271,12 @@ NAME_CONTEXT = [
 class NameIndex:
     """Full names known to the bank (from person-tagged columns), matched in free text."""
 
-    def __init__(self, names=()):
+    def __init__(self, names: Iterable[Any] = ()) -> None:
         self.names = {" ".join(n.lower().split()) for n in names if n and " " in str(n).strip()}
         self.max_words = max((n.count(" ") + 1 for n in self.names), default=0)
 
-    def find(self, text: str):
+    def find(self, text: str) -> list[Span]:
+        """Spans of known full names in `text`, preferring the longest match at each word."""
         if not self.names:
             return []
         out = []
@@ -292,7 +297,7 @@ class NameIndex:
         return out
 
 
-def find_spans(text: str, names: NameIndex | None = None, extra=None):
+def find_spans(text: str, names: NameIndex | None = None, extra: Iterable[Span] | None = None) -> list[Span]:
     """Non-overlapping (start, end, entity) spans of PII inside free text.
     `extra` adds spans from the ML model, labelled e.g. "person (AI)"."""
     if not text:

@@ -10,8 +10,13 @@ import json
 import re
 import time
 from collections import Counter
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 from . import config, detectors
+
+if TYPE_CHECKING:
+    from .backends import Backend
 
 ENTITY_TAG = {
     "card": "PII_HIGH",
@@ -118,7 +123,8 @@ def header_tokens(name: str) -> list[str]:
     return [t for t in re.split(r"[^a-z0-9]+", name.lower()) if t]
 
 
-def header_hint(name: str):
+def header_hint(name: str) -> tuple[str | None, float, bool, list[str]]:
+    """(entity, strength, negative, tokens): what a column header alone suggests."""
     toks = header_tokens(name)
     best, strength = None, 0.0
     for t in toks:
@@ -128,15 +134,15 @@ def header_hint(name: str):
     return best, strength, negative, toks
 
 
-def _rate(counts: Counter, n: int, *ents) -> float:
+def _rate(counts: Counter[str | None], n: int, *ents: str) -> float:
     return sum(counts[e] for e in ents) / n if n else 0.0
 
 
-def classify_column(table: str, column: str, values: list, null_rate: float) -> dict:
+def classify_column(table: str, column: str, values: list[Any], null_rate: float) -> dict[str, Any]:
     """Decide one column's tag from its sampled values and header."""
     n = len(values)
     hint, strength, negative, toks = header_hint(column)
-    res = {
+    res: dict[str, Any] = {
         "table": table,
         "column": column,
         "tag": None,
@@ -155,7 +161,7 @@ def classify_column(table: str, column: str, values: list, null_rate: float) -> 
     distinct = len({str(v) for v in values}) / n
     ev = res["evidence"]
 
-    def tag(entity, conf, *why, status=None):
+    def tag(entity: str, conf: float, *why: str, status: str | None = None) -> dict[str, Any]:
         res.update(entity=entity, tag=ENTITY_TAG[entity], confidence=round(min(conf, 1.0), 2))
         res["status"] = status or ("auto" if conf >= 0.8 else "review")
         ev.extend(why)
@@ -322,7 +328,9 @@ def classify_column(table: str, column: str, values: list, null_rate: float) -> 
     return res
 
 
-def scan(backend, progress=None, sample_size: int | None = None) -> dict:
+def scan(
+    backend: Backend, progress: Callable[..., object] | None = None, sample_size: int | None = None
+) -> dict[str, Any]:
     """Scan every column of every table. `progress(event, **info)` reports live status."""
     sample_size = sample_size or config.SAMPLE_SIZE
     schema = backend.schema()
@@ -348,7 +356,7 @@ def scan(backend, progress=None, sample_size: int | None = None) -> dict:
     return catalog
 
 
-def business_records(catalog: dict) -> None:
+def business_records(catalog: dict[str, Any]) -> None:
     """Contacts and quasi-identifiers only matter in tables that describe people.
     A table with no person, identity or customer link (e.g. branches) holds business data."""
     by_table = {}
@@ -364,7 +372,7 @@ def business_records(catalog: dict) -> None:
                 c.update(tag=None, entity=None, confidence=0.0, status="clean")
 
 
-def summary(catalog: dict) -> dict:
+def summary(catalog: dict[str, Any]) -> dict[str, int]:
     cols = catalog["columns"]
     return {
         "tagged": sum(1 for c in cols if c["tag"] and c["status"] == "auto"),
@@ -373,15 +381,15 @@ def summary(catalog: dict) -> dict:
     }
 
 
-def index(catalog: dict) -> dict:
+def index(catalog: dict[str, Any]) -> dict[tuple[str, str], dict[str, Any]]:
     """{(table_lower, column_lower): column info} for fast lookup."""
     return {(c["table"].lower(), c["column"].lower()): c for c in catalog.get("columns", []) if c["tag"]}
 
 
-def save(catalog: dict) -> None:
+def save(catalog: dict[str, Any]) -> None:
     config.state_path(f"catalog_{catalog['backend']}.json").write_text(json.dumps(catalog, indent=1))
 
 
-def load(backend_name: str) -> dict | None:
+def load(backend_name: str) -> dict[str, Any] | None:
     p = config.state_path(f"catalog_{backend_name}.json")
     return json.loads(p.read_text()) if p.exists() else None
