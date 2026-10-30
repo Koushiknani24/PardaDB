@@ -331,6 +331,35 @@ section.alt{background:var(--panel)}
 .soak dd{margin:6px 0 0;font:400 20px/1.1 var(--bit);overflow-wrap:anywhere}
 .soak p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
 
+/* ---------- install in one command ---------- */
+.inst{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:28px;align-items:start;margin-bottom:40px}
+.inst-h{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px}
+.inst-h h3{font:800 24px/1.2 var(--sans);letter-spacing:-.01em}
+.inst-h a{font:600 14px var(--mono);color:var(--accent)}
+.os{display:flex;gap:0;border:2px solid #4a5568}
+.os button{border:0;background:transparent;color:var(--t-dim);font:700 13px/1 var(--mono);padding:8px 12px;cursor:pointer}
+.os button+button{border-left:2px solid #4a5568}
+.os button[aria-selected="true"]{background:var(--t-fg);color:var(--t-bg)}
+.os button:focus-visible{outline-offset:-4px}
+.inst-term .t-bar{flex-wrap:wrap}
+.cmd{display:flex;align-items:flex-start;gap:10px;padding:14px 16px 0}
+.cmd pre{flex:1;min-width:0;margin:0;padding:0 0 12px;font:14px/1.6 var(--mono);white-space:pre;overflow-x:auto}
+.cmd pre::before{content:attr(data-prompt);color:var(--t-blue);margin-right:.6em}
+.cmd .btn{flex:none;background:#161b22;color:var(--t-fg);border-color:#4a5568;box-shadow:none;min-height:30px;padding:0 10px;font-size:12px}
+.cmd .btn:hover{transform:none;border-color:var(--t-fg)}
+.cmd.sub pre{font-size:13px;color:var(--t-dim)}
+.inst-sub{margin:0;padding:6px 16px 0;border-top:1px dashed #2a323d;font:12.5px/1.5 var(--mono);color:var(--t-dim)}
+.inst-term>div:last-child{padding-bottom:6px}
+.inst-steps{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:is}
+.inst-steps li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;font-size:15px;color:var(--muted)}
+.inst-steps li::before{counter-increment:is;content:counter(is);display:grid;place-items:center;width:34px;height:34px;border:2px solid var(--edge);background:var(--panel);color:var(--text);font:400 15px/1 var(--bit);box-shadow:3px 3px 0 var(--shade)}
+.inst-steps b{color:var(--text)}
+.inst-steps code,.inst-note code{font-size:13px;background:var(--panel2);border:1px solid var(--line);padding:1px 5px;overflow-wrap:anywhere}
+.inst-note{margin:18px 0 0;font-size:14px;color:var(--muted)}
+.clone{display:flex;align-items:center;gap:10px;margin-top:8px;border:2px solid var(--line);background:var(--panel);padding:8px 10px}
+.clone pre{flex:1;min-width:0;margin:0;font:13px/1.5 var(--mono);white-space:pre;overflow-x:auto}
+.clone .btn{flex:none}
+
 /* ai */
 .ticket{padding:0}
 .t-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between;padding:12px 16px;border-bottom:2px solid var(--edge);background:var(--panel2);font:12.5px var(--mono);color:var(--muted)}
@@ -395,7 +424,7 @@ footer .r{margin-left:auto}
   .st:nth-child(3n)::after{display:none}
   .lv-pick{grid-template-columns:repeat(3,minmax(0,1fr))}
   .res{grid-template-columns:minmax(0,1fr)}
-  .two,.dev{grid-template-columns:minmax(0,1fr)}
+  .two,.dev,.inst{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:820px){
   .roles thead{display:none}
@@ -473,6 +502,7 @@ footer .r{margin-left:auto}
       <a href="#roles">Roles</a>
       <a href="#safety">Safety</a>
       <a href="#ai">AI</a>
+      <a href="#install">Install</a>
       <a href="#dev">For developers</a>
     </nav>
     <div class="tools">
@@ -797,6 +827,32 @@ footer .r{margin-left:auto}
       <p class="eyebrow">08 <b>For developers</b></p>
       <h2 id="dev-h">One command to start. A plain REST API to build on.</h2>
       <p class="lede">A single Python process. Use the web dashboard, the full-screen terminal UI, the <code>pardadb</code> CLI, or call the API from your own tools.</p>
+    </div>
+    <div class="inst" id="install">
+      <div class="inst-h"><h3>Install in one command</h3><a href="https://github.com/deadhearth01/pardadb#install-one-command">All options: README</a></div>
+      <div class="term inst-term">
+        <div class="t-bar"><i></i><i></i><i></i>
+          <div class="os" role="tablist" aria-label="Operating system">
+            <button type="button" role="tab" id="os-t-linux" data-os="linux" aria-controls="os-panel" aria-selected="true">Linux</button><button type="button" role="tab" id="os-t-macos" data-os="macos" aria-controls="os-panel" aria-selected="false" tabindex="-1">macOS</button><button type="button" role="tab" id="os-t-windows" data-os="windows" aria-controls="os-panel" aria-selected="false" tabindex="-1">Windows</button>
+          </div>
+          <span id="os-shell">bash</span>
+        </div>
+        <div id="os-panel" role="tabpanel" aria-labelledby="os-t-linux">
+          <div class="cmd"><pre id="os-cmd" data-prompt="$" tabindex="0" aria-label="Install command">curl -fsSL https://raw.githubusercontent.com/deadhearth01/pardadb/main/FULL_CODE/scripts/install.sh | bash</pre><button class="btn" type="button" data-copy="os-cmd" aria-label="Copy the install command"><svg class="pa" width="14" height="14" aria-hidden="true" focusable="false"><use href="#p-copy"/></svg>Copy</button></div>
+          <p class="inst-sub">With the problem pack and the AI model:</p>
+          <div class="cmd sub"><pre id="os-cmd2" data-prompt="$" tabindex="0" aria-label="Install command with the problem pack and the AI model">curl -fsSL https://raw.githubusercontent.com/deadhearth01/pardadb/main/FULL_CODE/scripts/install.sh | bash -s -- --data /path/to/B1_Smart_Data_Masking_PII --with-ai</pre><button class="btn" type="button" data-copy="os-cmd2" aria-label="Copy the install command with the problem pack and the AI model"><svg class="pa" width="14" height="14" aria-hidden="true" focusable="false"><use href="#p-copy"/></svg>Copy</button></div>
+        </div>
+      </div>
+      <div>
+        <ol class="inst-steps">
+          <li><span><b>Run the command</b> for your system.</span></li>
+          <li><span><b>Put the problem pack</b> in <code>FULL_CODE/data</code> (or pass it with <code>--data</code>).</span></li>
+          <li><span><b>Start it:</b> <code>cd ~/pardadb/FULL_CODE &amp;&amp; uv run pardadb</code> opens <code>http://127.0.0.1:8765</code>.</span></li>
+        </ol>
+        <p class="inst-note"><b>From a clone:</b></p>
+        <div class="clone"><pre id="clone-cmd" tabindex="0" aria-label="Install from a clone">git clone https://github.com/deadhearth01/pardadb &amp;&amp; ./pardadb/FULL_CODE/scripts/install.sh</pre><button class="btn sm" type="button" data-copy="clone-cmd" aria-label="Copy the clone command"><svg class="pa" width="14" height="14" aria-hidden="true" focusable="false"><use href="#p-copy"/></svg>Copy</button></div>
+        <p class="inst-note">Needs git and Python 3.10+. The installer checks both and tells you what to install.</p>
+      </div>
     </div>
     <div class="dev">
       <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>quick start &middot; shell</span><button class="btn" type="button" data-copy="cli" aria-label="Copy the CLI commands"><svg class="pa" width="14" height="14" aria-hidden="true" focusable="false"><use href="#p-copy"/></svg>Copy</button></div>
@@ -1250,6 +1306,42 @@ footer .r{margin-left:auto}
     heal.className = 'heal' + (healI === 1 || healI === 2 ? ' s' + healI : '');
     healSt.textContent = HEAL[healI];
   }, 1700);
+
+  /* ---------- install: OS tabs (roving tabindex, arrow keys) + one typing pass ---------- */
+  const RAW = 'https://raw.githubusercontent.com/deadhearth01/pardadb/main/FULL_CODE/scripts/';
+  const SH = 'curl -fsSL ' + RAW + 'install.sh | bash';
+  const OS = {
+    linux: { shell: 'bash', p: '$', a: SH, b: SH + ' -s -- --data /path/to/B1_Smart_Data_Masking_PII --with-ai' },
+    macos: { shell: 'zsh / bash', p: '$', a: SH, b: SH + ' -s -- --data /path/to/B1_Smart_Data_Masking_PII --with-ai' },
+    windows: { shell: 'PowerShell', p: 'PS>', a: 'irm ' + RAW + 'install.ps1 | iex', b: '& ([scriptblock]::Create((irm ' + RAW + 'install.ps1))) -Data C:\\path\\to\\B1_Smart_Data_Masking_PII -WithAI' },
+  };
+  const osTabs = $$('.os [role="tab"]'), osCmd = $('#os-cmd'), osCmd2 = $('#os-cmd2');
+  let osTyping = 0;
+  function setOS(k, focus) {
+    const o = OS[k];
+    clearInterval(osTyping);
+    osTabs.forEach((t) => { const on = t.dataset.os === k; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+    $('#os-panel').setAttribute('aria-labelledby', 'os-t-' + k);
+    $('#os-shell').textContent = o.shell;
+    osCmd.dataset.prompt = o.p; osCmd2.dataset.prompt = o.p;
+    osCmd.textContent = o.a; osCmd2.textContent = o.b;
+  }
+  osTabs.forEach((t, i) => {
+    t.addEventListener('click', () => setOS(t.dataset.os, false));
+    t.addEventListener('keydown', (e) => {
+      const n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: osTabs.length - 1 }[e.key];
+      if (n == null) return;
+      e.preventDefault();
+      setOS(osTabs[(n + osTabs.length) % osTabs.length].dataset.os, true);
+    });
+  });
+  const plat = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
+  setOS(/win/.test(plat) ? 'windows' : /mac|iphone|ipad/.test(plat) ? 'macos' : 'linux', false);
+  onView($('#install'), () => {
+    if (calm()) return;
+    const full = osCmd.textContent; let n = 0;
+    osTyping = setInterval(() => { n += 3; osCmd.textContent = full.slice(0, n); if (n >= full.length) { clearInterval(osTyping); osCmd.textContent = full; } }, 22);
+  }, true);
 
   /* ---------- copy buttons ---------- */
   function copyText(text) {
