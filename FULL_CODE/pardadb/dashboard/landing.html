@@ -564,7 +564,7 @@ footer .r{margin-left:auto}
   <ul class="wrap">
     <li><span class="num"><b class="cnt" data-to="129260">129,260</b></span><span>rows of bank data protected; full scan in about half a second</span></li>
     <li><span class="num"><b class="cnt" data-to="120">120</b></span><span>columns in 9 tables, labelled automatically</span></li>
-    <li><span class="num">~<b class="cnt" data-to="45">45</b><small> MB</small></span><span>of memory while running</span></li>
+    <li><span class="num">~<b class="cnt" data-to="60">60</b><small> MB</small></span><span>of memory with all three databases under load</span></li>
     <li><span class="num"><b class="cnt" data-to="3">3</b><small> DBs</small></span><span>SQLite, MySQL and PostgreSQL, identical output</span></li>
     <li><span class="num"><b class="cnt" data-to="0.993" data-dec="3">0.993</b></span><span>name recall with the optional AI (0.911 rules only)</span></li>
   </ul>
@@ -744,7 +744,7 @@ footer .r{margin-left:auto}
       <article class="card box s12 offline">
         <div class="ic"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-offline"/></svg><h3>Runs offline</h3></div>
         <p>No cloud service, no tracking, nothing sent out. Built to run inside a bank network; even this page loads nothing from the internet.</p>
-        <div class="pills"><span>no CDN</span><span>no telemetry</span><span>~45 MB RAM</span></div>
+        <div class="pills"><span>no CDN</span><span>no telemetry</span><span>~60 MB RAM</span></div>
       </article>
     </div>
   </div>
@@ -760,7 +760,7 @@ footer .r{margin-left:auto}
       <ul class="lr">
         <li><span><b>Bounded memory.</b> The event list is capped at 200, the AI result cache at 20,000 entries and query results at 1,000 rows.</span></li>
         <li><span><b>Scan cost stays flat.</b> Scans sample 200 values per column, so the cost does not grow with table size.</span></li>
-        <li><span><b>Small footprint.</b> ~45 MB RAM for the engine and web app, ~0% CPU when idle.</span></li>
+        <li><span><b>Small footprint.</b> ~60 MB RAM for the engine and web app with three databases, ~0% CPU when idle.</span></li>
         <li><span><b>Self-healing.</b> An unreachable database is retried every 10 s; the schema is re-checked every 30 s and new columns are re-scanned automatically.</span></li>
         <li><span><b>Stable tokens across restarts.</b> The HMAC key is persisted, so analytics keep working day after day.</span></li>
         <li><span><b>Fails closed.</b> Anything the guard cannot analyse is refused.</span></li>
@@ -772,7 +772,7 @@ footer .r{margin-left:auto}
       <figure class="box lr-chart" id="lr-chart" style="margin:0">
         <h3>Memory <small>illustration</small></h3>
         <svg viewBox="0 0 120 48" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="var(--line)" d="M0 12h120v.5h-120zM0 24h120v.5h-120zM0 36h120v.5h-120z"/><path fill="currentColor" d="M0 44h4v3h-4zM4 38h4v3h-4zM8 30h4v3h-4zM12 24h4v3h-4zM16 21h4v3h-4zM20 20h100v3h-100z"/><rect id="lr-cover" x="0" y="0" width="120" height="48" fill="var(--panel)" style="transform-box:fill-box;transform-origin:right;transform:scaleX(0)"/></svg>
-        <div class="ax"><span>start</span><span>~45 MB, flat</span><span>time &rarr;</span></div>
+        <div class="ax"><span>start</span><span>60.5 &rarr; 62.2 MB, flat</span><span>time &rarr;</span></div>
         <figcaption>Caps instead of growth: the event list, AI cache and result size all have a fixed upper limit.</figcaption>
       </figure>
       <div class="box">
@@ -783,14 +783,14 @@ footer .r{margin-left:auto}
       <div id="soak-card"><div class="box soak">
         <h3>Soak test</h3>
         <dl>
-          <div><dt>queries run</dt><dd id="soak-queries">&mdash;</dd></div>
-          <div><dt>duration</dt><dd id="soak-minutes">&mdash;</dd></div>
-          <div><dt>RAM start &rarr; end</dt><dd id="soak-rss">&mdash;</dd></div>
-          <div><dt>p95 latency (ms)</dt><dd id="soak-p95">&mdash;</dd></div>
-          <div><dt>errors</dt><dd id="soak-errors">&mdash;</dd></div>
-          <div><dt>recovery after a dropped connection</dt><dd id="soak-recover">&mdash;</dd></div>
+          <div><dt>queries run</dt><dd id="soak-queries">375,636</dd></div>
+          <div><dt>duration</dt><dd id="soak-minutes">10 min &middot; 626 per second</dd></div>
+          <div><dt>RAM start &rarr; end</dt><dd id="soak-rss">60.5 &rarr; 62.2 MB</dd></div>
+          <div><dt>p95 latency (ms)</dt><dd id="soak-p95">40 ms (p50 8.5 ms)</dd></div>
+          <div><dt>errors</dt><dd id="soak-errors">0 &middot; audit chain verified across 4 files</dd></div>
+          <div><dt>recovery after a dropped connection</dt><dd id="soak-recover">MySQL and PostgreSQL sessions killed server-side: reconnected, next query answered (separate test)</dd></div>
         </dl>
-        <p>Measured on this laptop with 8 parallel clients</p>
+        <p>Measured on this laptop with 8 parallel clients on SQLite, MySQL and PostgreSQL, all three roles (benchmarks/soak.json)</p>
       </div></div>
     </div>
   </div>
