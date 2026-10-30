@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import functools
 import hashlib
+import random
 import re
 import unicodedata
 from pathlib import Path
@@ -123,11 +124,11 @@ def ascii_fold(text: str) -> str:
     return "".join(c for c in decomposed if c.isascii() and c.isalnum()).lower()
 
 
-def _first(rng, region: str, split: str) -> str:
+def _first(rng: random.Random, region: str, split: str) -> str:
     return rng.choice(name_pool(region, "first", split))
 
 
-def _last(rng, region: str, split: str) -> str:
+def _last(rng: random.Random, region: str, split: str) -> str:
     return rng.choice(name_pool(region, "last", split))
 
 
@@ -136,7 +137,7 @@ def _initial(name: str) -> str:
     return (folded[:1] or "a").upper()
 
 
-def sample_name(rng, region: str, split: str) -> str:
+def sample_name(rng: random.Random, region: str, split: str) -> str:
     """A person name in one of the shapes people write: full, three-part,
     initials, first name only, "Last, First", or FORM CAPS."""
     shape = rng.random()

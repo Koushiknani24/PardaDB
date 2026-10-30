@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import random
 import re
 import string
 
@@ -356,7 +357,7 @@ def _mod97(s: str) -> int:
     return rem
 
 
-def iban(rng, spaced: bool | None = None) -> str:
+def iban(rng: random.Random, spaced: bool | None = None) -> str:
     country = rng.choice(sorted(_IBAN_SPECS))
     pools = {"n": string.digits, "a": string.ascii_uppercase, "c": string.digits + string.ascii_uppercase}
     bban = "".join(rng.choice(pools[k]) for k in _IBAN_SPECS[country])
@@ -371,7 +372,7 @@ _GST_ALPHABET = string.digits + string.ascii_uppercase
 PAN_HOLDER = "PCHFATBLJG"
 
 
-def pan(rng, holder: str | None = None) -> str:
+def pan(rng: random.Random, holder: str | None = None) -> str:
     letters = string.ascii_uppercase
     return (
         "".join(rng.choice(letters) for _ in range(3))
@@ -382,7 +383,7 @@ def pan(rng, holder: str | None = None) -> str:
     )
 
 
-def gstin(rng) -> str:
+def gstin(rng: random.Random) -> str:
     body = f"{rng.randint(1, 37):02d}" + pan(rng) + rng.choice("123456789ABC") + "Z"
     total = 0
     for i, ch in enumerate(body):
@@ -394,17 +395,17 @@ def gstin(rng) -> str:
 # ---------------------------------------------------------------------------
 # value generators
 # ---------------------------------------------------------------------------
-def _digits(rng, n: int, first: str = "0123456789") -> str:
+def _digits(rng: random.Random, n: int, first: str = "0123456789") -> str:
     return rng.choice(first) + "".join(rng.choice(string.digits) for _ in range(n - 1))
 
 
-def _pin(rng, prefix: str | None = None) -> str:
+def _pin(rng: random.Random, prefix: str | None = None) -> str:
     if prefix:
         return prefix + _digits(rng, 2)
     return _digits(rng, 6, "12345678")
 
 
-def _local_part(rng, region: str, split: str) -> str:
+def _local_part(rng: random.Random, region: str, split: str) -> str:
     first = names.ascii_fold(rng.choice(names.name_pool(region, "first", split))) or "user"
     last = names.ascii_fold(rng.choice(names.name_pool(region, "last", split))) or "mail"
     shape = rng.randrange(7)
@@ -423,13 +424,13 @@ def _local_part(rng, region: str, split: str) -> str:
     return f"{last}.{first}"
 
 
-def _email(rng, region: str, split: str) -> str:
+def _email(rng: random.Random, region: str, split: str) -> str:
     pool = INDIA_MAIL if region == "india" else GLOBAL_MAIL
     domain = rng.choice(pool if rng.random() < 0.7 else WORK_DOMAINS)
     return f"{_local_part(rng, region, split)}@{domain}"
 
 
-def _phone(rng, region: str) -> str:
+def _phone(rng: random.Random, region: str) -> str:
     if region == "india":
         mobile = _digits(rng, 10, "6789")
         shape = rng.randrange(8)
@@ -470,7 +471,7 @@ def _phone(rng, region: str) -> str:
     return f"+234 803 {_digits(rng, 3)} {_digits(rng, 4)}"
 
 
-def _india_address(rng) -> str:
+def _india_address(rng: random.Random) -> str:
     city, state, prefix = rng.choice(INDIA_CITIES)
     pin = _pin(rng, prefix)
     loc = rng.choice(INDIA_LOCALITIES)
@@ -496,7 +497,7 @@ def _india_address(rng) -> str:
     return f"#{rng.randint(1, 900)}, {rng.randint(1, 30)}th Cross, {loc}, {city} - {pin}"
 
 
-def _global_address(rng) -> str:
+def _global_address(rng: random.Random) -> str:
     fmt, cities = rng.choice(GLOBAL_ADDRESS_FORMATS)
     return fmt.format(
         n=rng.randint(1, 2400),
@@ -523,7 +524,7 @@ def _global_address(rng) -> str:
     )
 
 
-def _dob(rng) -> str:
+def _dob(rng: random.Random) -> str:
     y, m, d = rng.randint(1950, 2006), rng.randint(1, 12), rng.randint(1, 28)
     month = MONTHS[m - 1]
     shape = rng.randrange(8)
@@ -539,7 +540,7 @@ def _dob(rng) -> str:
     ][shape]
 
 
-def _aadhaar(rng) -> str:
+def _aadhaar(rng: random.Random) -> str:
     base = _digits(rng, 11, "23456789")
     full = base + verhoeff_digit(base)
     shape = rng.randrange(3)
@@ -550,7 +551,7 @@ def _aadhaar(rng) -> str:
     return full
 
 
-def _card(rng) -> str:
+def _card(rng: random.Random) -> str:
     network = rng.randrange(5)
     if network == 0:
         num = _luhn_complete("4" + _digits(rng, 14))
@@ -568,13 +569,13 @@ def _card(rng) -> str:
     return sep.join(num[i : i + 4] for i in range(0, len(num), 4))
 
 
-def _bank_account(rng, region: str) -> str:
+def _bank_account(rng: random.Random, region: str) -> str:
     if region == "global" and rng.random() < 0.6:
         return iban(rng)
     return _digits(rng, rng.randint(9, 18) if region == "india" else rng.randint(9, 12), "123456789")
 
 
-def _passport(rng, region: str) -> str:
+def _passport(rng: random.Random, region: str) -> str:
     if region == "india":
         return rng.choice("ABCDEFGHJKLMNPRSTUVWY") + _digits(rng, 7, "123456789")
     shape = rng.randrange(4)
@@ -587,7 +588,7 @@ def _passport(rng, region: str) -> str:
     return rng.choice(["TK", "TR", "MZ"]) + _digits(rng, 7)
 
 
-def _ip(rng) -> str:
+def _ip(rng: random.Random) -> str:
     if rng.random() < 0.25:
         groups = [f"{rng.randint(0, 0xFFFF):x}" for _ in range(8)]
         if rng.random() < 0.5:
@@ -601,7 +602,7 @@ def _ip(rng) -> str:
     return f"{first}.{rng.randint(0, 255)}.{rng.randint(0, 255)}.{rng.randint(1, 254)}"
 
 
-def _username(rng, region: str, split: str) -> str:
+def _username(rng: random.Random, region: str, split: str) -> str:
     first = names.ascii_fold(rng.choice(names.name_pool(region, "first", split))) or "user"
     shape = rng.randrange(5)
     if shape == 0:
@@ -618,7 +619,7 @@ def _username(rng, region: str, split: str) -> str:
 _PW_CHARS = string.ascii_letters + string.digits + "!@#$%^&*?"
 
 
-def _password(rng) -> str:
+def _password(rng: random.Random) -> str:
     n = rng.randint(8, 14)
     pw = [rng.choice(string.ascii_letters), rng.choice(string.digits), rng.choice("!@#$%^&*?")]
     pw += [rng.choice(_PW_CHARS) for _ in range(n - 3)]
@@ -626,16 +627,16 @@ def _password(rng) -> str:
     return "".join(pw)
 
 
-def _upi(rng, region: str, split: str) -> str:
+def _upi(rng: random.Random, region: str, split: str) -> str:
     local = _digits(rng, 10, "6789") if rng.random() < 0.35 else _local_part(rng, region, split).replace("_", ".")
     return f"{local}@{rng.choice(UPI_HANDLES)}"
 
 
-def _ifsc(rng) -> str:
+def _ifsc(rng: random.Random) -> str:
     return rng.choice(IFSC_BANKS) + "0" + "".join(rng.choice(string.digits) for _ in range(6))
 
 
-def make_entity(label: str, rng, region: str, split: str) -> str:
+def make_entity(label: str, rng: random.Random, region: str, split: str) -> str:
     """One synthetic value for `label`."""
     if label == "person":
         return names.sample_name(rng, region, split)

@@ -8,6 +8,7 @@ places, festivals, version numbers, order ids).
 
 from __future__ import annotations
 
+import random
 import re
 from dataclasses import dataclass, field
 
@@ -655,7 +656,7 @@ def static_texts() -> list[str]:
     return out
 
 
-def render(parts, region: str, style: str) -> dict:
+def render(parts: list[str | tuple[str, str]], region: str, style: str) -> dict:
     """Join text pieces and `(label, value)` entity pieces into a record."""
     text = ""
     entities = []
@@ -670,7 +671,7 @@ def render(parts, region: str, style: str) -> dict:
     return {"text": text, "entities": entities, "region": region, "style": style}
 
 
-def instantiate(template: Template, style: str, split: str, rng) -> dict:
+def instantiate(template: Template, style: str, split: str, rng: random.Random) -> dict:
     """Fill a template with fresh values. Retries until every entity lines up
     with token boundaries (random values occasionally glue to neighbours)."""
     from .entities import make_entity

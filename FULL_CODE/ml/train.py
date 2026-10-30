@@ -20,12 +20,12 @@ import torch  # noqa: E402
 from gliner import GLiNER  # noqa: E402
 
 
-def read_jsonl(path):
+def read_jsonl(path: str | Path) -> list[dict]:
     with open(path, encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
 
 
-def compose(examples, rate, rng, max_tokens=256):
+def compose(examples: list[dict], rate: float, rng: random.Random, max_tokens: int = 256) -> list[dict]:
     """Stitch a share of examples together so the model also sees multi-sentence text."""
     out = []
     for ex in examples:
@@ -43,7 +43,7 @@ def compose(examples, rate, rng, max_tokens=256):
     return out
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default="knowledgator/gliner-pii-edge-v1.0")
     ap.add_argument("--name", default="pardadb-pii")

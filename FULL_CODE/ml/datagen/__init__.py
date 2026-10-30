@@ -7,3 +7,5 @@ generalisation to unseen names. Standard library only.
 
     python -m datagen.generate --n 20000 --seed 7 --split train --out data/train.jsonl
 """
+
+from __future__ import annotations

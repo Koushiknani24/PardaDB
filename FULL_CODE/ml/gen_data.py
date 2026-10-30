@@ -214,11 +214,11 @@ NEGATIVES = [
 ]
 
 
-def _digits(rng, n):
+def _digits(rng: random.Random, n: int) -> str:
     return "".join(rng.choice("0123456789") for _ in range(n))
 
 
-def _phone(rng):
+def _phone(rng: random.Random) -> str:
     d = rng.choice("9876") + _digits(rng, 9)
     return rng.choice(
         [
@@ -233,23 +233,23 @@ def _phone(rng):
     )
 
 
-def _card(rng):
+def _card(rng: random.Random) -> str:
     raw = entities._card(rng).replace(" ", "").replace("-", "")
     return rng.choice(
         [raw, " ".join(raw[i : i + 4] for i in range(0, 16, 4)), "-".join(raw[i : i + 4] for i in range(0, 16, 4))]
     )
 
 
-def _aadhaar(rng):
+def _aadhaar(rng: random.Random) -> str:
     d = rng.choice("23456789") + _digits(rng, 11)
     return rng.choice([d, f"{d[:4]} {d[4:8]} {d[8:]}", f"{d[:4]}-{d[4:8]}-{d[8:]}"])
 
 
-def merchant(rng, split):
+def merchant(rng: random.Random, split: str) -> str:
     return f"{rng.choice(MERCHANT_WORDS[split])} {rng.choice(MERCHANT_TYPES)}"
 
 
-def filler(key, rng, split):
+def filler(key: str, rng: random.Random, split: str) -> str:
     if key == "amount":
         return rng.choice([str(rng.randint(100, 99999)), f"{rng.randint(1, 99)},{_digits(rng, 3)}"])
     if key == "card":
@@ -303,7 +303,7 @@ def filler(key, rng, split):
     raise KeyError(key)
 
 
-def entity(slot, rng, split):
+def entity(slot: str, rng: random.Random, split: str) -> tuple[str, str]:
     label = slot.lower()
     if label == "person":
         value = names.sample_name(rng, "india", split)
@@ -316,7 +316,7 @@ def entity(slot, rng, split):
     return label, value.upper() if slot.isupper() else value
 
 
-def render(template, rng, split):
+def render(template: str, rng: random.Random, split: str) -> dict:
     """Fill `{entity}` and `[filler]` slots, returning a char-offset record."""
     text, ents, i = "", [], 0
     while i < len(template):
@@ -338,7 +338,7 @@ def render(template, rng, split):
     return {"text": text, "entities": ents}
 
 
-def bank_examples(n, seed, split):
+def bank_examples(n: int, seed: int, split: str) -> list[tuple[dict, dict]]:
     out = []
     for k in range(n):
         rng = random.Random(f"pardadb-bank/{seed}/{split}/{k}")
@@ -351,7 +351,7 @@ def bank_examples(n, seed, split):
     return out
 
 
-def parda_examples(n, seed, split):
+def parda_examples(n: int, seed: int, split: str) -> list[tuple[dict, dict]]:
     """The general India-first corpus from ml/datagen, keeping only our three labels."""
     out = []
     for _record, chars in generate_examples(n, seed, split):
@@ -361,7 +361,7 @@ def parda_examples(n, seed, split):
     return out
 
 
-def write(path, rows):
+def write(path: Path, rows: list[tuple[dict, dict]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as fg, open(path.with_suffix(".chars.jsonl"), "w", encoding="utf-8") as fc:
         for g, c in rows:
@@ -369,7 +369,7 @@ def write(path, rows):
             fc.write(json.dumps(c, ensure_ascii=False) + "\n")
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="dataset")
     ap.add_argument("--bank", type=int, default=9000)

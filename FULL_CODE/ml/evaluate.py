@@ -52,16 +52,18 @@ GOLDEN = ROOT / "golden"
 DB = ROOT.parent / "data" / "sql" / "sqlite" / "saffron_bank.db"
 
 
-def read_jsonl(path):
+def read_jsonl(path: str | Path) -> list[dict]:
     with open(path, encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
 
 
-def overlaps(a, b):
+def overlaps(a: tuple[int, int, str], b: tuple[int, int, str]) -> bool:
     return a[0] < b[1] and b[0] < a[1]
 
 
-def predict(model, texts, labels, threshold, batch=16):
+def predict(
+    model: GLiNER, texts: list[str], labels: list[str], threshold: float, batch: int = 16
+) -> list[list[tuple[int, int, str]]]:
     out = []
     for i in range(0, len(texts), batch):
         chunk = texts[i : i + batch]
@@ -73,7 +75,7 @@ def predict(model, texts, labels, threshold, batch=16):
     return out
 
 
-def prf(golds, preds):
+def prf(golds: list[list[tuple[int, int, str]]], preds: list[list[tuple[int, int, str]]]) -> dict:
     tp, fp, fn = defaultdict(int), defaultdict(int), defaultdict(int)
     leak_free = 0
     for gold, pred in zip(golds, preds, strict=False):
@@ -113,7 +115,7 @@ def prf(golds, preds):
     return res
 
 
-def golden_set():
+def golden_set() -> tuple[list[str], list[list[tuple[int, int, str]]]]:
     texts, golds = [], []
     for name in ("names.jsonl", "negatives.jsonl"):
         for r in read_jsonl(GOLDEN / name):
@@ -122,12 +124,17 @@ def golden_set():
     return texts, golds
 
 
-def bank_set():
+def bank_set() -> tuple[list[str], list[list[tuple[int, int, str]]]]:
     rows = read_jsonl(ROOT / "dataset" / "test.chars.jsonl")
     return [r["text"] for r in rows], [[(e["start"], e["end"], e["label"]) for e in r["entities"]] for r in rows]
 
 
-def saffron_set(limit=400):
+def saffron_set(
+    limit: int = 400,
+) -> tuple[
+    tuple[list[str], list[list[tuple[int, int, str]]]],
+    tuple[list[str], list[list[tuple[int, int, str]]]],
+]:
     """Spans whose identity is known from the database. Recall only: other names
     in the same text (nominees, co-applicants) are not labelled here."""
     con = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
@@ -155,7 +162,9 @@ def saffron_set(limit=400):
     return names, (ntexts[:limit], ngolds[:limit])
 
 
-def recall(golds, preds, any_label=False):
+def recall(
+    golds: list[list[tuple[int, int, str]]], preds: list[list[tuple[int, int, str]]], any_label: bool = False
+) -> float:
     hit = tot = 0
     for gold, pred in zip(golds, preds, strict=False):
         for g in gold:
@@ -164,7 +173,7 @@ def recall(golds, preds, any_label=False):
     return round(hit / tot, 3) if tot else 0.0
 
 
-def latency(model, texts, labels, threshold, device, n=200):
+def latency(model: GLiNER, texts: list[str], labels: list[str], threshold: float, device: str, n: int = 200) -> float:
     texts = texts[:n]
     predict(model, texts[:16], labels, threshold)
     if device == "cuda":
@@ -176,7 +185,7 @@ def latency(model, texts, labels, threshold, device, n=200):
     return round((time.perf_counter() - t0) * 1000 / len(texts), 2)
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
     ap.add_argument("--tag", required=True)

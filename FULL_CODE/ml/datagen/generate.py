@@ -17,10 +17,11 @@ import json
 import random
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 from .entities import LABELS
-from .templates import FAMILIES, NEGATIVES, instantiate
+from .templates import FAMILIES, NEGATIVES, Template, instantiate
 
 SPLITTER = re.compile(r"\w+(?:[-_]\w+)*|\S")
 SPLITS = ("train", "dev", "test")
@@ -88,7 +89,7 @@ def _schedule(i: int) -> tuple[str, bool, str]:
     return region, negative, style
 
 
-def _pick_template(candidates, counts, total, rng):
+def _pick_template(candidates: list[Template], counts: dict[str, int], total: int, rng: random.Random) -> Template:
     """Prefer templates whose labels are below their target share."""
     weights = []
     for t in candidates:
@@ -98,7 +99,7 @@ def _pick_template(candidates, counts, total, rng):
     return rng.choices(candidates, weights=weights, k=1)[0]
 
 
-def _negative(candidates, style: str, split: str, rng) -> dict:
+def _negative(candidates: list[Template], style: str, split: str, rng: random.Random) -> dict:
     """One or two entity-free sentences: prompts are rarely a single line, and
     pairs keep negatives varied (single fillers repeat quickly)."""
     first = rng.choice(candidates)
@@ -110,7 +111,7 @@ def _negative(candidates, style: str, split: str, rng) -> dict:
     return chars
 
 
-def generate_examples(n: int, seed: int, split: str = "train"):
+def generate_examples(n: int, seed: int, split: str = "train") -> Iterator[tuple[dict, dict]]:
     """Yield `(gliner_record, chars_record)` pairs."""
     if not isinstance(n, int) or n < 0:
         raise ValueError(f"n must be a non-negative integer, got {n!r}")

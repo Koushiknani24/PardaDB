@@ -2,6 +2,8 @@
 customer's own name, and every narration that contains its non-UPI counterparty (3,000 sampled).
 Compares PardaDB rules alone (context patterns, no name dictionary) with the base and fine-tuned models."""
 
+from __future__ import annotations
+
 import json
 import sys
 import time
@@ -18,7 +20,7 @@ from pardadb import detectors
 out = {"customer_name_cases": len(nt), "narration_cases": len(rt)}
 
 
-def rules(texts):
+def rules(texts: list[str]) -> list[list[tuple[int, int, str]]]:
     return [[(s, e, "person") for s, e, k in detectors.find_spans(t) if k == "person"] for t in texts]
 
 
