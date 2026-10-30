@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from urllib.parse import ParseResult, parse_qs, urlparse
 
-from . import audit, config, engine, ml
+from . import audit, benchmarks, config, engine, ml
 
 if TYPE_CHECKING:
     from .server import Runtime
@@ -188,6 +188,8 @@ def make_handler(rt: Runtime) -> type[BaseHTTPRequestHandler]:
                 return self._send(200, rt.tables(rt.backend_name(q)))
             if u.path == "/api/browse":
                 return self._send(200, rt.count(self._browse(q)))
+            if u.path == "/api/benchmarks":
+                return self._send(200, benchmarks.collect())
             if u.path == "/api/audit":
                 return self._send(200, audit.read(int_param(q, "limit", 100, 1, 1000)))
             return self._send(404, {"error": "not found"})

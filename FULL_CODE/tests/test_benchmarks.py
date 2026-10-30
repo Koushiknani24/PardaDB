@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+import threading
+import urllib.request
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from pardadb import benchmarks
+from pardadb import benchmarks, http_api
 
 
 def _metrics(f1: float, person: int = 10, org: int = 0) -> dict[str, Any]:
@@ -159,3 +161,17 @@ def test_soak_must_be_an_object(reports: Path, tmp_path: Path) -> None:
 
 def test_display_path_outside_repo_is_unchanged(tmp_path: Path) -> None:
     assert benchmarks.display_path(tmp_path / "x.json") == str(tmp_path / "x.json")
+
+
+def test_benchmarks_route_serves_collect(tmp_path: Path) -> None:
+    """GET /api/benchmarks answers with exactly what benchmarks.collect() assembles."""
+    runtime = type("RuntimeStub", (), {})()
+    httpd = http_api.serve(runtime, port=0)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    try:
+        url = f"http://127.0.0.1:{httpd.server_address[1]}/api/benchmarks"
+        with urllib.request.urlopen(url, timeout=10) as r:
+            body = json.load(r)
+        assert set(body) == set(benchmarks.collect())
+    finally:
+        httpd.shutdown()
