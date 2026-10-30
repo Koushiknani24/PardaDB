@@ -539,7 +539,7 @@ footer .r{margin-left:auto}
           <button type="button" data-role="support" aria-pressed="false"><svg class="px" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-support"/></svg>Support<span class="bar"></span></button>
           <button type="button" data-role="analyst" aria-pressed="false"><svg class="px" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-analyst"/></svg>Analyst<span class="bar"></span></button>
         </div>
-        <div class="c-sql"><b id="c-role">admin</b>&gt; <span class="kw">SELECT</span> cust_nm, mob_no, dob_dt, pan_no, card_no, curr_bal, city <span class="kw">FROM</span> customers &hellip; <span class="kw">WHERE</span> customer_id = 'C10427';<span class="cur" aria-hidden="true"></span></div>
+        <div class="c-sql"><b id="c-role">admin</b>&gt; <span class="kw">SELECT</span> cust_nm, mob_no, dob_dt, pan_no, card_no, curr_bal, city <span class="kw">FROM</span> customers &hellip; <span class="kw">LIMIT</span> 1;<span class="cur" aria-hidden="true"></span></div>
         <table class="rt">
           <thead><tr><th scope="col">Column</th><th scope="col" class="tag">Found as</th><th scope="col">Rule</th><th scope="col">Value</th></tr></thead>
           <tbody id="c-rows" aria-live="polite">
@@ -562,9 +562,9 @@ footer .r{margin-left:auto}
 <!-- ======================= PROOF STRIP ======================= -->
 <section class="strip" aria-label="Measured results">
   <ul class="wrap">
-    <li><span class="num"><b class="cnt" data-to="129260">129,260</b></span><span>rows of bank data protected; full scan in about half a second</span></li>
+    <li><span class="num"><b class="cnt" data-to="129260">129,260</b></span><span>rows of bank data protected; full scan in under a second</span></li>
     <li><span class="num"><b class="cnt" data-to="120">120</b></span><span>columns in 9 tables, labelled automatically</span></li>
-    <li><span class="num">~<b class="cnt" data-to="60">60</b><small> MB</small></span><span>of memory with all three databases under load</span></li>
+    <li><span class="num">~<b class="cnt" data-to="60">60</b><small>&ndash;70 MB</small></span><span>of memory with all three databases under load</span></li>
     <li><span class="num"><b class="cnt" data-to="3">3</b><small> DBs</small></span><span>SQLite, MySQL and PostgreSQL, identical output</span></li>
     <li><span class="num"><b class="cnt" data-to="0.993" data-dec="3">0.993</b></span><span>name recall with the optional AI (0.911 rules only)</span></li>
   </ul>
@@ -674,7 +674,7 @@ footer .r{margin-left:auto}
         </tr></thead>
         <tbody>
           <tr><th scope="row">card_no<small>card number</small></th><td data-l="Admin"><mark class="m b">4111111111116916</mark></td><td data-l="Support"><mark class="m r">4111-XXXX-XXXX-6916</mark></td><td data-l="Analyst"><mark class="m r">[REDACTED]</mark></td></tr>
-          <tr><th scope="row">cust_nm<small>customer name</small></th><td data-l="Admin"><mark class="m b">Ritika Sharma</mark></td><td data-l="Support"><mark class="m r">Ritika S*****</mark></td><td data-l="Analyst"><mark class="m r">tok_5a1c9e07b3d2</mark></td></tr>
+          <tr><th scope="row">cust_nm<small>customer name</small></th><td data-l="Admin"><mark class="m b">Ritika Sharma</mark></td><td data-l="Support"><mark class="m r">Ritika S****</mark></td><td data-l="Analyst"><mark class="m r">tok_5a1c9e07b3d2</mark></td></tr>
           <tr><th scope="row">mob_no<small>phone</small></th><td data-l="Admin"><mark class="m b">+919000012345</mark></td><td data-l="Support"><mark class="m r">+91 XXXXXX2345</mark></td><td data-l="Analyst"><mark class="m r">tok_c08e41f6a9b7</mark></td></tr>
           <tr><th scope="row">pan_no<small>tax ID</small></th><td data-l="Admin"><mark class="m b">ABCPS0000K</mark></td><td data-l="Support"><mark class="m r">XXXXXX000K</mark></td><td data-l="Analyst"><mark class="m r">[REDACTED]</mark></td></tr>
           <tr><th scope="row">dob_dt<small>date of birth</small></th><td data-l="Admin"><mark class="m b">1991-04-12</mark></td><td data-l="Support"><mark class="m r">1991</mark></td><td data-l="Analyst"><mark class="m r">30-39</mark></td></tr>
@@ -813,7 +813,7 @@ footer .r{margin-left:auto}
       <div class="t-head"><span>support_tickets.ticket_text</span>
         <div class="mini" role="group" aria-label="Detection mode"><button type="button" data-ai="0" aria-pressed="false">Rules only</button><button type="button" data-ai="1" aria-pressed="true">Rules + AI</button></div>
       </div>
-      <p class="t-body">Customer <mark class="m v">Ritika Sharma</mark> called from <mark class="m r">+91 90000 12345</mark>. She says card <mark class="m r">4111 1111 1111 6916</mark> was charged twice and wants the new card sent to <mark class="m r">14 Lake View Road, Baner, Pune</mark>.</p>
+      <p class="t-body">Customer <mark class="m v">Ritika Sharma</mark> called from <mark class="m r">+91 90000 12345</mark>. She says card <mark class="m r">4111 1111 1111 1111</mark> was charged twice and wants the new card sent to <mark class="m r">14 Lake View Road, Baner, Pune 411045</mark>.</p>
       <div class="t-out" aria-live="polite"><b>analyst sees&gt;</b> <span id="t-out">Customer [NAME] called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to [ADDRESS].</span></div>
       <div class="t-key"><span><mark class="m r">red</mark> found by rules</span><span><mark class="m v">violet</mark> found by AI</span><span id="t-leak" hidden><mark class="m a">amber</mark> missed: would leak</span></div>
     </div>
@@ -952,7 +952,7 @@ footer .r{margin-left:auto}
 
   /* ---------- hero: same row, three roles ---------- */
   const ROWS = [ // column, tag, admin value, [support rule, value], [analyst rule, value]
-    ['cust_nm', 'PII_MEDIUM', 'Ritika Sharma', ['PARTIAL', 'Ritika S*****'], ['HASH', 'tok_5a1c9e07b3d2']],
+    ['cust_nm', 'PII_MEDIUM', 'Ritika Sharma', ['PARTIAL', 'Ritika S****'], ['HASH', 'tok_5a1c9e07b3d2']],
     ['mob_no', 'PII_MEDIUM', '+919000012345', ['PARTIAL', '+91 XXXXXX2345'], ['HASH', 'tok_c08e41f6a9b7']],
     ['dob_dt', 'PII_QUASI', '1991-04-12', ['PARTIAL', '1991'], ['GENERALIZE', '30-39']],
     ['pan_no', 'PII_HIGH', 'ABCPS0000K', ['PARTIAL', 'XXXXXX000K'], ['REDACT', '[REDACTED]']],
@@ -1081,7 +1081,7 @@ footer .r{margin-left:auto}
     { role: 'support', sql: "SELECT * FROM cards WHERE CARD_NO LIKE '4111%';", msg: "inference guard: role 'support' cannot filter on cards.card_no (PII_HIGH); that would reveal masked values", why: 'Matching the first digits would leak digits Support may not see.' },
     { role: 'analyst', sql: 'SELECT cust_nm FROM customers ORDER BY mob_no;', msg: "inference guard: role 'analyst' cannot sort on customers.mob_no (PII_MEDIUM); that would reveal masked values", why: 'The sort order alone would give away the hidden phone numbers.' },
     { role: 'admin', sql: 'DELETE FROM cards;', msg: 'write statements are blocked on bank data: PardaDB is read-only by design (create your own test tables in the Playground database)', why: 'Nobody can change bank data through PardaDB, not even Admin.' },
-    { role: 'support', sql: 'SELECT cust_nm, mob_no FROM customers LIMIT 1;', ok: true, out: 'cust_nm         mob_no\nRitika S*****   +91 XXXXXX2345', why: 'A normal question passes, and the answer comes back masked for the role.' },
+    { role: 'support', sql: 'SELECT cust_nm, mob_no FROM customers LIMIT 1;', ok: true, out: 'cust_nm         mob_no\nRitika S****   +91 XXXXXX2345', why: 'A normal question passes, and the answer comes back masked for the role.' },
   ];
   const chOut = $('#ch-out'), verdict = $('#verdict'), chBtns = $$('.probes button');
   let chTimer = 0, chRun = 0;

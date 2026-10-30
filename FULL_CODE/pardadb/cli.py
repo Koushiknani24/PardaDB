@@ -224,7 +224,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     p.add_argument("--no-browser", action="store_true")
     p.add_argument("--heartbeat", type=int, default=30, help="seconds between terminal status lines")
     p.add_argument("--no-tui", action="store_true", help="plain monitoring log instead of the interactive terminal UI")
-    p.add_argument("--ml", action="store_true", help="also start the AI model sidecar (needs ml/.venv; ~1.4 GB RAM)")
+    p.add_argument("--ml", action="store_true", help="also start the AI model sidecar (needs ml/.venv; ~1.2 GB RAM)")
     p.add_argument("--classic", action="store_true", help="line-based terminal UI instead of the full-screen one")
     p = sub.add_parser("scan", help="scan once and print the catalog")
     p.add_argument("--db", default="sqlite")
