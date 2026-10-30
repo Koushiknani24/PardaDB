@@ -1,0 +1,800 @@
+{"tokenized_text": ["Co-applicant", ":", "Clara", "Swain", ",", "mob", "7208212049", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Co-applicant", "PAN", "OKFFS8337L", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "5109", "1870", "9654", "1077", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "91-6968384023", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["Duplicate", "of", "earlier", "complaint", ".", "Closing", "."], "ner": []}
+{"tokenized_text": ["POA", "holder", "Lohia", ",", "Vishal", ",", "contact", "+", "91", "65239", "17590"], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "29948", "to", "my", "brother", "Partha", "Farah", "Jaiswal", "on", "9659884194", "@", "saffronupi", ",", "money", "deducted", "but", "not", "received"], "ner": [[7, 9, "person"]]}
+{"tokenized_text": ["Branch", "Service"], "ner": []}
+{"tokenized_text": ["Visited", "Sahyadri", "Salon", "branch", "with", "cyrus", "jaiswal", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 6, "person"]]}
+{"tokenized_text": ["SANATOMBI", "CHANDY"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["JUPITARA", "JOHAL", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "50652607626011", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "88845", "28444"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-0LJCKY1A", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["PUNE"], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Nilgiri", "TEXTILES", "LTD", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 7, "organization"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "91", "76168", "81732"], "ner": []}
+{"tokenized_text": ["Co-applicant", "PAN", "ARRJP2741B", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-H1KLB1RA"], "ner": []}
+{"tokenized_text": ["NRI", "cust", "-", "US", "contact", "+", "1", "(", "512", ")", "555-0123", ".", "Callback", "scheduled", "."], "ner": []}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "2118-8321-9425", "hai", "aur", "PAN", "DVZJY7848D", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "7555098974"], "ner": []}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "muthu_samanta", "@", "fabrikam", ".", "de", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Chilika", "Fashion", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "681879907147", ",", "mera", "number", "+", "917128979937"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "531194109850", "/", "R", ".", "AGARWAL", "/", "XXXXXXXXXX9570", "/", "transfer"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "82662", "to", "my", "brother", "Manasa", "Negi", "on", "9389830325", "@", "neelpay", ",", "money", "deducted", "but", "not", "received"], "ner": [[7, 8, "person"]]}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Sahyadri", "MOTORS", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN53379020071", "/", "F", ".", "SHETH", "/", "SAHYADRI", "LOGISTICS", "LLP"], "ner": [[4, 6, "person"], [8, 10, "organization"]]}
+{"tokenized_text": ["co-applicant", ":", "H", ".", "Mann", ",", "mob", "+", "916611278134", ".", "salary", "slips", "verified", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-YSC9FQTO"], "ner": []}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "2669", "1710", "9188", "hai", "aur", "PAN", "DJDPM0555Q", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "3633-7443-1609-93", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "94770", "79706", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["Branch", "Service"], "ner": []}
+{"tokenized_text": ["Please", "add", "Nelson", "as", "nominee", "for", "my", "account", "61564604267010", ".", "Regards", ",", "Junaid", "Thorat"], "ner": [[2, 2, "person"], [12, 13, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "666121349365", "/", "SATHE", "/", "kanhaiyazaidi", "@", "okaxis", "/", "loan", "return"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "522257468672", "/", "S", ".", "B", ".", "GOHIL", "/", "9701758665", "@", "pragatiupi", "/", "loan", "return"], "ner": [[6, 10, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "683550230068", "/", "HEMANTA", "/", "sirisha", "@", "paytm", "/", "loan", "return"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["Cust", "alt", "email", "paramjit_maurya", "@", "rediffmail", ".", "com"], "ner": []}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "4", ",", "702", "have", "been", "deducted", "from", "my", "salary", "account", "60918236512340", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "V", ".", "Lohia", "06546786386"], "ner": [[31, 33, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "560180003101", "/", "MOHINI", "APTE", "/", "9322770868", "@", "pragatiupi", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["PAN", "JAQGU7204G", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "Flat", "506A", ",", "Shanti", "Kunj", ",", "Vaishali", "Nagar", ",", "Dehradun", "248009", ".", "shifted", "last", "month", ".", "a", "/", "c", "52269254532905", "thx"], "ner": [[5, 15, "address"]]}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Brahmaputra", "Sweets", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "14573", "credited", "back", "to", "a", "/", "c", "66457412659178", "."], "ner": []}
+{"tokenized_text": ["Cust", "Pranali", "Sheth", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-69RL0SQB"], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN48994796769", "/", "KALYAN", "IRANI", "/", "NILGIRI", "STEEL", "WORKS"], "ner": [[4, 5, "person"], [7, 9, "organization"]]}
+{"tokenized_text": ["POS", "474672XXXXXX0621", "AJANTA", "DISTRICT", "HOSPITAL", "PUNE"], "ner": [[2, 4, "organization"]]}
+{"tokenized_text": ["PAN", "BLVBW4675L", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["Spoke", "to", "Samanta", ",", "Anirudh", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "91", "71361", "35864", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "4969-9111-0354-5371", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "917544051157", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["Cheque", "book", "50", "lvs", "issued"], "ner": []}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "917475239028"], "ner": []}
+{"tokenized_text": ["PAN", "TYCPM9252O", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["CHILIKA", "MOTORS"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["CUST", "LAHIRI", ",", "LAVANYA", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 3, "person"]]}
+{"tokenized_text": ["Co-applicant", ":", "Dhillon", ",", "mob", "6534397826", ".", "ITR", "verified", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["Visited", "Brahmaputra", "Travels", "branch", "with", "Rajasekar", "Rizvi", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 6, "person"]]}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "2747", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "A", ".", "R", ".", "Jaiswal"], "ner": [[31, 35, "person"]]}
+{"tokenized_text": ["Please", "add", "Junaid", "Jaiswal", "as", "nominee", "for", "my", "account", "31084600867517", ".", "Regards", ",", "Jehangir"], "ner": [[2, 3, "person"], [13, 13, "person"]]}
+{"tokenized_text": ["ATW", "/", "457836XXXXXX0512", "/", "SAFF4718", "/", "SURAT"], "ner": []}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "54617", "credited", "back", "to", "a", "/", "c", "83765407029606", "."], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Nilgiri", "Pharmacy", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "mann", ".", "renjith", "@", "yahoo", ".", "co", ".", "in", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Please", "add", "Lakshman", "as", "nominee", "for", "my", "account", "74985261076177", ".", "Regards", ",", "Hebbar", ",", "Deepika"], "ner": [[2, 2, "person"], [12, 14, "person"]]}
+{"tokenized_text": ["POS", "/", "5366-9280-5235-4312", "/", "SAHYADRI", "CO-OP", "BANK", "/", "KAKINADA"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "54261", "from", "Brahmaputra", "Sweets", "on", "my", "credit", "card", "3770", "5947", "1133", "737", ".", "You", "can", "also", "reach", "me", "at", "vamsi", ".", "bajpai47", "@", "stark", ".", "example", ".", "A", "/", "c", "no", ":", "12368978511501", "Regards", ",", "jaya", "chandy"], "ner": [[8, 9, "organization"], [41, 42, "person"]]}
+{"tokenized_text": ["co-applicant", ":", "Nanjundappa", "Zaidi", ",", "mob", "63655", "97202", ".", "salary", "slips", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN02770723712", "/", "ZAINAB", "LOHIA", "/", "KAZIRANGA", "TRAVELS"], "ner": [[4, 5, "person"], [7, 8, "organization"]]}
+{"tokenized_text": ["CUST", "ZAINAB", "CHUDASAMA", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Cust", "Alina", "Dutta", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Nominee", "Sudipta", "Kamat", "added", ";", "address", "Shop", "3", ",", "Model", "Town", ",", "Thiruvananthapuram"], "ner": [[1, 2, "person"], [6, 12, "address"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "14331", "have", "been", "deducted", "from", "my", "salary", "account", "49132917938932", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Maurya", "7912880394"], "ner": [[29, 29, "person"]]}
+{"tokenized_text": ["PAN", "OXPLR2807J", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["Sweep-in", "linked", "to", "FD"], "ner": []}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "P", ".", "Bhosale", "same", "as", "on", "pan", "XPIAU5113O", ".", "pls", "fix"], "ner": [[14, 16, "person"]]}
+{"tokenized_text": ["Hutoxi", "Sharon", "Rizvi", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "67702504639175", "hai", ".", "please", "check"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "97180", "from", "Atlassian", "on", "my", "credit", "card", "3639-7962-5319-09", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Shoaib"], "ner": [[8, 8, "organization"], [27, 27, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "WJBFP2697L", ",", "account", "no", "86240641893570", ".", "Thank", "you", ",", "Ratan", "Irani"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["Please", "add", "Bhosale", "as", "nominee", "for", "my", "account", "25617632511646", ".", "Regards", ",", "N", ".", "Chudasama"], "ner": [[2, 2, "person"], [12, 14, "person"]]}
+{"tokenized_text": ["Form", "15G", "submitted", "but", "still", "tds", "cut", "on", "my", "FD", "ending", "4886", "."], "ner": []}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["Sathe", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "93525853620468", "hai", ".", "please", "check"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["POA", "holder", "BRIJESH", "SWAIN", ",", "contact", "+", "918276532125"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "548131085112", "/", "NANJUNDAPPA", "KHARE", "/", "9683484809", "@", "pragatiupi", "/", "bday", "gift"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "95008", "to", "my", "brother", "Sharon", "Dhillon", "on", "kalyan", ".", "maurya", "@", "ybl", ",", "money", "deducted", "but", "not", "received", "pls"], "ner": [[7, 8, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "621598803621", "/", "SIRISHA", "/", "XXXXXXXXXX5904", "/", "transfer"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["JOYDEEP"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["Cust", "SUKHWINDER", "CHOKSI", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Kaziranga", "Fibernet", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "514278480690", ",", "mera", "number", "+", "91", "62130", "92223"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Known", "issue", "on", "app", "version", ",", "fix", "in", "next", "release", "."], "ner": []}
+{"tokenized_text": ["NRI", "cust", "-", "US", "contact", "+", "1", "(", "732", ")", "555-0158", ".", "Callback", "scheduled", "."], "ner": []}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91-64218-83022", "-", ">", "+", "919174775166", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "40", ",", "025", "from", "Sahyadri", "Diagnostics", "on", "my", "credit", "card", "8222-4790-4222-0484", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Khare", ",", "Pankaj"], "ner": [[10, 11, "organization"], [30, 32, "person"]]}
+{"tokenized_text": ["POA", "holder", "F", ".", "Negi", ",", "contact", "+", "91", "80022", "05961"], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["I", "am", "Anirudh", "Negi", ",", "my", "DOB", "is", "26-07-1988", ".", "Please", "update", "my", "Aadhaar", "6245", "2813", "9362", "in", "the", "account", "67340153147631", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "6775-0812-3876", "hai", "aur", "PAN", "VWGHX8350O", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["Kinjal", "Chandy", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "98122931221140", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["UPI", "/", "638677479064", "/", "9918225136", "@", "saffronupi", "/", "dinner"], "ner": []}
+{"tokenized_text": ["User", "ID", "unlocked", "after", "verification", "on", "63767", "73739", "."], "ner": []}
+{"tokenized_text": ["co-applicant", ":", "Lakshman", "Khare", ",", "mob", "+", "91-79240-57799", ".", "salary", "slips", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["POA", "holder", "Sukhwinder", "Johal", ",", "contact", "+", "91-87345-80352"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Hi", "team", "I", "lost", "my", "wallet", "last", "night", ",", "my", "credit", "card", "3620", "4065", "1083", "06", "was", "inside", ".", "pls", "block", "it", "asap", ".", "call", "me", "on", "84421", "22899", "A", "/", "c", "no", ":", "99661229138853", "thx"], "ner": []}
+{"tokenized_text": ["My", "account", "13743070598764", "has", "become", "dormant", ".", "I", "want", "to", "reactivate", "it", "."], "ner": []}
+{"tokenized_text": ["User", "ID", "unlocked", "after", "verification", "on", "+", "91-84235-18558", "."], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "PRAVIN", "DHILLON", ",", "mob", "9401613526", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-0GV32L2Q", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "Shop", "40", ",", "Kothapet", ",", "Raipur", ".", "shifted", "last", "month", ".", "a", "/", "c", "98896912225565", "thx"], "ner": [[5, 10, "address"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN66744721476", "/", "CHILIKA", "RESTAURANT", "/", "SALARY", "AUG", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN84448586498", "/", "INDIAN", "OIL", "CORPORATION", "/", "SALARY", "NOV", "26"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["KAZIRANGA", "LOGISTICS", "LLP"], "ner": [[0, 2, "organization"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "14", ",", "127", "credited", "back", "to", "a", "/", "c", "31777657043868", "."], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "615400670102", "/", "SETHI", ",", "FAHAD", "/", "XXXXXXXXXX7057", "/", "transfer"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "561420412619", "/", "ARUL", "HEBBAR", "/", "XXXXXXXXXX1079", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "sathe", "@", "ybl", "Rs", "26", ",", "760", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9323227057", "@", "okaxis", "hai"], "ner": []}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Phrang", "Negi", "same", "as", "on", "pan", "USSPB1190T", ".", "pls", "fix"], "ner": [[14, 15, "person"]]}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "7065390148", ")", ",", "naya", "number", "+", "91", "97453", "76001", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "😡"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "95", ",", "281", "from", "Ajanta", "MOBILE", "STORE", "on", "my", "credit", "card", "36501592114321", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Debasis", "Rizvi"], "ner": [[10, 12, "organization"], [31, 32, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN80199530556", "/", "JAYA", "CHISHTI", "/", "AJANTA", "SUPERMART"], "ner": [[4, 5, "person"], [7, 8, "organization"]]}
+{"tokenized_text": ["Cust", "irate", ".", "Explained", "charges", "as", "per", "schedule", "."], "ner": []}
+{"tokenized_text": ["CUST", "PAROMITA", "TIWARI", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Known", "issue", "on", "app", "version", ",", "fix", "in", "next", "release", "."], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-NU8GG89S", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "sidharth_bosco_khanna", "@", "neelpay", "Rs", "49", ",", "093", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9071878439", "@", "ybl", "hai", "🙏", "🙏"], "ner": []}
+{"tokenized_text": ["Co-applicant", "PAN", "SGJPX8433J", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "696817387772", "/", "KINJAL", "ZAIDI", "/", "9956280720", "@", "pragatiupi", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "moolchand", "sharon", "khanna", "same", "as", "on", "pan", "NACBF5903D", ".", "pls", "fix"], "ner": [[14, 16, "person"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "569748322108", "hai", "aur", "PAN", "HSFPQ0282M", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "ZSAJK5441D", ",", "account", "no", "95436033464080", ".", "Thank", "you", ",", "Arnab", "Lahiri"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "9859387746", "@", "paytm", "Rs", "61", ",", "205", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9593958480", "@", "saffronupi", "hai"], "ner": []}
+{"tokenized_text": ["Cust", "Trilochan", "Bhosale", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["TAX", "PMT", "/", "ADV", "TAX", "/", "PAN", "HVRPR3553F", "/", "CHALLAN", "280"], "ner": []}
+{"tokenized_text": ["Please", "add", "Sirisha", "Haldar", "as", "nominee", "for", "my", "account", "90742096849358", ".", "Regards", ",", "Vamsi", "Pradhan"], "ner": [[2, 3, "person"], [13, 14, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "UFBPL8127A", ",", "account", "no", "92097391146521", ".", "Thank", "you", ",", "S", ".", "Chudasama"], "ner": [[28, 30, "person"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "24717", "to", "my", "brother", "Satnam", "Johal", "on", "9781059273", "@", "paytm", ",", "money", "deducted", "but", "not", "received", "🙏"], "ner": [[7, 8, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Paytm", "Payments", "Bank", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "521938675700", ",", "mera", "number", "+", "91-8578194811"], "ner": [[5, 7, "organization"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "510047656673", "/", "SURBHI", "KAPOOR", "/", "XXXXXXXXXX1007", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["INT", ".", "PD", ":", "01-07-2026", "TO", "30-09-2026"], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "685496131276", "/", "P", ".", "C", ".", "APTE", "/", "9958122728", "@", "neelpay", "/", "bday", "gift"], "ner": [[6, 10, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "09380237502", "-", ">", "83833", "62396", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "655364846050", "/", "SAYAN", "/", "XXXXXXXXXX2408", "/", "transfer"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["Co-applicant", "PAN", "ZRYPF8203M", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["Please", "add", "Trilochan", "as", "nominee", "for", "my", "account", "80778447043999", ".", "Regards", ",", "Shravan"], "ner": [[2, 2, "person"], [12, 12, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "06476636311", "-", ">", "+", "918529015616", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["Please", "add", "Tirthankar", "as", "nominee", "for", "my", "account", "65414519424925", ".", "Regards", ",", "Surajit", "Zaidi"], "ner": [[2, 2, "person"], [12, 13, "person"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "8826-4424-6768", "hai", "aur", "PAN", "LAIPR2308E", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["Visited", "Ajanta", "Steel", "Works", "branch", "with", "Lachi", "Zaidi", "for", "re-KYC", "."], "ner": [[1, 3, "organization"], [6, 7, "person"]]}
+{"tokenized_text": ["Please", "add", "Gurinder", "Rajagopal", "as", "nominee", "for", "my", "account", "43408214023057", ".", "Regards", ",", "Lakshman", "Maurya"], "ner": [[2, 3, "person"], [13, 14, "person"]]}
+{"tokenized_text": ["Hi", "team", "I", "lost", "my", "wallet", "last", "night", ",", "my", "credit", "card", "3643-3124-9388-54", "was", "inside", ".", "pls", "block", "it", "asap", ".", "call", "me", "on", "+", "91", "65613", "66428", "A", "/", "c", "no", ":", "67026990067673", "thx"], "ner": []}
+{"tokenized_text": ["Branch", "Service"], "ner": []}
+{"tokenized_text": ["atm", "didnttt", "give", "cash", "but", "sms", "came", "for", "debit", "Rs", ".", "62448", ".", "ref", "557949289952"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-BBZJEE3T", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["Old", "a", "/", "c", "no", "059554333801", "migrated", "from", "legacy", "CBS"], "ner": []}
+{"tokenized_text": ["Visited", "Goldman", "Sachs", "branch", "with", "Gyanranjan", "Chandy", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 6, "person"]]}
+{"tokenized_text": ["Nominee", "A", ".", "Rajagopal", "added", ";", "address", "Shop", "29", ",", "Hazratganj", ",", "Indore"], "ner": [[1, 3, "person"], [7, 12, "address"]]}
+{"tokenized_text": ["TAX", "PMT", "/", "ADV", "TAX", "/", "PAN", "EYVAM0099C", "/", "CHALLAN", "280"], "ner": []}
+{"tokenized_text": ["GUWAHATI"], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "691393953569", "/", "MANN", ",", "CYRUS", "/", "9983570972", "@", "saffronupi", "/", "loan", "return"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "515539460716", "/", "JAYA", "RAJAGOPAL", "/", "gohil", ",", "_satnam", "@", "ybl", "/", "bday", "gift"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Old", "a", "/", "c", "no", "086133098279", "migrated", "from", "legacy", "CBS"], "ner": []}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-YGGMW781"], "ner": []}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "sheth", ".", "santhosh", "@", "yahoo", ".", "co", ".", "in", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "36701691477161", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Co-applicant", "PAN", "AANCX9364Z", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["SETHI", ",", "HUTOXI"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["Co-applicant", "PAN", "WCLLD2068P", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["TRUPTI", "JOHAL"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Nominee", "Kodali", ",", "Vishal", "added", ";", "address", "Flat", "781A", ",", "Sea", "Breeze", "Apartments", ",", "Civil", "Lines", ",", "Vijayawada", "520032"], "ner": [[1, 3, "person"], [7, 18, "address"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "646400059271", "/", "JITU", "NELSON", "PRADHAN", "/", "9416992660", "@", "paytm", "/", "bday", "gift"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["Cust", "Madhumita", "Kodali", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN35132340551", "/", "CHILIKA", "FIBERNET", "/", "SALARY", "JUL", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "670047227802", "/", "HALDAR", ",", "RUTH", "/", "9907669274", "@", "neelpay", "/", "bday", "gift"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-FSRJHGM7", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "82834", "79164"], "ner": []}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "88", ",", "917", "credited", "back", "to", "a", "/", "c", "65513701798861", "."], "ner": []}
+{"tokenized_text": ["atm", "didnttt", "give", "cash", "but", "sms", "came", "for", "debit", "Rs", ".", "92", ",", "886", ".", "ref", "585124062017"], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "5136-9587-2319-6494", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "91-80566-68699", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "70030", "have", "been", "deducted", "from", "my", "salary", "account", "17109829886944", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Rizvi", "+", "91-9158891187"], "ner": [[29, 29, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "81", ",", "632", "from", "Nilgiri", "Textiles", "Ltd", "on", "my", "credit", "card", "6579-3178-4905-6805", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Tirthankar"], "ner": [[10, 12, "organization"], [31, 31, "person"]]}
+{"tokenized_text": ["Nominee", "Sabu", "Johal", "added", ";", "address", "27", "/", "1", "Park", "Street", ",", "Bhopal", "462045"], "ner": [[1, 2, "person"], [6, 13, "address"]]}
+{"tokenized_text": ["Nominee", "Wasim", "Rawat", "added", ";", "address", "Flat", "466B", ",", "Sea", "Breeze", "Apartments", ",", "Koregaon", "Park", ",", "Bengaluru", "560016"], "ner": [[1, 2, "person"], [6, 17, "address"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN39652670767", "/", "KAZIRANGA", "SUPERMART", "/", "SALARY", "APR", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Spoke", "to", "S", ".", "P", ".", "Gohil", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "91", "97032", "52111", "."], "ner": [[2, 6, "person"]]}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "AJANTA", "LOGISTICS", "LLP", "/", "4376023114"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["Asked", "cust", "to", "visit", "branch", "with", "originals", "for", "reactivation", "."], "ner": []}
+{"tokenized_text": ["Yuvaraj", "Zaidi"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Hemanta", "Chandy", "same", "as", "on", "pan", "DCDJM2453O", ".", "pls", "fix"], "ner": [[14, 15, "person"]]}
+{"tokenized_text": ["Cust", "irate", ".", "Explained", "charges", "as", "per", "schedule", "."], "ner": []}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["KOCHI"], "ner": []}
+{"tokenized_text": ["RD", "INSTALLMENT", "MAY", "26"], "ner": []}
+{"tokenized_text": ["Co-applicant", "PAN", "DIGPM8883Z", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["POA", "holder", "Bhadra", "Bhatti", ",", "contact", "+", "918946188157"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "Flat", "420A", ",", "Shanti", "Kunj", ",", "Model", "Town", ",", "Kozhikode", "673080", ".", "shifted", "last", "month", ".", "a", "/", "c", "80120202248244", "thx"], "ner": [[5, 15, "address"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Red", "Cross", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "585372182792", ",", "mera", "number", "+", "91", "73532", "61051"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "#", "166", ",", "9th", "Cross", ",", "Jayanagar", ",", "Kanpur", "-", "208039", ".", "shifted", "last", "month", ".", "a", "/", "c", "40171655083778", "thx"], "ner": [[5, 15, "address"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "50", ",", "187", "have", "been", "deducted", "from", "my", "salary", "account", "53071115990149", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Mann", "7973813414"], "ner": [[31, 31, "person"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "6597-5831-1745-1204", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "91-8081289193", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "9721445893", ")", ",", "naya", "number", "+", "91-8654672154", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "pls"], "ner": []}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "172", ",", "Station", "Road", ",", "Gomti", "Nagar", "Mumbai", "-", "400091", ".", "shifted", "last", "month", ".", "a", "/", "c", "49495061647646", "thx"], "ner": [[5, 14, "address"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "gohil", "@", "ybl", "Rs", "72", ",", "604", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "sheth", "@", "neelpay", "hai", "pls"], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "642516417029", "/", "NARPAT", "SABU", "RIZVI", "/", "khare", "@", "neelpay", "/", "bday", "gift"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["Known", "issue", "on", "app", "version", ",", "fix", "in", "next", "release", "."], "ner": []}
+{"tokenized_text": ["Trilochan", "Tiwari", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "47325985880307", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "88", "/", "16", "Gandhi", "Marg", ",", "Kozhikode", "673058", ".", "shifted", "last", "month", ".", "a", "/", "c", "75216973605184", "thx"], "ner": [[5, 12, "address"]]}
+{"tokenized_text": ["Duplicate", "of", "earlier", "complaint", ".", "Closing", "."], "ner": []}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "9438522618", "@", "paytm", "Rs", "51082", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9607834639", "@", "neelpay", "hai"], "ner": []}
+{"tokenized_text": ["Hi", "team", "I", "lost", "my", "wallet", "last", "night", ",", "my", "credit", "card", "5492", "7278", "6933", "3643", "was", "inside", ".", "pls", "block", "it", "asap", ".", "call", "me", "on", "+", "916623731568", "A", "/", "c", "no", ":", "30532539559341", "thx"], "ner": []}
+{"tokenized_text": ["Joint", "holder", ":", "Madhumita", "Chudasama", "(", "mob", "90082", "33423", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["Known", "issue", "on", "app", "version", ",", "fix", "in", "next", "release", "."], "ner": []}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "T", ".", "S", ".", "Lyngdoh", "same", "as", "on", "pan", "HBJAW6829Z", ".", "pls", "fix"], "ner": [[14, 18, "person"]]}
+{"tokenized_text": ["SMS", "ALERT", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Kaziranga", "Salon", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["ATW", "/", "829400XXXXXX1236", "/", "SAFF4783", "/", "LUCKNOW"], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Kaziranga", "MOTORS", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["TAX", "PMT", "/", "ADV", "TAX", "/", "PAN", "SDAGX8890F", "/", "CHALLAN", "280"], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "630456421804", "/", "FARAH", "BAJPAI", "/", "XXXXXXXXXX2076", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "806176952470", "hai", "aur", "PAN", "JGJFJ1855I", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["POS", "655195XXXXXX1106", "SAHYADRI", "SALON", "MYSURU"], "ner": [[2, 3, "organization"]]}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "KAZIRANGA", "FIBERNET", "/", "7866921993"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Lakshman", "Sethi", "same", "as", "on", "pan", "CNXCA7882Y", ".", "pls", "fix"], "ner": [[14, 15, "person"]]}
+{"tokenized_text": ["Rizvi", ",", "Gloria"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["Cust", "irate", ".", "Explained", "charges", "as", "per", "schedule", "."], "ner": []}
+{"tokenized_text": ["AJANTA", "SUPERMART"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["POA", "holder", "Chinmaya", "Sheth", ",", "contact", "+", "91", "76877", "31468"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Nilgiri", "Travels", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "604701023225", ",", "mera", "number", "+", "91-8493381821"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "73763", "have", "been", "deducted", "from", "my", "salary", "account", "87191760564893", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Jaya", "9101591820"], "ner": [[29, 29, "person"]]}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "BRAHMAPUTRA", "FASHION", "/", "0196277047"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Spoke", "to", "Nasir", "Dutta", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "91-77846-64700", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "89575", "from", "Ajanta", "Pharmacy", "on", "my", "credit", "card", "5540", "5461", "0253", "9978", ".", "You", "can", "also", "reach", "me", "at", "rajinderrawat", "@", "hotmail", ".", "com", ".", "A", "/", "c", "no", ":", "51745729521319", "Regards", ",", "Dhillon", ",", "Jupitara"], "ner": [[8, 9, "organization"], [39, 41, "person"]]}
+{"tokenized_text": ["SAHYADRI", "TEXTILES", "LTD"], "ner": [[0, 2, "organization"]]}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-1XSLSTJU", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "3685-3246-9134-04", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "sheetalb96", "@", "rediffmail", ".", "com", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "6543928373494775", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "65200", "54282", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "81", ",", "242", "from", "Alibaba", "Group", "on", "my", "credit", "card", "5207422089831792", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Divya", "Sheth"], "ner": [[10, 11, "organization"], [30, 31, "person"]]}
+{"tokenized_text": ["co-applicant", ":", "Arul", "Rajagopal", ",", "mob", "7064246088", ".", "salary", "slips", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "65", ",", "609", "have", "been", "deducted", "from", "my", "salary", "account", "14644163269396", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Arnab", "Chishti", "8961952090"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["atm", "didnttt", "give", "cash", "but", "sms", "came", "for", "debit", "Rs", ".", "15720", ".", "ref", "650396407433"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "33301", "from", "Sahyadri", "FIBERNET", "on", "my", "credit", "card", "5490", "2025", "3249", "6666", ".", "You", "can", "also", "reach", "me", "at", "kinjal", ".", "sethi43", "@", "tailspin", ".", "com", ".", "br", ".", "A", "/", "c", "no", ":", "25455479772665", "Regards", ",", "Sidharth", "Dutta"], "ner": [[8, 9, "organization"], [43, 44, "person"]]}
+{"tokenized_text": ["UPI", "/", "633636067069", "/", "9152701321", "@", "okaxis", "/", "dinner"], "ner": []}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "32215", "credited", "back", "to", "a", "/", "c", "57316559349342", "."], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "36501302235929", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "72252", "92998", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "+", "91-69495-06626", ")", ",", "naya", "number", "91258", "99455", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha"], "ner": []}
+{"tokenized_text": ["Asked", "cust", "to", "visit", "branch", "with", "originals", "for", "reactivation", "."], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "49", ",", "502", "from", "Nilgiri", "Electronics", "on", "my", "credit", "card", "3678-3477-2357-73", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Jhumpa", "Rosy", "Rizvi"], "ner": [[10, 11, "organization"], [30, 32, "person"]]}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-6LB1VIUR", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["RD", "INSTALLMENT", "JAN", "26"], "ner": []}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "7074-4691-0452", "hai", "aur", "PAN", "EOAPZ0533S", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "Dutta", ",", "mob", "6158454663", ".", "ITR", "verified", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["Please", "add", "Aarti", "Lyngdoh", "as", "nominee", "for", "my", "account", "52282858603267", ".", "Regards", ",", "Ankita", "Chudasama"], "ner": [[2, 3, "person"], [13, 14, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "#", "286", ",", "8th", "Cross", ",", "Kukatpally", ",", "Kolkata", "-", "700058", ".", "shifted", "last", "month", ".", "a", "/", "c", "99677998538526", "thx"], "ner": [[5, 15, "address"]]}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "926268294671", "hai", "aur", "PAN", "DUQCU3471M", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-9QA765M3", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN71244885723", "/", "D", ".", "S", ".", "DHILLON", "/", "SIEMENS"], "ner": [[4, 8, "person"], [10, 10, "organization"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-SQJ2TBGP"], "ner": []}
+{"tokenized_text": ["Legal", "and", "technical", "valuation", "done", "."], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "8180254272006915", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "91-79112-90500", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["Mobile", "update", "request", "82544", "50131", "-", ">", "66010", "71034", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["My", "account", "56691959683120", "has", "become", "dormant", ".", "I", "want", "to", "reactivate", "it", "."], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Brahmaputra", "TRAVELS", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "659085333348", ",", "mera", "number", "+", "91-99103-02795"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Joint", "holder", ":", "Farah", "Swain", "(", "mob", "+", "91", "72293", "22885", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["CUST", "HEMANTA", "SWAIN", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Kaziranga", "Pharmacy", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "672700235837", ",", "mera", "number", "08059449592"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "raminder", ".", "negi", "@", "yahoo", ".", "co", ".", "in", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "VPGPX1284Y", ",", "account", "no", "94936381362075", ".", "Thank", "you", ",", "P", ".", "Bajpai"], "ner": [[28, 30, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "503693591176", "/", "PRANALI", "RIZVI", "/", "negi", "@", "ybl", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Sweep-in", "linked", "to", "FD"], "ner": []}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "31658", "have", "been", "deducted", "from", "my", "salary", "account", "90232829746258", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Chinmay", "Marak", "+", "918242116564"], "ner": [[29, 30, "person"]]}
+{"tokenized_text": ["S", ".", "L", ".", "Chishti", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "51615385703421", "hai", ".", "please", "check"], "ner": [[0, 4, "person"]]}
+{"tokenized_text": ["Visited", "Sahyadri", "Logistics", "Llp", "branch", "with", "Vandana", "Dhillon", "for", "re-KYC", "."], "ner": [[1, 3, "organization"], [6, 7, "person"]]}
+{"tokenized_text": ["atm", "didnttt", "give", "cash", "but", "sms", "came", "for", "debit", "Rs", ".", "5573", ".", "ref", "645527000444"], "ner": []}
+{"tokenized_text": ["PAN", "WYMPS3533M", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["Sent", "Rs", ".", "67799", "to", "my", "brother", "Sathe", ",", "Kiranjot", "on", "i", ".", ".", "kamat", "@", "tulsiupi", ",", "money", "deducted", "but", "not", "received", "pls"], "ner": [[7, 9, "person"]]}
+{"tokenized_text": ["Cust", "alt", "email", "hebbar", ".", "nasir", "@", "umbrella-labs", ".", "in"], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "NARPAT", "LAHIRI", ",", "mob", "+", "91-72804-51814", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Uber", "Technologies", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "600545496288", ",", "mera", "number", "09578085398"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Joint", "holder", ":", "Prasanna", "Tenzin", "Lohia", "(", "mob", "+", "918685742945", ")"], "ner": [[3, 5, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "609381637670", "/", "JUNAID", "SHIRKE", "/", "hazel", ".", "shirke", "@", "saffronupi", "/", "bday", "gift"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "656557666198", "/", "AARTI", "SHETH", "/", "XXXXXXXXXX0881", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "8397", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "Chandy"], "ner": [[31, 31, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN49296336704", "/", "NILGIRI", "SWEETS", "/", "SALARY", "SEP", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-Q8Z0POJ1"], "ner": []}
+{"tokenized_text": ["CUST", "BAJPAI", ",", "DORJEE", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 3, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "648815030253", "/", "KRUNAL", "KODALI", "/", "XXXXXXXXXX2110", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Spoke", "to", "P", ".", "F", ".", "Kapoor", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "83080", "21834", "."], "ner": [[2, 6, "person"]]}
+{"tokenized_text": ["MIN", "BAL", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["I", "am", "Ratan", "Chishti", ",", "my", "DOB", "is", "10-07-1992", ".", "Please", "update", "my", "Aadhaar", "346438409654", "in", "the", "account", "54720674524667", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Nominee", "Phrang", "Mann", "added", ";", "address", "Flat", "552A", ",", "Prestige", "Shantiniketan", ",", "Vastrapur", ",", "Bhubaneswar", "751096"], "ner": [[1, 2, "person"], [6, 15, "address"]]}
+{"tokenized_text": ["Cust", "LAVANYA", "SATHE", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Rajagopal", "same", "as", "on", "pan", "YFXBH4574D", ".", "pls", "fix"], "ner": [[14, 14, "person"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "4190", "6814", "7519", "4592", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Co-applicant", "PAN", "EDPHP3328F", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "682944210186", "/", "P", ".", "AGARWAL", "/", "gyanranjan", ".", "choksi", "@", "pragatiupi", "/", "loan", "return"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["UPI", "/", "502127243705", "/", "dhillon", ",", "_sharmistha", "@", "paytm", "/", "dinner"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-6EK90EVC", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-UU2MWXGE", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["PAN", "ISLCR0760A", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "504062617367", "/", "SAYAN", "TIWARI", "/", "XXXXXXXXXX4094", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "FFMGW4440E", ",", "account", "no", "91428409954953", ".", "Thank", "you", ",", "P", ".", "Sethi"], "ner": [[28, 30, "person"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-1BG1Q8AH"], "ner": []}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "2931", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "Dhara", "Furtado"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["CUST", "PARAMJIT", "RAWAT", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91-8812017360", "-", ">", "66047", "80783", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["I", "am", "I", ".", "Lahiri", ",", "my", "DOB", "is", "06-07-2003", ".", "Please", "update", "my", "Aadhaar", "892683283603", "in", "the", "account", "15441966879962", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "RCXCI2210F", ",", "account", "no", "31832826413056", ".", "Thank", "you", ",", "Alina", "Bajpai"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["INT", ".", "PD", ":", "01-07-2026", "TO", "30-09-2026"], "ner": []}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "98", ",", "882", "have", "been", "deducted", "from", "my", "salary", "account", "39794838154057", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Balbir", "+", "91-67993-66302"], "ner": [[31, 31, "person"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "5540678233093128", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["RED", "CROSS"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "53", ",", "921", "from", "State", "Bank", "of", "India", "on", "my", "credit", "card", "36885925123970", ".", "You", "can", "also", "reach", "me", "at", "moolchand", ".", "dutta", "@", "rediffmail", ".", "com", ".", "A", "/", "c", "no", ":", "42365572469898", "Regards", ",", "pankaj", "chudasama"], "ner": [[10, 13, "organization"], [42, 43, "person"]]}
+{"tokenized_text": ["ECOM", "PUR", "/", "MEDIKART", ".", "EXAMPLE", "/", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "8011"], "ner": []}
+{"tokenized_text": ["Visited", "Ajanta", "DIAGNOSTICS", "branch", "with", "Shikha", "Zaidi", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 6, "person"]]}
+{"tokenized_text": ["Branch", "Service"], "ner": []}
+{"tokenized_text": ["ECOM", "PUR", "/", "SHOPKART", ".", "EXAMPLE", "/", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "1600"], "ner": []}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-ORO1XFC4"], "ner": []}
+{"tokenized_text": ["SAHYADRI", "RESTAURANT"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "124", "to", "my", "brother", "Rita", "Sethi", "on", "rawat", "@", "saffronupi", ",", "money", "deducted", "but", "not", "received", "🙏"], "ner": [[7, 8, "person"]]}
+{"tokenized_text": ["Jhumpa", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "77993218342083", "hai", ".", "please", "check"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["Spoke", "to", "b", ".", "rawat", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "91", "76177", "68579", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["rajagopal", ",", "tanushree", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "83579731381070", "hai", ".", "please", "check"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["Joint", "holder", ":", "maurya", ",", "hazel", "(", "mob", "+", "91-75568-02634", ")"], "ner": [[3, 5, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN32550769779", "/", "ARNAB", "RAJAGOPAL", "/", "KAZIRANGA", "MOBILE", "STORE"], "ner": [[4, 5, "person"], [7, 9, "organization"]]}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Sahyadri", "Steel", "Works", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 7, "organization"]]}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "satnam", ".", "bhatti79", "@", "hotmail", ".", "com", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "83", ",", "106", "from", "Sony", "Group", "on", "my", "credit", "card", "3693-7758-0182-54", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Rajasekar", "Marak"], "ner": [[10, 11, "organization"], [30, 31, "person"]]}
+{"tokenized_text": ["Hi", "team", "I", "lost", "my", "wallet", "last", "night", ",", "my", "credit", "card", "8232-6756-2172-8635", "was", "inside", ".", "pls", "block", "it", "asap", ".", "call", "me", "on", "72569", "34011", "A", "/", "c", "no", ":", "32847701486461", "thx"], "ner": []}
+{"tokenized_text": ["Cust", "Dominic", "Flora", "Chudasama", "called", "twice", "for", "status", "."], "ner": [[1, 3, "person"]]}
+{"tokenized_text": ["POA", "holder", "MOOLCHAND", "NEGI", ",", "contact", "+", "91", "75199", "82187"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Joint", "holder", ":", "Lakshman", "Ehsan", "Sethi", "(", "mob", "+", "91-83486-26890", ")"], "ner": [[3, 5, "person"]]}
+{"tokenized_text": ["I", "am", "Surajit", "Irani", ",", "my", "DOB", "is", "27-01-1953", ".", "Please", "update", "my", "Aadhaar", "3538-7085-8851", "in", "the", "account", "47172347246967", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "626227617281", "/", "BALBIR", "/", "XXXXXXXXXX6231", "/", "transfer"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN53982440098", "/", "KAZIRANGA", "OPTICALS", "/", "SALARY", "MAY", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["POA", "holder", "k", ".", "f", ".", "samanta", ",", "contact", "74844", "27196"], "ner": [[2, 6, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN48946637776", "/", "AJANTA", "STEEL", "WORKS", "/", "SALARY", "JUN", "26"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "190", ",", "Market", "Road", ",", "Anna", "Nagar", "Thiruvananthapuram", "-", "695005", ".", "shifted", "last", "month", ".", "a", "/", "c", "67276468217273", "thx"], "ner": [[5, 14, "address"]]}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "nancy", ".", "gohil", "@", "yahoo", ".", "co", ".", "in", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Ipsita", "Sathe", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "81970637618147", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "2174-0077-0711", "hai", "aur", "PAN", "MOBHT9298Y", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "phrang", ".", "bhosale63", "@", "rediffmail", ".", "com", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Joint", "holder", ":", "Kalyan", "Apte", "(", "mob", "+", "91-7920197078", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["Nominee", "Sabu", "added", ";", "address", "#", "166", ",", "29th", "Cross", ",", "Sector", "15", ",", "Shillong", "-", "793075"], "ner": [[1, 1, "person"], [5, 16, "address"]]}
+{"tokenized_text": ["Sweep-in", "linked", "to", "FD"], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "Prem", ",", "mob", "+", "91-93979-25236", ".", "ITR", "verified", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["ECOM", "PUR", "/", "SHOPKART", ".", "EXAMPLE", "/", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "0974"], "ner": []}
+{"tokenized_text": ["ECOM", "PUR", "/", "MEDIKART", ".", "EXAMPLE", "/", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "7313"], "ner": []}
+{"tokenized_text": ["Joint", "holder", ":", "Narpat", "Gohil", "(", "mob", "+", "91-66161-66575", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN81867664307", "/", "NILGIRI", "SWEETS", "/", "SALARY", "APR", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Sweep-in", "linked", "to", "FD"], "ner": []}
+{"tokenized_text": ["POS", "492070XXXXXX0678", "KAZIRANGA", "SWEETS", "MUMBAI"], "ner": [[2, 3, "organization"]]}
+{"tokenized_text": ["Sharon", "Padmaraj", "Hebbar", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "88625426055752", "hai", ".", "please", "check"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Nanjundappa", "same", "as", "on", "pan", "HGJGR7125Q", ".", "pls", "fix"], "ner": [[14, 14, "person"]]}
+{"tokenized_text": ["POS", "/", "4597", "8866", "5280", "6871", "/", "SAHYADRI", "MARKET", "/", "TIRUPATI"], "ner": [[7, 8, "organization"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "45", ",", "845", "credited", "back", "to", "a", "/", "c", "52037151708700", "."], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "54356", "from", "Hsbc", "on", "my", "credit", "card", "6587-0357-6360-4315", ".", "You", "can", "also", "reach", "me", "at", "ranjani_tiwari", "@", "hotmail", ".", "com", ".", "A", "/", "c", "no", ":", "24785800107401", "Regards", ",", "Tanvir", "Lyngdoh"], "ner": [[8, 8, "organization"], [35, 36, "person"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "74959", "79724"], "ner": []}
+{"tokenized_text": ["Duplicate", "of", "earlier", "complaint", ".", "Closing", "."], "ner": []}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "8222-9987-3299-3761", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Nominee", "Debasis", "Bhosale", "added", ";", "address", "22", "/", "11", "Nehru", "Road", ",", "Mumbai", "400043"], "ner": [[1, 2, "person"], [6, 13, "address"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "cedric_chudasama", "@", "okaxis", "Rs", "2846", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "r", ".", "sheth", "@", "saffronupi", "hai"], "ner": []}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Rizvi", "same", "as", "on", "pan", "ASLPA7072Q", ".", "pls", "fix"], "ner": [[14, 14, "person"]]}
+{"tokenized_text": ["Old", "a", "/", "c", "no", "074243619280", "migrated", "from", "legacy", "CBS"], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "522258652510", "/", "KAMAT", "/", "phrangbanerjee", "@", "neelpay", "/", "loan", "return"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "621124118269", "/", "RADHA", "KHANNA", "/", "chinmayapte", "@", "okaxis", "/", "bday", "gift"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "96", ",", "083", "credited", "back", "to", "a", "/", "c", "78924759728785", "."], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Sahyadri", "Market", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Nominee", "G", ".", "C", ".", "Furtado", "added", ";", "address", "273", ",", "Ring", "Road", ",", "Koregaon", "Park", "Siliguri", "-", "734030"], "ner": [[1, 5, "person"], [9, 18, "address"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "H", ".", "No", ".", "1-4-185", ",", "near", "Big", "Bazaar", ",", "Adyar", ",", "Vadodara", ",", "Gujarat", "390084", ".", "shifted", "last", "month", ".", "a", "/", "c", "98600212669752", "thx"], "ner": [[5, 20, "address"]]}
+{"tokenized_text": ["Mobile", "update", "request", "9811305086", "-", ">", "+", "91-89168-50923", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "540926778223", "/", "KHARE", ",", "BASAVANNA", "/", "9014539914", "@", "ybl", "/", "bday", "gift"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["Spoke", "to", "Hutoxi", "Lahiri", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "91-99407-70832", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Cust", "Tirthankar", "called", "twice", "for", "status", "."], "ner": [[1, 1, "person"]]}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "kinjalh97", "@", "umbrella-labs", ".", "in", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Cust", "T", ".", "Rizvi", "called", "twice", "for", "status", "."], "ner": [[1, 3, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "47268", "from", "Nilgiri", "DISTRICT", "HOSPITAL", "on", "my", "credit", "card", "6579932663204057", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "D", ".", "Q", ".", "Lyngdoh"], "ner": [[8, 10, "organization"], [29, 33, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN45422241999", "/", "BRAHMAPUTRA", "FIBERNET", "/", "SALARY", "SEP", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Co-applicant", ":", "Wasim", ",", "mob", "71548", "36341", ".", "ITR", "verified", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "40886", "from", "Brahmaputra", "District", "Hospital", "on", "my", "credit", "card", "36768743379661", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Padmaraj", "Zaidi"], "ner": [[8, 10, "organization"], [29, 30, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "PWMHY0650K", ",", "account", "no", "21046226032271", ".", "Thank", "you", ",", "PADMARAJ", "RIZVI"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["Hi", "team", "I", "lost", "my", "wallet", "last", "night", ",", "my", "credit", "card", "6098", "7027", "0174", "4634", "was", "inside", ".", "pls", "block", "it", "asap", ".", "call", "me", "on", "+", "919215228063", "A", "/", "c", "no", ":", "80522246358729", "thx"], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Ajanta", "TRAVELS", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["User", "ID", "unlocked", "after", "verification", "on", "+", "91", "71397", "32994", "."], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "514419224917", "/", "KIRANJOT", "LAHIRI", "/", "johal", "@", "tulsiupi", "/", "bday", "gift"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "63", ",", "972", "from", "Chilika", "Bakery", "on", "my", "credit", "card", "3678-9198-6280-71", ".", "You", "can", "also", "reach", "me", "at", "jehangirirani", "@", "initech", ".", "com", ".", "A", "/", "c", "no", ":", "69104483318596", "Regards", ",", "Inderpreet", "Swain"], "ner": [[10, 11, "organization"], [38, 39, "person"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "4836234153210999", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Known", "issue", "on", "app", "version", ",", "fix", "in", "next", "release", "."], "ner": []}
+{"tokenized_text": ["POA", "holder", "Ranjani", "Bhosale", ",", "contact", "97428", "22036"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "9969796613", "@", "neelpay", "Rs", "76554", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "paromita_bhosale", "@", "pragatiupi", "hai", "🙏"], "ner": []}
+{"tokenized_text": ["RD", "INSTALLMENT", "JUL", "26"], "ner": []}
+{"tokenized_text": ["atm", "didnttt", "give", "cash", "but", "sms", "came", "for", "debit", "Rs", ".", "93908", ".", "ref", "610411968851"], "ner": []}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "kodali", ",", ".", "mohini", "@", "pragatiupi", "Rs", "79", ",", "718", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "nelson", "@", "ybl", "hai"], "ner": []}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "TJFPE3312X", ",", "account", "no", "43262050667326", ".", "Thank", "you", ",", "Anirudh"], "ner": [[28, 28, "person"]]}
+{"tokenized_text": ["ECOM", "PUR", "/", "MEDIKART", ".", "EXAMPLE", "/", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "7800"], "ner": []}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "91-7873330077"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-K3FEPB3L", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "564252261319", "/", "F", ".", "P", ".", "TIWARI", "/", "9050917630", "@", "neelpay", "/", "bday", "gift"], "ner": [[6, 10, "person"]]}
+{"tokenized_text": ["PAN", "UTYPK6651I", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["Spoke", "to", "Gloria", "Lyngdoh", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "91", "65222", "92783", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Chiranjit", "Nelson", "Lohia", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "54343487447346", "hai", ".", "please", "check"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "06658781008"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-CT07EO02", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "91", "71684", "44325"], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "Imkongliba", "Khare", ",", "mob", "+", "91-6796120588", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "50", ",", "061", "from", "Brahmaputra", "Logistics", "Llp", "on", "my", "credit", "card", "6038198337789304", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Bosco", "Celine", "Bhatti"], "ner": [[10, 12, "organization"], [31, 33, "person"]]}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "9648883660", ")", ",", "naya", "number", "72752", "63307", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha"], "ner": []}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "69", ",", "007", "credited", "back", "to", "a", "/", "c", "88772233734753", "."], "ner": []}
+{"tokenized_text": ["Asked", "cust", "to", "visit", "branch", "with", "originals", "for", "reactivation", "."], "ner": []}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "FDUAD0964A", ",", "account", "no", "11307832994000", ".", "Thank", "you", ",", "Lavanya", "Maurya"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Kaziranga", "LOGISTICS", "LLP", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 7, "organization"]]}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "SAHYADRI", "RESTAURANT", "/", "2127764411"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "9300134120", ")", ",", "naya", "number", "08731303693", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "🙏"], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Sahyadri", "Travels", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "696584464950", ",", "mera", "number", "+", "919133107068"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Known", "issue", "on", "app", "version", ",", "fix", "in", "next", "release", "."], "ner": []}
+{"tokenized_text": ["UPI", "/", "698018961325", "/", "9882430734", "@", "paytm", "/", "Payment", "from", "Ph"], "ner": []}
+{"tokenized_text": ["SMS", "ALERT", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["Cheque", "book", "25", "lvs", "issued"], "ner": []}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "9024-7709-4083", "hai", "aur", "PAN", "FICCT1226O", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["Visited", "Nilgiri", "MOTORS", "branch", "with", "Nagendra", "Satnam", "Mann", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 7, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "593338501966", "/", "DOMINIC", "RESMI", "NEGI", "/", "XXXXXXXXXX3515", "/", "transfer"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "9761425525", "@", "okaxis", "Rs", "3967", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9777537903", "@", "neelpay", "hai"], "ner": []}
+{"tokenized_text": ["CUST", "TENZIN", "MAURYA", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["POA", "holder", "Dhillon", ",", "contact", "+", "91-97369-15380"], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["ECOM", "PUR", "/", "TRAVELDESK", ".", "EXAMPLE", "/", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "8702"], "ner": []}
+{"tokenized_text": ["Co-applicant", "PAN", "NTCLR6634Z", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["FARZANA"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91-9336160387", "-", ">", "+", "91-8295691801", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN73157799400", "/", "SAP", "/", "SALARY", "OCT", "26"], "ner": [[4, 4, "organization"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "39", ",", "298", "credited", "back", "to", "a", "/", "c", "58832285755998", "."], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Chilika", "Market", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "535116709345", ",", "mera", "number", "+", "916360059188"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Spoke", "to", "Renjith", "Kapoor", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "73236", "01725", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Nilgiri", "STEEL", "WORKS", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "669503716220", ",", "mera", "number", "+", "91-7769761514"], "ner": [[5, 7, "organization"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "Plot", "No", ".", "255", ",", "Sector", "51", ",", "Noida", ",", "Uttar", "Pradesh", "201362", ".", "shifted", "last", "month", ".", "a", "/", "c", "79651158831274", "thx"], "ner": [[5, 17, "address"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "santhosh", "@", "ybl", "Rs", "69", ",", "226", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9159721070", "@", "okaxis", "hai", "😢"], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Sahyadri", "Bakery", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "644627403854", ",", "mera", "number", "+", "91-9481502091"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN23576651237", "/", "R", ".", "CHUDASAMA", "/", "SAHYADRI", "CEMENTS", "LTD"], "ner": [[4, 6, "person"], [8, 10, "organization"]]}
+{"tokenized_text": ["Joint", "holder", ":", "Kausar", "Irani", "(", "mob", "61056", "26051", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["CUST", "AARTI", "FURTADO", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "AJANTA", "CO-OP", "BANK", "/", "9025405827"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "3715-1297-9519-183", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "65724", "65688", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "36354373572113", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["co-applicant", ":", "Lavanya", "Maurya", ",", "mob", "+", "91-9413054068", ".", "salary", "slips", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "23023", "to", "my", "brother", "Jaya", "on", "9028001650", "@", "okaxis", ",", "money", "deducted", "but", "not", "received", "😢"], "ner": [[7, 7, "person"]]}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "tanvir", "jaiswal", "same", "as", "on", "pan", "HRDLH3607S", ".", "pls", "fix"], "ner": [[14, 15, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "Plot", "No", ".", "399", ",", "Sector", "14", ",", "Thiruvananthapuram", ",", "Kerala", "695045", ".", "shifted", "last", "month", ".", "a", "/", "c", "70740010800758", "thx"], "ner": [[5, 16, "address"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "PWGCV8557M", ",", "account", "no", "21508779482546", ".", "Thank", "you", ",", "Anand", "Kapoor"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "tanvirc87", "@", "stark", ".", "example", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["Spoke", "to", "Karamjit", "Samanta", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "916517171108", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "78", ",", "200", "credited", "back", "to", "a", "/", "c", "42102653098320", "."], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "J", ".", "S", ".", "Jaiswal", ",", "mob", "92033", "75456", ".", "ITR", "verified", "."], "ner": [[2, 6, "person"]]}
+{"tokenized_text": ["Co-applicant", ":", "Dhara", "Bhatti", ",", "mob", "68600", "20654", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Sweep-in", "linked", "to", "FD"], "ner": []}
+{"tokenized_text": ["INT", ".", "PD", ":", "01-07-2026", "TO", "30-09-2026"], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Unilever", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "537969493651", ",", "mera", "number", "09313368299"], "ner": [[5, 5, "organization"]]}
+{"tokenized_text": ["POS", "537568XXXXXX9471", "KAZIRANGA", "BAKERY", "PUNE"], "ner": [[2, 3, "organization"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "23", ",", "782", "have", "been", "deducted", "from", "my", "salary", "account", "91694003819023", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Sukhwinder", "Kamat", "+", "91", "72936", "44593"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["POA", "holder", "Chinmaya", "Apte", ",", "contact", "7116329774"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "7167244897", ")", ",", "naya", "number", "+", "91-82520-14259", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "🙏", "🙏"], "ner": []}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "5495285161844970", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["PATNA"], "ner": []}
+{"tokenized_text": ["Feedback", "shared", "with", "branch", "(", "+", "91-8403100285", ")", "."], "ner": []}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "379398391182590", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN28020219820", "/", "KAZIRANGA", "ELECTRONICS", "/", "SALARY", "OCT", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Please", "add", "SAMUEL", "ZAIDI", "as", "nominee", "for", "my", "account", "20801546777984", ".", "Regards", ",", "Harsha", "Mann"], "ner": [[2, 3, "person"], [13, 14, "person"]]}
+{"tokenized_text": ["POS", "/", "342541774792576", "/", "BRAHMAPUTRA", "SUPERMART", "/", "VIJAYAWADA"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "27", ",", "207", "from", "Kaziranga", "Textiles", "Ltd", "on", "my", "credit", "card", "3645", "0102", "3259", "04", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Rajasekar", "Khanna"], "ner": [[10, 12, "organization"], [34, 35, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Nilgiri", "PHARMACY", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "608368067499", ",", "mera", "number", "7008196747"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "91-75592-20085"], "ner": []}
+{"tokenized_text": ["UPI", "/", "565353780327", "/", "9967829691", "@", "neelpay", "/", "dinner"], "ner": []}
+{"tokenized_text": ["Nominee", "K", ".", "Q", ".", "Mann", "added", ";", "address", "Shop", "24", ",", "Kukatpally", ",", "Guwahati"], "ner": [[1, 5, "person"], [9, 14, "address"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "4725", "3090", "1686", "4002", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "91", "78856", "19344", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["I", "am", "T", ".", "Apte", ",", "my", "DOB", "is", "10-03-1974", ".", "Please", "update", "my", "Aadhaar", "8497-4370-2521", "in", "the", "account", "88047852639527", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["SMS", "ALERT", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "MERCADO", "LIBRE", "/", "4333798740"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "4759", "4575", "1453", "0606", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-PX1ABQ6L", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["CUST", "G", ".", "KHANNA", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 3, "person"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "9627925535", "@", "tulsiupi", "Rs", "46", ",", "412", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "qasim", ".", "khanna", "@", "paytm", "hai"], "ner": []}
+{"tokenized_text": ["TAX", "PMT", "/", "ADV", "TAX", "/", "PAN", "IHYHJ7399O", "/", "CHALLAN", "280"], "ner": []}
+{"tokenized_text": ["Form", "15G", "submitted", "but", "still", "tds", "cut", "on", "my", "FD", "ending", "8675", "."], "ner": []}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "NILGIRI", "CEMENTS", "LTD", "/", "8517126737"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "604573732930", "/", "PARAMJIT", "/", "9935926732", "@", "ybl", "/", "bday", "gift"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["Nominee", "Jhumpa", "Gohil", "added", ";", "address", "Shop", "8", ",", "Kothrud", ",", "Madurai"], "ner": [[1, 2, "person"], [6, 11, "address"]]}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["Sent", "Rs", ".", "76588", "to", "my", "brother", "Tanveer", "Kodali", "on", "surajit", ".", "brijesh", ".", "haldar", "@", "saffronupi", ",", "money", "deducted", "but", "not", "received"], "ner": [[7, 8, "person"]]}
+{"tokenized_text": ["ALIBABA", "GROUP"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["Hi", "team", "I", "lost", "my", "wallet", "last", "night", ",", "my", "credit", "card", "374570904159522", "was", "inside", ".", "pls", "block", "it", "asap", ".", "call", "me", "on", "7693895235", "A", "/", "c", "no", ":", "16355375458861", "thx"], "ner": []}
+{"tokenized_text": ["POS", "449387XXXXXX4038", "NILGIRI", "ELECTRONICS", "NAGPUR"], "ner": [[2, 3, "organization"]]}
+{"tokenized_text": ["RD", "INSTALLMENT", "NOV", "26"], "ner": []}
+{"tokenized_text": ["Joint", "holder", ":", "Divya", "Shirke", "(", "mob", "9676131909", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "IOBFM5842U", ",", "account", "no", "14803143420571", ".", "Thank", "you", ",", "Harjinder", "Zaidi"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN64841619458", "/", "JUPITARA", "KAMAT", "/", "SAHYADRI", "STEEL", "WORKS"], "ner": [[4, 5, "person"], [7, 9, "organization"]]}
+{"tokenized_text": ["Mobile", "update", "request", "06366999467", "-", ">", "69259", "88214", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["Moolchand"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["Ruth", "Bhosale", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "45627818226728", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "MSALU2534S", ",", "account", "no", "65015487998039", ".", "Thank", "you", ",", "Teja", "Negi"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "06091169900", "-", ">", "+", "91", "64022", "52467", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "1598", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "Celine", "Rawat"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Chilika", "Jewellers", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "569417670140", ",", "mera", "number", "+", "918321112338"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN29121124143", "/", "IMKONGLIBA", "DUTTA", "/", "CHILIKA", "SALON"], "ner": [[4, 5, "person"], [7, 8, "organization"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "08065223750"], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "666437290709", "/", "SHRAVAN", "APTE", "/", "arnabjitusamanta", "@", "neelpay", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "5552-9302-9037-0120", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "08621147321", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["SUKHWINDER", "DHILLON", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "87289068476803", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Feedback", "shared", "with", "branch", "(", "92522", "68118", ")", "."], "ner": []}
+{"tokenized_text": ["POS", "/", "3712", "6763", "6228", "989", "/", "CHILIKA", "SUPERMART", "/", "BHOPAL"], "ner": [[7, 8, "organization"]]}
+{"tokenized_text": ["POA", "holder", "Pranali", "Negi", ",", "contact", "+", "91", "76521", "72681"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "6506", "2061", "0534", "3304", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Please", "add", "Bushra", "Choksi", "as", "nominee", "for", "my", "account", "39339490673321", ".", "Regards", ",", "S", ".", "Irani"], "ner": [[2, 3, "person"], [13, 15, "person"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "4502", "9953", "7527", "9946", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Mobile", "update", "request", "+", "919584555283", "-", ">", "68045", "24988", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "23290", "from", "Nilgiri", "LOGISTICS", "LLP", "on", "my", "credit", "card", "8182-5497-7774-5554", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Teja", "Jupitara", "Lohia"], "ner": [[8, 10, "organization"], [29, 31, "person"]]}
+{"tokenized_text": ["Cust", "Lohia", "called", "twice", "for", "status", "."], "ner": [[1, 1, "person"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "8965-4115-6512", "hai", "aur", "PAN", "ZUDTQ5349O", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "598382074504", "/", "ALINA", "LYNGDOH", "/", "XXXXXXXXXX8984", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "90530", "to", "my", "brother", "Lyngdoh", "on", "zainab", ".", "apte", "@", "neelpay", ",", "money", "deducted", "but", "not", "received"], "ner": [[7, 7, "person"]]}
+{"tokenized_text": ["Co-applicant", ":", "Sehaj", "Furtado", ",", "mob", "+", "91-8797156942", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["POS", "/", "3660", "3605", "5884", "16", "/", "CHILIKA", "SUPERMART", "/", "INDORE"], "ner": [[7, 8, "organization"]]}
+{"tokenized_text": ["C", ".", "MANN"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "157", ",", "Tilak", "Road", ",", "Hazratganj", "Kolkata", "-", "700049", ".", "shifted", "last", "month", ".", "a", "/", "c", "30149011973672", "thx"], "ner": [[5, 13, "address"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "24", "/", "7", "Park", "Street", ",", "Pune", "411081", ".", "shifted", "last", "month", ".", "a", "/", "c", "17394199614768", "thx"], "ner": [[5, 12, "address"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "4756-4269-0572-8650", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "06510978647", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["NILGIRI", "FIBERNET"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["Nominee", "Manasa", "Shravan", "Haldar", "added", ";", "address", "51", "/", "3", "Park", "Street", ",", "Kochi", "682082"], "ner": [[1, 3, "person"], [7, 14, "address"]]}
+{"tokenized_text": ["I", "am", "IPSITA", "FURTADO", ",", "my", "DOB", "is", "16-06-1964", ".", "Please", "update", "my", "Aadhaar", "423105408813", "in", "the", "account", "42906095091215", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "13", ",", "135", "have", "been", "deducted", "from", "my", "salary", "account", "60152411486882", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Aarti", "Samanta", "09636952038"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "9357743193", "@", "saffronupi", "Rs", "1", ",", "218", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9792252424", "@", "tulsiupi", "hai", "🙏", "🙏"], "ner": []}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Prem", "Shirke", "same", "as", "on", "pan", "CXWPD0768E", ".", "pls", "fix"], "ner": [[14, 15, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "607441641465", "/", "RAJASEKAR", "BHOSALE", "/", "9124250955", "@", "ybl", "/", "bday", "gift"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "674822610770", "/", "PARTHA", "CHUDASAMA", "/", "XXXXXXXXXX5905", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "c", ".", ".", "f", ".", ".", "chudasama", "@", "saffronupi", "Rs", "73", ",", "179", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9683141630", "@", "ybl", "hai", "😢"], "ner": []}
+{"tokenized_text": ["Visited", "Nilgiri", "Co-Op", "Bank", "branch", "with", "Fahad", "for", "re-KYC", "."], "ner": [[1, 3, "organization"], [6, 6, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "512122612674", "/", "PARAMJIT", "SATHE", "/", "XXXXXXXXXX5676", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "6903-5594-5977", "hai", "aur", "PAN", "TZTJR1194F", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN95533492817", "/", "SAFARICOM", "/", "SALARY", "AUG", "26"], "ner": [[4, 4, "organization"]]}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["AJANTA", "BAKERY"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["UPI", "/", "570996992298", "/", "9450661888", "@", "saffronupi", "/", "dinner"], "ner": []}
+{"tokenized_text": ["BIL", "/", "BBPS", "/", "CHILIKA", "DISTRICT", "HOSPITAL", "/", "7781957437"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["Nominee", "Kodali", "added", ";", "address", "186", ",", "Temple", "Street", ",", "New", "Town", "Kolkata", "-", "700001"], "ner": [[1, 1, "person"], [5, 14, "address"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "60", ",", "315", "have", "been", "deducted", "from", "my", "salary", "account", "99756074199634", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Tenzin", "Pradhan", "+", "91-7634506043"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "652574791411", "/", "H", ".", "SHIRKE", "/", "9047785730", "@", "pragatiupi", "/", "bday", "gift"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "91", "83250", "40851"], "ner": []}
+{"tokenized_text": ["SAHYADRI", "SALON"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["Cust", "irate", ".", "Explained", "charges", "as", "per", "schedule", "."], "ner": []}
+{"tokenized_text": ["My", "account", "32514596341568", "has", "become", "dormant", ".", "I", "want", "to", "reactivate", "it", "."], "ner": []}
+{"tokenized_text": ["POS", "/", "3789", "8748", "2455", "112", "/", "FRESHWORKS", "/", "INDORE"], "ner": [[7, 7, "organization"]]}
+{"tokenized_text": ["Cheque", "book", "10", "lvs", "issued"], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN27472025659", "/", "ADANI", "PORTS", "/", "SALARY", "JAN", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Form", "15G", "submitted", "but", "still", "tds", "cut", "on", "my", "FD", "ending", "7287", "."], "ner": []}
+{"tokenized_text": ["Spoke", "to", "A", ".", "A", ".", "Sheth", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "+", "91-9279948024", "."], "ner": [[2, 6, "person"]]}
+{"tokenized_text": ["co-applicant", ":", "Jehangir", "Jaiswal", ",", "mob", "+", "919949689623", ".", "salary", "slips", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["My", "account", "50759369035751", "has", "become", "dormant", ".", "I", "want", "to", "reactivate", "it", "."], "ner": []}
+{"tokenized_text": ["RADHA"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["Please", "add", "Tanushree", "Dhillon", "as", "nominee", "for", "my", "account", "38533683070903", ".", "Regards", ",", "Zainab", "Diganta", "Rizvi"], "ner": [[2, 3, "person"], [13, 15, "person"]]}
+{"tokenized_text": ["MANIPAL", "HOSPITALS"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "09776889753"], "ner": []}
+{"tokenized_text": ["I", "am", "Muthu", "Diganta", "Shirke", ",", "my", "DOB", "is", "14-12-1949", ".", "Please", "update", "my", "Aadhaar", "4478", "1489", "1391", "in", "the", "account", "36074862496971", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["ATLASSIAN"], "ner": [[0, 0, "organization"]]}
+{"tokenized_text": ["ATW", "/", "449295XXXXXX5549", "/", "SAFF8822", "/", "CHENNAI"], "ner": []}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "4369", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "P", ".", "Zaidi"], "ner": [[31, 33, "person"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "4", ",", "301", "have", "been", "deducted", "from", "my", "salary", "account", "64382416891429", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Chishti", ",", "Krunal", "+", "91-85641-37504"], "ner": [[31, 33, "person"]]}
+{"tokenized_text": ["Cust", "M", ".", "N", ".", "Dhillon", "called", "twice", "for", "status", "."], "ner": [[1, 5, "person"]]}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "dominicm89", "@", "yahoo", ".", "co", ".", "in", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "637358651870", "/", "ZAINAB", "KAPOOR", "/", "XXXXXXXXXX0080", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["farhan", "sheth", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "67817942386234", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91-9450325225", "-", ">", "+", "91", "73279", "85819", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Sahyadri", "Motors", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "5213", "8584", "1086", "2984", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Cust", "irate", ".", "Explained", "charges", "as", "per", "schedule", "."], "ner": []}
+{"tokenized_text": ["GUWAHATI"], "ner": []}
+{"tokenized_text": ["POS", "441121XXXXXX4184", "KAZIRANGA", "DIAGNOSTICS", "WARANGAL"], "ner": [[2, 3, "organization"]]}
+{"tokenized_text": ["Mobile", "update", "request", "09010498600", "-", ">", "8286896996", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "Nagendra", "Agarwal", ",", "mob", "+", "91-7816857660", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-QQWWLW1D"], "ner": []}
+{"tokenized_text": ["Visited", "Ajanta", "Motors", "branch", "with", "T", ".", "T", ".", "Khanna", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 9, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "86", "/", "15", "Linking", "Road", ",", "Noida", "201355", ".", "shifted", "last", "month", ".", "a", "/", "c", "20436644126077", "thx"], "ner": [[5, 12, "address"]]}
+{"tokenized_text": ["Cust", "alt", "email", "khare", ".", "pranali", "@", "yahoo", ".", "co", ".", "in"], "ner": []}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "09987549128"], "ner": []}
+{"tokenized_text": ["Branch", "Service"], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Nilgiri", "FIBERNET", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "559710831521", ",", "mera", "number", "67718", "75445"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["ATW", "/", "817238XXXXXX7389", "/", "SAFF4695", "/", "MYSURU"], "ner": []}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "6414", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "Swain"], "ner": [[31, 31, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN95471735968", "/", "SULTANA", "CHOKSI", "/", "FORTIS", "HEALTHCARE"], "ner": [[4, 5, "person"], [7, 8, "organization"]]}
+{"tokenized_text": ["Cust", "alt", "email", "ipsita_bhatti", "@", "globex", ".", "co", ".", "jp"], "ner": []}
+{"tokenized_text": ["Co-applicant", "PAN", "TZRPC0707H", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["I", "am", "Arul", "Swain", ",", "my", "DOB", "is", "12-09-1982", ".", "Please", "update", "my", "Aadhaar", "9453", "8327", "8471", "in", "the", "account", "75632398775765", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["MIN", "BAL", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "99761", "have", "been", "deducted", "from", "my", "salary", "account", "84100517404953", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "BOSCO", "FURTADO", "+", "91-67948-29947"], "ner": [[29, 30, "person"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "91", ",", "106", "to", "my", "brother", "Aarti", "Basavanna", "Maurya", "on", "9362452420", "@", "ybl", ",", "money", "deducted", "but", "not", "received", "pls"], "ner": [[9, 11, "person"]]}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "deepika", ".", "banerjee", "@", "ybl", "Rs", "38", ",", "123", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "basavannajaiswal", "@", "okaxis", "hai"], "ner": []}
+{"tokenized_text": ["Asked", "cust", "to", "visit", "branch", "with", "originals", "for", "reactivation", "."], "ner": []}
+{"tokenized_text": ["CUST", "NASIR", "APTE", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["co-applicant", ":", "T", ".", "T", ".", "Irani", ",", "mob", "9963792796", ".", "salary", "slips", "verified", "."], "ner": [[2, 6, "person"]]}
+{"tokenized_text": ["co-applicant", ":", "Radha", "Lyngdoh", ",", "mob", "+", "91-78676-77952", ".", "salary", "slips", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Sweep-in", "linked", "to", "FD"], "ner": []}
+{"tokenized_text": ["Cust", "Karthikeya", "Lohia", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "#", "313", ",", "23th", "Cross", ",", "Velachery", ",", "Vadodara", "-", "390018", ".", "shifted", "last", "month", ".", "a", "/", "c", "75012568991062", "thx"], "ner": [[5, 15, "address"]]}
+{"tokenized_text": ["Duplicate", "of", "earlier", "complaint", ".", "Closing", "."], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "Qasim", ",", "mob", "6372944159", ".", "ITR", "verified", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["Farah", "Jaiswal"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "53705", "have", "been", "deducted", "from", "my", "salary", "account", "59113833714035", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Anand", "Kodali", "6429191989"], "ner": [[29, 30, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "URJHE3523I", ",", "account", "no", "98496490809520", ".", "Thank", "you", ",", "bosco", "devendra", "jaiswal"], "ner": [[28, 30, "person"]]}
+{"tokenized_text": ["Co-applicant", "PAN", "KNHCU7855P", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "613173495481", "/", "RAMINDER", "DHILLON", "/", "XXXXXXXXXX7553", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "5130", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "S", ".", "S", ".", "Negi"], "ner": [[31, 35, "person"]]}
+{"tokenized_text": ["ATW", "/", "510375XXXXXX2365", "/", "SAFF7594", "/", "SURAT"], "ner": []}
+{"tokenized_text": ["UPI", "/", "CR", "/", "618518189822", "/", "P", ".", "FURTADO", "/", "shivanna_zaidi", "@", "okaxis", "/", "loan", "return"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "07233078751", ")", ",", "naya", "number", "+", "91-7405829278", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha"], "ner": []}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "DEBPY3517I", ",", "account", "no", "14806448684429", ".", "Thank", "you", ",", "Kamat"], "ner": [[28, 28, "person"]]}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Kaziranga", "Electronics", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "574009260480", "/", "DHANYA", "PRADHAN", "/", "XXXXXXXXXX3382", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "85", ",", "925", "have", "been", "deducted", "from", "my", "salary", "account", "58449660110618", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Jitu", "Sarabjit", "Dutta", "+", "91-65055-54254"], "ner": [[31, 33, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN52061786387", "/", "BRAHMAPUTRA", "MOTORS", "/", "SALARY", "NOV", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "91", ",", "Church", "Street", ",", "Kothapet", "Nagpur", "-", "440057", ".", "shifted", "last", "month", ".", "a", "/", "c", "39932332236923", "thx"], "ner": [[5, 13, "address"]]}
+{"tokenized_text": ["Cust", "alt", "email", "pamela", ".", "chandy", "@", "acmecorp", ".", "in"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-C7JSZ5U5", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "3488-4152-0472-059", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "07894519755", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN20581139200", "/", "AJANTA", "SWEETS", "/", "SALARY", "JUN", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["POS", "488798XXXXXX0105", "AJANTA", "CO-OP", "BANK", "LUCKNOW"], "ner": [[2, 4, "organization"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "8", ",", "304", "credited", "back", "to", "a", "/", "c", "46819615350443", "."], "ner": []}
+{"tokenized_text": ["CUST", "BIKASH", "MAURYA", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "659123833886", "/", "KAKOLI", "KODALI", "/", "XXXXXXXXXX0768", "/", "transfer"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["ATW", "/", "376925XXXXXX5580", "/", "SAFF5902", "/", "PUNE"], "ner": []}
+{"tokenized_text": ["POS", "371024XXXXXX8677", "CHILIKA", "RESTAURANT", "KAKINADA"], "ner": [[2, 3, "organization"]]}
+{"tokenized_text": ["Dhanya", "Tenzin", "Rizvi"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "3690", "4159", "1624", "38", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["CUST", "MOHINI", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 1, "person"]]}
+{"tokenized_text": ["uploaded", "pan", "card", "on", "app", "but", "it", "says", "name", "mismatch", ".", "my", "name", "is", "Sirisha", "same", "as", "on", "pan", "TJOGP7996S", ".", "pls", "fix"], "ner": [[14, 14, "person"]]}
+{"tokenized_text": ["Cust", "alt", "email", "bhadrab89", "@", "gmail", ".", "com"], "ner": []}
+{"tokenized_text": ["Paisa", "galat", "UPI", "ID", "pe", "chala", "gaya", "9599103054", "@", "tulsiupi", "Rs", "63", ",", "949", "Wapas", "mangwa", "sakte", "ho", "kya", "?", "Mera", "UPI", "9571554131", "@", "paytm", "hai"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "20738", "from", "Ajanta", "Sweets", "on", "my", "credit", "card", "6503229629632294", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Mohini", "Bhosale"], "ner": [[8, 9, "organization"], [28, 29, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "07373860885", "-", ">", "80843", "27515", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["co-applicant", ":", "P", ".", "Chishti", ",", "mob", "+", "916698768543", ".", "salary", "slips", "verified", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "72642", "credited", "back", "to", "a", "/", "c", "26125250621819", "."], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN84173686351", "/", "AJANTA", "PHARMACY", "/", "SALARY", "SEP", "26"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["MUTHU", "KAMAT"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["CHILIKA", "MOBILE", "STORE"], "ner": [[0, 2, "organization"]]}
+{"tokenized_text": ["Co-applicant", "PAN", "IKNLT7543F", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "11110", "have", "been", "deducted", "from", "my", "salary", "account", "63147924074254", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Clara", "Zaidi", "7358469365"], "ner": [[29, 30, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "544233241896", "/", "DEEPIKA", "SWAIN", "/", "9445116499", "@", "tulsiupi", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "509026115940", "/", "ANAND", "RAJAGOPAL", "/", "9789532430", "@", "neelpay", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91-82453-06629", "-", ">", "+", "91-82246-88214", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["Nominee", "Pravin", "Sethi", "added", ";", "address", "Shop", "19", ",", "Kothrud", ",", "Siliguri"], "ner": [[1, 2, "person"], [6, 11, "address"]]}
+{"tokenized_text": ["CUST", "MANASA", "MANN", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Ajanta", "MARKET", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "695525612113", "/", "F", ".", "A", ".", "HEBBAR", "/", "XXXXXXXXXX5548", "/", "transfer"], "ner": [[6, 10, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "646068036345", "/", "KARAMJIT", "PRADHAN", "/", "trilochan", "@", "saffronupi", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["CHANDY"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["TAX", "PMT", "/", "ADV", "TAX", "/", "PAN", "FAWAG5654N", "/", "CHALLAN", "280"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "60477", "from", "Sahyadri", "STEEL", "WORKS", "on", "my", "credit", "card", "4025-9633-3922-0438", ".", "You", "can", "also", "reach", "me", "at", "a", ".", "rawat", "@", "outlook", ".", "com", ".", "A", "/", "c", "no", ":", "31699057320975", "Regards", ",", "Dominic", "Samanta"], "ner": [[8, 10, "organization"], [39, 40, "person"]]}
+{"tokenized_text": ["INT", ".", "PD", ":", "01-07-2026", "TO", "30-09-2026"], "ner": []}
+{"tokenized_text": ["UPI", "/", "502390714263", "/", "9752894022", "@", "pragatiupi", "/", "Payment", "from", "Ph"], "ner": []}
+{"tokenized_text": ["PAN", "XDOPL8700Z", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["PAN", "FBNJO3008R", "updated", "in", "CBS", ".", "TDS", "refund", "to", "be", "processed", "in", "next", "cycle", "."], "ner": []}
+{"tokenized_text": ["I", "am", "Kanhaiya", "Clara", "Haldar", ",", "my", "DOB", "is", "22-06-1965", ".", "Please", "update", "my", "Aadhaar", "718726563868", "in", "the", "account", "21698345991008", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "KQMPN4632H", ",", "account", "no", "91292025153076", ".", "Thank", "you", ",", "Dorjee", "Lyngdoh"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "25315", "have", "been", "deducted", "from", "my", "salary", "account", "25452993682833", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "farzana", "+", "91", "60715", "63874"], "ner": [[29, 29, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN43071307297", "/", "AJANTA", "TEXTILES", "LTD", "/", "SALARY", "NOV", "26"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Chilika", "Co-Op", "Bank", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "527064217857", ",", "mera", "number", "+", "91-83262-38077"], "ner": [[5, 7, "organization"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN57764047604", "/", "TIRTHANKAR", "SETHI", "/", "LARSEN", "&", "TOUBRO"], "ner": [[4, 5, "person"], [7, 9, "organization"]]}
+{"tokenized_text": ["Cheque", "book", "50", "lvs", "issued"], "ner": []}
+{"tokenized_text": ["Income", "docs", "verified", ".", "Employer", "Kaziranga", "BAKERY", "confirmed", "employment", "over", "mail", "."], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "6108", "to", "my", "brother", "Kausar", "Marak", "on", "madhumita_zaidi", "@", "paytm", ",", "money", "deducted", "but", "not", "received"], "ner": [[7, 8, "person"]]}
+{"tokenized_text": ["Co-applicant", "PAN", "FMVGD5666Y", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN68901033023", "/", "SULTANA", "CHUDASAMA", "/", "CHILIKA", "SUPERMART"], "ner": [[4, 5, "person"], [7, 8, "organization"]]}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91-62293-54608", "-", ">", "8159192795", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["I", "am", "Pranali", ",", "my", "DOB", "is", "14-11-1950", ".", "Please", "update", "my", "Aadhaar", "571909305259", "in", "the", "account", "67605252416245", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["KAZIRANGA", "TEXTILES", "LTD"], "ner": [[0, 2, "organization"]]}
+{"tokenized_text": ["Co-applicant", "PAN", "DZCGD0943R", "-", "name", "match", "OK", "."], "ner": []}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "10", "/", "4", "Station", "Road", ",", "Chandigarh", "160053", ".", "shifted", "last", "month", ".", "a", "/", "c", "87256567595511", "thx"], "ner": [[5, 12, "address"]]}
+{"tokenized_text": ["Sent", "Rs", ".", "26186", "to", "my", "brother", "Deepika", "Sheth", "on", "nelson", ".", "haldar", "@", "ybl", ",", "money", "deducted", "but", "not", "received", "pls"], "ner": [[7, 8, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN19095245743", "/", "CHANDY", "/", "CHILIKA", "SALON"], "ner": [[4, 4, "person"], [6, 7, "organization"]]}
+{"tokenized_text": ["CHILIKA", "PHARMACY"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "4442", "2963", "8455", "3444", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["POA", "holder", "Farhan", ",", "contact", "8882338317"], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "31", ",", "169", "have", "been", "deducted", "from", "my", "salary", "account", "42097721845979", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "gyanranjan", "lyngdoh", "+", "91", "76287", "33250"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["POS", "371690XXXXXX6905", "BHARTI", "AIRTEL", "MUMBAI"], "ner": [[2, 3, "organization"]]}
+{"tokenized_text": ["Cust", "alt", "email", "ruth_haldar", "@", "hotmail", ".", "com"], "ner": []}
+{"tokenized_text": ["I", "am", "Arul", "Dutta", ",", "my", "DOB", "is", "14-10-1964", ".", "Please", "update", "my", "Aadhaar", "873937227740", "in", "the", "account", "51135872711867", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["TAX", "PMT", "/", "ADV", "TAX", "/", "PAN", "EUKPS0003Q", "/", "CHALLAN", "280"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "18", ",", "535", "from", "Ajanta", "Sweets", "on", "my", "credit", "card", "344936536727795", ".", "You", "can", "also", "reach", "me", "at", "rajasekar_tiwari", "@", "yahoo", ".", "co", ".", "in", ".", "A", "/", "c", "no", ":", "40187310414223", "Regards", ",", "GLORIA", "DUTTA"], "ner": [[10, 11, "organization"], [40, 41, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "584600435480", "/", "PARAMJIT", "/", "9881302383", "@", "ybl", "/", "loan", "return"], "ner": [[6, 6, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "44292", "from", "Shell", "on", "my", "credit", "card", "36105682154278", ".", "You", "can", "also", "reach", "me", "at", "chandrakala_rajagopal", "@", "tailspin", ".", "com", ".", "br", ".", "A", "/", "c", "no", ":", "88863763341883", "Regards", ",", "Dhara", "Kamat"], "ner": [[8, 8, "organization"], [37, 38, "person"]]}
+{"tokenized_text": ["Old", "a", "/", "c", "no", "091673309269", "migrated", "from", "legacy", "CBS"], "ner": []}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "77033", "53111", ")", ",", "naya", "number", "80871", "12181", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "🙏"], "ner": []}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "96986", "credited", "back", "to", "a", "/", "c", "64053056051190", "."], "ner": []}
+{"tokenized_text": ["CUST", "PITAMBAR", "JAISWAL", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Nanjundappa", "Qasim", "Lohia"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["CUST", "K", ".", "CHUDASAMA", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 3, "person"]]}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "2592", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "Apte"], "ner": [[31, 31, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "78", ",", "181", "from", "Ajanta", "MOBILE", "STORE", "on", "my", "credit", "card", "373365797201221", ".", "You", "can", "also", "reach", "me", "at", "kodali", ".", "divya", "@", "hotmail", ".", "com", ".", "A", "/", "c", "no", ":", "43276579385934", "Regards", ",", "Samuel", "Paromita", "Bhosale"], "ner": [[10, 12, "organization"], [41, 43, "person"]]}
+{"tokenized_text": ["Sheetal"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN99965869442", "/", "STRIPE", "/", "SALARY", "JUL", "26"], "ner": [[4, 4, "organization"]]}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "65518", "71664", ")", ",", "naya", "number", "8315873855", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "🙏", "🙏"], "ner": []}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "2743", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "Karthikeya"], "ner": [[31, 31, "person"]]}
+{"tokenized_text": ["User", "ID", "unlocked", "after", "verification", "on", "+", "91-9370733273", "."], "ner": []}
+{"tokenized_text": ["My", "account", "34533726778226", "has", "become", "dormant", ".", "I", "want", "to", "reactivate", "it", "."], "ner": []}
+{"tokenized_text": ["POA", "holder", "Tarachand", ",", "contact", "+", "91", "60567", "17804"], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "4457", "3251", "9144", "1048", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "918540003249", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["video", "kyc", "beech", "me", "disconnect", "ho", "gaya", "2", "baar", ".", "customer", "id", "CIF-VKCXBJ1G", ".", "dobara", "link", "bhejo"], "ner": []}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "8137-7794-6946", "hai", "aur", "PAN", "BAQPI9129J", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "11", ",", "552", "from", "Ajanta", "CO-OP", "BANK", "on", "my", "credit", "card", "3459-7350-9965-267", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Khanna", ",", "Vandana"], "ner": [[10, 12, "organization"], [31, 33, "person"]]}
+{"tokenized_text": ["Joint", "holder", ":", "Mushtaq", "Pradhan", "(", "mob", "+", "918162872078", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "17933", "from", "Brahmaputra", "JEWELLERS", "on", "my", "credit", "card", "376483932438892", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Ipsita", "Junaid", "Lohia"], "ner": [[8, 9, "organization"], [28, 30, "person"]]}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "90", ",", "072", "credited", "back", "to", "a", "/", "c", "55265134026314", "."], "ner": []}
+{"tokenized_text": ["I", "am", "Ipsita", ",", "my", "DOB", "is", "14-03-1966", ".", "Please", "update", "my", "Aadhaar", "3003", "8566", "4489", "in", "the", "account", "41977950063309", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["ECOM", "PUR", "/", "SAFFRONRETAIL", ".", "EXAMPLE", "/", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "4081"], "ner": []}
+{"tokenized_text": ["INDIAN", "OIL", "CORPORATION"], "ner": [[0, 2, "organization"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "83292", "have", "been", "deducted", "from", "my", "salary", "account", "59578245216137", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Rizvi", ",", "Rita", "9210265061"], "ner": [[29, 31, "person"]]}
+{"tokenized_text": ["POA", "holder", "Lakshman", "Hebbar", ",", "contact", "+", "91-9126442816"], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["B", ".", "Rizvi"], "ner": [[0, 2, "person"]]}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "6", ",", "099", "from", "Nykaa", "on", "my", "credit", "card", "3786", "9295", "2638", "235", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Lohia"], "ner": [[10, 10, "organization"], [32, 32, "person"]]}
+{"tokenized_text": ["Legal", "and", "technical", "valuation", "done", "."], "ner": []}
+{"tokenized_text": ["KAZIRANGA", "DISTRICT", "HOSPITAL"], "ner": [[0, 2, "organization"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Brahmaputra", "SALON", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "503718427719", ",", "mera", "number", "+", "91-90183-49062"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-JWNP28W2"], "ner": []}
+{"tokenized_text": ["IMPS", "/", "P2A", "/", "589488940748", "/", "S", ".", "E", ".", "CHISHTI", "/", "XXXXXXXXXX9562", "/", "transfer"], "ner": [[6, 10, "person"]]}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Nilgiri", "Cements", "Ltd", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "696078297882", ",", "mera", "number", "07910494028"], "ner": [[5, 7, "organization"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "3624", "1321", "5535", "29", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Nominee", "Chandrakala", "Gohil", "added", ";", "address", "H", ".", "No", ".", "4-6-116", ",", "near", "Post", "Office", ",", "Indiranagar", ",", "Cuttack", ",", "Odisha", "753082"], "ner": [[1, 2, "person"], [6, 21, "address"]]}
+{"tokenized_text": ["Nominee", "Sharmistha", "Lahiri", "added", ";", "address", "Plot", "No", ".", "27", ",", "Sector", "59", ",", "Cuttack", ",", "Odisha", "753004"], "ner": [[1, 2, "person"], [6, 17, "address"]]}
+{"tokenized_text": ["KYC", "upate", "karna", "hai", "Aadhaar", "no", "6670", "1995", "1645", "hai", "aur", "PAN", "SHSHI2337T", "Branch", "jaana", "zaroori", "h", "kya", "ya", "online", "ho", "jayega", "?"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "78174", "from", "Nilgiri", "Pharmacy", "on", "my", "credit", "card", "6076381722879038", "which", "I", "did", "not", "authorise", ".", "Please", "reverse", "it", ".", "Thank", "you", ",", "Pravin", "Lahiri"], "ner": [[8, 9, "organization"], [28, 29, "person"]]}
+{"tokenized_text": ["Cust", "alt", "email", "cedric_maurya", "@", "contoso", ".", "com"], "ner": []}
+{"tokenized_text": ["SMS", "ALERT", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["TAX", "PMT", "/", "ADV", "TAX", "/", "PAN", "NBZJG6517R", "/", "CHALLAN", "280"], "ner": []}
+{"tokenized_text": ["Joint", "holder", ":", "Lyngdoh", "(", "mob", "06174988856", ")"], "ner": [[3, 3, "person"]]}
+{"tokenized_text": ["Feedback", "shared", "with", "branch", "(", "+", "91", "75137", "75307", ")", "."], "ner": []}
+{"tokenized_text": ["UPI", "/", "655030981353", "/", "negi", "@", "ybl", "/", "Payment", "from", "Ph"], "ner": []}
+{"tokenized_text": ["Madhumita", "Irani", "ji", "ka", "cheque", "bounce", "ho", "gaya", ",", "unka", "account", "63299281167553", "hai", ".", "please", "check"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["NEFT", "/", "SAFFN43335347493", "/", "MADHUMITA", "PRADHAN", "/", "SAHYADRI", "PHARMACY"], "ner": [[4, 5, "person"], [7, 8, "organization"]]}
+{"tokenized_text": ["Cust", "alt", "email", "arnab", ".", "chudasama80", "@", "hotmail", ".", "com"], "ner": []}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "Flat", "495A", ",", "Brigade", "Gateway", ",", "Navrangpura", ",", "Nagpur", "440042", ".", "shifted", "last", "month", ".", "a", "/", "c", "68334183345914", "thx"], "ner": [[5, 14, "address"]]}
+{"tokenized_text": ["Please", "update", "my", "PAN", "in", "the", "account", ";", "TDS", "is", "being", "deducted", "at", "a", "higher", "rate", ".", "PAN", ":", "JOEHQ4117D", ",", "account", "no", "90231023647492", ".", "Thank", "you", ",", "Jupitara", "Shirke"], "ner": [[28, 29, "person"]]}
+{"tokenized_text": ["My", "account", "83220076401877", "has", "become", "dormant", ".", "I", "want", "to", "reactivate", "it", "."], "ner": []}
+{"tokenized_text": ["atm", "didnttt", "give", "cash", "but", "sms", "came", "for", "debit", "Rs", ".", "98229", ".", "ref", "695048517332"], "ner": []}
+{"tokenized_text": ["Branch", "Service"], "ner": []}
+{"tokenized_text": ["Co-applicant", ":", "Rizvi", ",", "Harjinder", ",", "mob", "67547", "17474", ".", "ITR", "verified", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["PADMARAJ", "AGARWAL"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Cheque", "book", "10", "lvs", "issued"], "ner": []}
+{"tokenized_text": ["Visited", "Hdfc", "Bank", "branch", "with", "Farhan", "Hebbar", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 6, "person"]]}
+{"tokenized_text": ["POS", "/", "4452-4599-9877-6580", "/", "SAHYADRI", "MOBILE", "STORE", "/", "MUMBAI"], "ner": [[4, 6, "organization"]]}
+{"tokenized_text": ["Spoke", "to", "Prasanna", ",", "explained", "charges", "as", "per", "schedule", ".", "Callback", "on", "09587324216", "."], "ner": [[2, 2, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91", "97480", "91078", "-", ">", "+", "916825925020", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "4258-0233-0531-7482", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Please", "add", "Choksi", "as", "nominee", "for", "my", "account", "83732742589585", ".", "Regards", ",", "Dorjee", "Tiwari"], "ner": [[2, 2, "person"], [12, 13, "person"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "09725354528"], "ner": []}
+{"tokenized_text": ["Cust", "Anand", "Lyngdoh", "called", "twice", "for", "status", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "3605", "4245", "4522", "92", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "84962", "84310", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["NEFT", "/", "SAFFN26857622482", "/", "JOYDEEP", "KAMAT", "/", "KAZIRANGA", "PHARMACY"], "ner": [[4, 5, "person"], [7, 8, "organization"]]}
+{"tokenized_text": ["Dear", "Sir", "/", "Madam", ",", "My", "debit", "card", "ending", "0826", "was", "lost", "while", "travelling", ".", "Please", "block", "it", "immediately", "and", "issue", "a", "replacement", "card", "to", "my", "registered", "address", ".", "Regards", ",", "Cyrus", "Chudasama"], "ner": [[31, 32, "person"]]}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "#", "162", ",", "11th", "Cross", ",", "Adyar", ",", "Jodhpur", "-", "342017", ".", "shifted", "last", "month", ".", "a", "/", "c", "13760208551444", "thx"], "ner": [[5, 15, "address"]]}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "+", "918595450003", ")", ",", "naya", "number", "+", "91", "71298", "86869", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "🙏", "🙏"], "ner": []}
+{"tokenized_text": ["co-applicant", ":", "Renjith", "Johal", ",", "mob", "+", "91-77851-45234", ".", "salary", "slips", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["video", "kyc", "link", "expired", ",", "customer", "id", "CIF-RGLEAX94"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "13", ",", "586", "from", "Nilgiri", "Market", "on", "my", "credit", "card", "3449", "4579", "8086", "899", ".", "You", "can", "also", "reach", "me", "at", "d", ".", "thorat", "@", "umbrella-labs", ".", "in", ".", "A", "/", "c", "no", ":", "92971275303937", "Regards", ",", "Rawat"], "ner": [[10, 11, "organization"], [43, 43, "person"]]}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "91-7667690819"], "ner": []}
+{"tokenized_text": ["Old", "a", "/", "c", "no", "086039137758", "migrated", "from", "legacy", "CBS"], "ner": []}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "nasir", ".", "agarwal54", "@", "hotmail", ".", "com", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["FAHAD", "BAJPAI"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["SMS", "ALERT", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "hemavathi_chishti", "@", "gmail", ".", "com", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "6016-3432-7980-1719", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "+", "91-70155-33045", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["Bhai", "UPI", "se", "paymnt", "kiya", "Samsung", "Electronics", "pe", ",", "psa", "cut", "gaya", ",", "transaction", "failed", "dikha", "raha", "hai", ".", "ref", "no", "694191982604", ",", "mera", "number", "98888", "10325"], "ner": [[5, 6, "organization"]]}
+{"tokenized_text": ["Joint", "holder", ":", "tanushree", "zaidi", "(", "mob", "+", "91-95168-33375", ")"], "ner": [[3, 4, "person"]]}
+{"tokenized_text": ["CUST", "J", ".", "CHISHTI", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 3, "person"]]}
+{"tokenized_text": ["Visited", "Chilika", "Market", "branch", "with", "Vishal", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 5, "person"]]}
+{"tokenized_text": ["POS", "/", "6080-2551-1915-6677", "/", "CHILIKA", "OPTICALS", "/", "GUWAHATI"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "560542861715", "/", "KALYAN", "IRANI", "/", "b", ".", "chandy", "@", "neelpay", "/", "loan", "return"], "ner": [[6, 7, "person"]]}
+{"tokenized_text": ["I", "am", "Sanatombi", "Krunal", "Irani", ",", "my", "DOB", "is", "04-06-1959", ".", "Please", "update", "my", "Aadhaar", "8389", "9093", "1034", "in", "the", "account", "91110607867901", "."], "ner": [[2, 4, "person"]]}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["MIN", "BAL", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["MIN", "BAL", "CHGS", "INCL", "GST"], "ner": []}
+{"tokenized_text": ["Statement", "re-sent", ";", "password", "hint", "shared", "on", "reg", "mob", "+", "917697952016"], "ner": []}
+{"tokenized_text": ["pls", "update", "my", "address", "to", "H", ".", "No", ".", "7-5-233", ",", "near", "Big", "Bazaar", ",", "Civil", "Lines", ",", "Pune", ",", "Maharashtra", "411091", ".", "shifted", "last", "month", ".", "a", "/", "c", "14913481652508", "thx"], "ner": [[5, 21, "address"]]}
+{"tokenized_text": ["Minimum", "balance", "charges", "of", "Rs", "57267", "have", "been", "deducted", "from", "my", "salary", "account", "45417897846010", ".", "A", "salary", "account", "should", "be", "zero", "balance", ".", "Please", "reverse", ".", "Thanks", "&", "regards", "Muthu", "Tiwari", "+", "91-8255511504"], "ner": [[29, 30, "person"]]}
+{"tokenized_text": ["DEBASIS"], "ner": [[0, 0, "person"]]}
+{"tokenized_text": ["POS", "/", "6023906494046913", "/", "CHILIKA", "OPTICALS", "/", "SURAT"], "ner": [[4, 5, "organization"]]}
+{"tokenized_text": ["Duplicate", "of", "earlier", "complaint", ".", "Closing", "."], "ner": []}
+{"tokenized_text": ["purana", "number", "band", "ho", "gaya", "hai", "(", "07190954638", ")", ",", "naya", "number", "+", "91", "81148", "92754", "update", "kar", "do", ".", "OTP", "nahi", "aa", "raha", "🙏"], "ner": []}
+{"tokenized_text": ["Duplicate", "of", "earlier", "complaint", ".", "Closing", "."], "ner": []}
+{"tokenized_text": ["Sent", "Rs", ".", "45", ",", "142", "to", "my", "brother", "Rita", "Bajpai", "on", "9811109935", "@", "neelpay", ",", "money", "deducted", "but", "not", "received", "😢"], "ner": [[9, 10, "person"]]}
+{"tokenized_text": ["UPI", "/", "CR", "/", "663415048776", "/", "ZAIDI", ",", "HEMANTA", "/", "parthapitambarnegi", "@", "paytm", "/", "bday", "gift"], "ner": [[6, 8, "person"]]}
+{"tokenized_text": ["User", "ID", "unlocked", "after", "verification", "on", "07098576597", "."], "ner": []}
+{"tokenized_text": ["statement", "email", "pe", "nahi", "aa", "raha", ".", "mera", "email", "lavanya", ".", "sethi", "@", "gmail", ".", "com", "hai", ",", "check", "karo"], "ner": []}
+{"tokenized_text": ["There", "is", "a", "charge", "of", "Rs", "70", ",", "574", "from", "Ajanta", "District", "Hospital", "on", "my", "credit", "card", "4140-9240-2844-0224", ".", "You", "can", "also", "reach", "me", "at", "lavanya_kamat", "@", "northwind", ".", "co", ".", "uk", ".", "A", "/", "c", "no", ":", "78349696343538", "Regards", ",", "U", ".", "T", ".", "Banerjee"], "ner": [[10, 12, "organization"], [41, 45, "person"]]}
+{"tokenized_text": ["INT", ".", "PD", ":", "01-07-2026", "TO", "30-09-2026"], "ner": []}
+{"tokenized_text": ["Locker", "attached"], "ner": []}
+{"tokenized_text": ["Auto-reversal", "done", ",", "Rs", ".", "79", ",", "825", "credited", "back", "to", "a", "/", "c", "88641745975135", "."], "ner": []}
+{"tokenized_text": ["Visited", "Ajanta", "Bakery", "branch", "with", "CHIRANJIT", "JAISWAL", "for", "re-KYC", "."], "ner": [[1, 2, "organization"], [5, 6, "person"]]}
+{"tokenized_text": ["MERA", "CARD", "KHO", "GAYA", "H", ",", "CARD", "NO", "36315299342188", ".", "PLEASE", "TURANT", "BLOCK", "KAR", "DO", ",", "KOI", "MISUSE", "NA", "HO", "JAYE", "MERA", "NUMBER", "8492729646", "HAI", ",", "CALL", "KARO"], "ner": []}
+{"tokenized_text": ["CHILIKA", "SALON"], "ner": [[0, 1, "organization"]]}
+{"tokenized_text": ["Co-applicant", ":", "Muthu", "Kamat", ",", "mob", "+", "91-9487980132", ".", "ITR", "verified", "."], "ner": [[2, 3, "person"]]}
+{"tokenized_text": ["Mobile", "update", "request", "+", "91-9687918459", "-", ">", "+", "91", "78088", "45047", ".", "OTP", "verified", "on", "old", "number", "."], "ner": []}
+{"tokenized_text": ["CUST", "FLORA", "NEGI", "CALLED", "TWICE", "FOR", "STATUS", "."], "ner": [[1, 2, "person"]]}
+{"tokenized_text": ["Zothansanga", "Banerjee"], "ner": [[0, 1, "person"]]}
+{"tokenized_text": ["Cust", "shared", "full", "card", "no", "3765", "9097", "6769", "154", "in", "chat", "-", "advised", "not", "to", "share", "card", "details", "on", "chat", ".", "Card", "hotlisted", "."], "ner": []}
+{"tokenized_text": ["Hi", "team", "I", "lost", "my", "wallet", "last", "night", ",", "my", "credit", "card", "4909998848944871", "was", "inside", ".", "pls", "block", "it", "asap", ".", "call", "me", "on", "7247488590", "A", "/", "c", "no", ":", "48382309576089", "thx"], "ner": []}

@@ -1,0 +1,24 @@
+{
+  "customer_name_cases": 918,
+  "narration_cases": 2883,
+  "rules_only": {
+    "name_recall": 0.911,
+    "narration_recall": 0.63
+  },
+  "base": {
+    "name_recall": 0.995,
+    "narration_recall": 0.949,
+    "ms_per_text": 2.31
+  },
+  "base_plus_rules": {
+    "name_recall": 0.999
+  },
+  "fine_tuned": {
+    "name_recall": 0.999,
+    "narration_recall": 0.942,
+    "ms_per_text": 1.99
+  },
+  "fine_tuned_plus_rules": {
+    "name_recall": 0.999
+  }
+}

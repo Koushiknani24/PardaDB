@@ -1,0 +1,5 @@
+# Direct dependencies of the ML add-on (training, evaluation, serving).
+# Install: uv pip install -r requirements.lock.txt --extra-index-url https://download.pytorch.org/whl/cu128
+gliner==0.2.29
+torch==2.8.0
+safetensors==0.8.0

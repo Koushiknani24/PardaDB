@@ -1,0 +1,67 @@
+{
+  "model": "knowledgator/gliner-pii-edge-v1.0",
+  "threshold": 0.4,
+  "device": "cuda",
+  "golden": {
+    "person": {
+      "precision": 0.961,
+      "recall": 0.987,
+      "f1": 0.974,
+      "support": 149
+    },
+    "address": {
+      "precision": 0.778,
+      "recall": 0.875,
+      "f1": 0.824,
+      "support": 8
+    },
+    "organization": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "micro": {
+      "precision": 0.675,
+      "recall": 0.981,
+      "f1": 0.8
+    },
+    "zero_leak_cases": 0.983
+  },
+  "bank_test": {
+    "person": {
+      "precision": 0.622,
+      "recall": 0.824,
+      "f1": 0.709,
+      "support": 363
+    },
+    "address": {
+      "precision": 0.643,
+      "recall": 1.0,
+      "f1": 0.783,
+      "support": 36
+    },
+    "organization": {
+      "precision": 0.193,
+      "recall": 0.875,
+      "f1": 0.316,
+      "support": 152
+    },
+    "micro": {
+      "precision": 0.382,
+      "recall": 0.849,
+      "f1": 0.527
+    },
+    "zero_leak_cases": 0.897
+  },
+  "saffron_customer_name_recall": {
+    "recall": 0.995,
+    "n": 400
+  },
+  "saffron_narration_counterparty_recall": {
+    "recall": 0.943,
+    "n": 400
+  },
+  "ms_per_text_3_labels": 3.3,
+  "ms_per_text_16_labels": 7.88
+}
