@@ -2,6 +2,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
+import sqlglot
 
 from pardadb import audit, backends, config, engine, ml, scanner
 
@@ -364,3 +365,37 @@ def test_render_spells_json_extract_for_sqlite_only() -> None:
 )
 def test_is_write_classifies_single_statements(sql: str, write: bool) -> None:
     assert engine.is_write(sql, "sqlite") is write
+
+
+SCHEMA_CASES = {"cards": {"CARD_NO": "TEXT", "CUSTOMER_ID": "TEXT"}, "customers": {"customer_id": "TEXT"}}
+
+
+@pytest.mark.parametrize(
+    ("sql", "expected"),
+    [
+        ("SELECT card_no FROM cards", 'SELECT "CARD_NO" FROM "cards"'),
+        ("SELECT CARD_NO FROM cards", 'SELECT "CARD_NO" FROM "cards"'),  # PostgreSQL would fold it to card_no
+        ("SELECT c.card_no FROM cards AS c", 'SELECT c."CARD_NO" FROM "cards" AS c'),
+        ("SELECT customer_id FROM cards", 'SELECT "CUSTOMER_ID" FROM "cards"'),  # only cards is in the query
+        ("SELECT customer_id FROM customers", 'SELECT "customer_id" FROM "customers"'),
+        ('SELECT "card_no" FROM cards', 'SELECT "card_no" FROM "cards"'),  # quoted: the user meant it
+        ("SELECT card_no AS x FROM cards ORDER BY x", 'SELECT "CARD_NO" AS x FROM "cards" ORDER BY x'),
+    ],
+)
+def test_identifier_case_matches_the_schema(sql: str, expected: str) -> None:
+    tree = engine.match_identifier_case(sqlglot.parse_one(sql, read="postgres"), SCHEMA_CASES)
+    assert tree.sql(dialect="postgres") == expected
+
+
+def test_identifier_case_prefers_an_exact_name() -> None:
+    sql = "SELECT customer_id FROM cards JOIN customers ON 1 = 1"
+    tree = engine.match_identifier_case(sqlglot.parse_one(sql, read="postgres"), SCHEMA_CASES)
+    assert tree.sql(dialect="postgres") == 'SELECT "customer_id" FROM "cards" JOIN "customers" ON 1 = 1'
+
+
+def test_identifier_case_leaves_ambiguous_names_alone() -> None:
+    schema = {"a": {"Name": "TEXT"}, "b": {"NAME": "TEXT"}}
+    tree = engine.match_identifier_case(
+        sqlglot.parse_one("SELECT name FROM a JOIN b ON 1 = 1", read="postgres"), schema
+    )
+    assert tree.sql(dialect="postgres") == 'SELECT name FROM "a" JOIN "b" ON 1 = 1'

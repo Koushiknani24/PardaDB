@@ -114,6 +114,40 @@ def is_write(sql: str, dialect: str) -> bool:
     return isinstance(tree, WRITE_NODES) or tree.find(*WRITE_NODES, exp.Command) is not None
 
 
+def match_identifier_case(tree: exp.Expression, schema: backends.Schema) -> exp.Expression:
+    """Write unquoted table and column names with the schema's exact spelling, quoted.
+
+    SQLite accepts ``card_no`` for a ``CARD_NO`` column, PostgreSQL folds unquoted names to lower case,
+    and sqlglot resolves names case-sensitively; quoting the real spelling lets one query work on every
+    backend. A name is rewritten only when it matches exactly, or when exactly one table (or exactly one
+    column among the query's tables) matches case-insensitively; anything ambiguous is left for
+    qualify() to reject.
+    """
+    tables_ci: dict[str, list[str]] = {}
+    for table in schema:
+        tables_ci.setdefault(table.lower(), []).append(table)
+    aliases: dict[str, str] = {}
+    for node in tree.find_all(exp.Table):
+        ident = node.this
+        if isinstance(ident, exp.Identifier) and not ident.quoted:
+            match = [ident.name] if ident.name in schema else tables_ci.get(ident.name.lower(), [])
+            if len(match) == 1:
+                node.set("this", exp.to_identifier(match[0], quoted=True))
+        if node.name in schema:
+            aliases[node.alias_or_name.lower()] = node.name
+    in_query = set(aliases.values())
+    for col in tree.find_all(exp.Column):
+        ident = col.this
+        if not isinstance(ident, exp.Identifier) or ident.quoted:
+            continue
+        scope = [aliases[col.table.lower()]] if col.table and col.table.lower() in aliases else in_query
+        names = {c for t in scope for c in schema[t]}
+        match = {ident.name} if ident.name in names else {c for c in names if c.lower() == ident.name.lower()}
+        if len(match) == 1:
+            col.set("this", exp.to_identifier(match.pop(), quoted=True))
+    return tree
+
+
 def _check_read_only(tree: exp.Expression) -> None:
     """Refuse writes, commands, SELECT ... INTO and banned functions anywhere in the tree."""
     if isinstance(tree, WRITE_NODES) or tree.find(*WRITE_NODES) or tree.find(exp.Command):
@@ -302,6 +336,7 @@ class Engine:
         """Validate `sql` for `role`; return the qualified, LIMITed tree and one masking decision per output."""
         tree = parse_single(sql, self.b.dialect)
         _check_read_only(tree)
+        tree = match_identifier_case(tree, self.b.schema())
         try:
             tree = qualify(tree, schema=self.sg_schema, dialect=self.b.dialect)
         except (sqlglot.errors.SqlglotError, KeyError, ValueError) as e:
