@@ -519,7 +519,7 @@ class Engine:
             "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
         }
 
-    def _audit(self, base: dict[str, Any], **fields: Any) -> None:  # noqa: ANN401 - record fields are free-form
+    def _audit(self, base: dict[str, Any], **fields: Any) -> None:
         """Append one audit record; the SQL is stored with its literal values removed."""
         audit.append({**base, "sql": audit_sql(base["sql"], self.b.dialect), **fields})
 

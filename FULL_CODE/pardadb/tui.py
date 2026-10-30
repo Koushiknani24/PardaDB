@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import contextlib
 import json
+import logging
 import shlex
 import webbrowser
 from typing import Any
@@ -23,6 +24,8 @@ from rich.table import Table
 from rich.text import Text
 
 from . import audit, engine, server
+
+log = logging.getLogger(__name__)
 
 TAG = {
     "PII_HIGH": "bold red",
@@ -508,4 +511,5 @@ class TUI:
                 args = shlex.split(line)[1:] if word not in ("compare",) else line.split()[1:]
                 fn(*args)
             except Exception as e:  # keep the TUI alive whatever happens
+                log.warning("console command %r failed", word, exc_info=True)
                 self.con.print(f"[red]{type(e).__name__}: {e}[/]")

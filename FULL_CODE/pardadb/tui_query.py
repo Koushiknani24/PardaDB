@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import time
 from typing import Any
 
@@ -13,6 +14,8 @@ from textual.widgets import Button, DataTable, OptionList, Select, Static, Switc
 from . import audit, engine, server
 from .tui_base import PardaBase
 from .tui_widgets import AUDIT_STYLE, QUERY_ROWS, Result, SqlArea, fill_grid, one_line, outcome_text
+
+log = logging.getLogger(__name__)
 
 
 def result_summary(res: Result) -> Text:
@@ -111,13 +114,15 @@ class QueryTab(PardaBase):
         try:
             n2 = self.rt.route(n, sql)
             res = self.rt.count(self.rt.engines[n2].run(sql, role, user))
-        except Exception as e:
+        except Exception as e:  # any backend failure becomes a result row; keeps the UI alive
+            log.warning("TUI query on %s failed", n, exc_info=True)
             res = {"ok": False, "error": one_line(f"{type(e).__name__}: {e}"), "role": role, "user": user}
         self.call_from_thread(self.show_query, [res])
         if res.get("write"):
             try:
                 self.rt.after_write(res)
-            except Exception as e:
+            except Exception as e:  # any re-scan failure becomes a notification; keeps the UI alive
+                log.exception("TUI re-scan after write on %s failed", n)
                 self.call_from_thread(self.notify, one_line(f"Re-scan failed: {e}"), severity="error")
 
     @on(Button.Pressed, "#q-compare")
@@ -135,7 +140,8 @@ class QueryTab(PardaBase):
             for r in engine.ROLES:
                 res = self.rt.count(self.rt.engines[n2].run(sql, r, f"compare:{r}"))
                 out.append(res)
-        except Exception as e:
+        except Exception as e:  # any backend failure becomes a result row; keeps the UI alive
+            log.warning("TUI role comparison on %s failed", n, exc_info=True)
             out.append({"ok": False, "error": one_line(f"{type(e).__name__}: {e}"), "role": "?"})
         self.call_from_thread(self.show_query, out)
 
@@ -186,7 +192,8 @@ class QueryTab(PardaBase):
     def load_audit(self) -> None:
         try:
             data = audit.read(50)
-        except Exception as e:
+        except Exception as e:  # an unreadable audit log is shown as a broken chain; keeps the UI alive
+            log.exception("TUI audit log read failed")
             data = {"chain_ok": False, "total": 0, "records": [], "error": str(e)}
         self.call_from_thread(self.show_audit, data)
 
@@ -224,7 +231,8 @@ class QueryTab(PardaBase):
     def do_verify(self, n: str) -> None:
         try:
             res = self.rt.integrity(n)
-        except Exception as e:
+        except Exception as e:  # any backend failure becomes a red banner; keeps the UI alive
+            log.exception("TUI integrity check of %s failed", n)
             res = {"all_unchanged": False, "tables": [], "error": one_line(f"{type(e).__name__}: {e}")}
         self.call_from_thread(self.show_verify, n, res)
 

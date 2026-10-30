@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from rich.text import Text
@@ -24,6 +25,8 @@ from .tui_widgets import (
     outcome_text,
     strat,
 )
+
+log = logging.getLogger(__name__)
 
 CAT_DEBOUNCE_S = 0.25  # wait for a pause in typing before re-filtering the catalog
 
@@ -60,7 +63,8 @@ class ExplorerTab(PardaBase):
     def load_tables(self, n: str) -> None:
         try:
             data = self.rt.tables(n)
-        except Exception as e:
+        except Exception as e:  # any backend failure becomes a message; keeps the UI alive
+            log.warning("TUI table list for %s failed", n, exc_info=True)
             data = {"error": one_line(f"{type(e).__name__}: {e}")}
         self.call_from_thread(self.show_tables, n, data)
 
@@ -114,7 +118,8 @@ class ExplorerTab(PardaBase):
     def do_browse(self, n: str, table: str, role: str, offset: int, fcol: str | None, fval: str | None) -> None:
         try:
             res = self.rt.count(self.rt.engines[n].browse(table, role, self.user_for(role), offset, PAGE, fcol, fval))
-        except Exception as e:
+        except Exception as e:  # any backend failure becomes a message; keeps the UI alive
+            log.warning("TUI browse of %s on %s failed", table, n, exc_info=True)
             res = {"ok": False, "error": f"{type(e).__name__}: {e}"}
         res.setdefault("role", role)
         self.call_from_thread(self.show_browse, res)
@@ -327,5 +332,6 @@ class ExplorerTab(PardaBase):
     def do_scan(self, n: str) -> None:
         try:
             self.rt.run_scan(n)
-        except Exception as e:
+        except Exception as e:  # any scan failure becomes a notification; keeps the UI alive
+            log.exception("TUI re-scan of %s failed", n)
             self.call_from_thread(self.notify, one_line(f"Scan failed: {e}"), severity="error")
