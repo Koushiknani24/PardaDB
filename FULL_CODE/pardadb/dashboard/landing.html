@@ -111,10 +111,6 @@ mark.a{background:var(--mk-a);border-color:var(--amber);border-bottom-style:dash
 .seg button:hover{color:var(--text);background:var(--panel2)}
 .seg button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
 .seg .bar{position:absolute;left:0;bottom:0;height:4px;width:0;background:var(--accent)}
-.seg button[aria-pressed="true"] .bar{animation:fill 4.2s steps(14) forwards}
-.console:hover .bar,.console:focus-within .bar,.console.manual .bar{animation-play-state:paused}
-.console.manual .bar{animation:none!important}
-@keyframes fill{to{width:100%}}
 .c-sql{padding:14px 16px;border-bottom:1px dashed var(--line);font:13px/1.55 var(--mono);color:var(--muted);overflow-wrap:anywhere}
 .c-sql b{color:var(--accent);font-weight:700}
 .c-sql .kw{color:var(--text);font-weight:700}
@@ -204,6 +200,7 @@ section.alt{background:var(--panel)}
 .t-bar .btn{margin-left:auto;background:#161b22;color:var(--t-fg);border-color:#4a5568;box-shadow:none;min-height:30px;padding:0 10px;font-size:12px}
 .t-bar .btn:hover{transform:none;border-color:var(--t-fg)}
 .term pre{margin:0;padding:16px 18px;font:13.5px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.dev pre{white-space:pre;overflow-x:auto;overflow-wrap:normal}
 .term .p{color:var(--t-blue)}.term .c{color:var(--t-dim)}.term .x{color:var(--t-red);font-weight:700}.term .o{color:var(--t-green);font-weight:700}.term .s{color:var(--t-amber)}
 
 /* safety */
@@ -302,6 +299,8 @@ footer .r{margin-left:auto}
   .hero{padding:44px 0 56px}
   .hero-grid{margin-top:24px}
   .ctas .btn{flex:1 1 100%}
+  .facts{display:none}
+  .cta .box>svg{width:64px;height:64px}
   .console{box-shadow:6px 6px 0 var(--shade)}
   .rt .tag{display:none}
   .rt th,.rt td{padding-left:12px;padding-right:12px}
@@ -340,11 +339,12 @@ footer .r{margin-left:auto}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="p-arrow-right" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z"/></symbol><symbol id="p-play" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/></symbol><symbol id="p-search" viewBox="0 0 24 24"><path fill="currentColor" d="M6 2h8v2H6V2zM4 6V4h2v2H4zm0 8H2V6h2v8zm2 2H4v-2h2v2zm8 0v2H6v-2h8zm2-2h-2v2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm0-8h2v8h-2V6zm0 0V4h-2v2h2z"/></symbol><symbol id="p-users" viewBox="0 0 24 24"><path fill="currentColor" d="M11 0H5v2H3v6h2v2h6V8H5V2h6V0zm0 2h2v6h-2V2zM0 14h2v4h12v2H0v-6zm2 0h12v-2H2v2zm14 0h-2v6h2v-6zM15 0h4v2h-4V0zm4 8h-4v2h4V8zm0-6h2v6h-2V2zm5 12h-2v4h-4v2h6v-6zm-6-2h4v2h-4v-2z"/></symbol><symbol id="p-shield" viewBox="0 0 24 24"><path fill="currentColor" d="M22 2H2v12h2V4h16v10h2V2zM6 14H4v2h2v-2zm0 2h2v2h2v2H8v-2H6v-2zm4 4v2h4v-2h2v-2h-2v2h-4zm10-6h-2v2h-2v2h2v-2h2v-2z"/></symbol><symbol id="p-lock" viewBox="0 0 24 24"><path fill="currentColor" d="M15 2H9v2H7v4H4v14h16V8h-3V4h-2V2zm0 2v4H9V4h6zm-6 6h9v10H6V10h3zm4 3h-2v4h2v-4z"/></symbol><symbol id="p-git-commit" viewBox="0 0 24 24"><path fill="currentColor" d="M7 7h10v4h5v2h-5v4H7v-4H2v-2h5V7zm2 2v6h6V9H9z"/></symbol><symbol id="p-check" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h2v2h-2V6zm-2 4V8h2v2h-2zm-2 2v-2h2v2h-2zm-2 2h2v-2h-2v2zm-2 2h2v-2h-2v2zm-2 0v2h2v-2H8zm-2-2h2v2H6v-2zm0 0H4v-2h2v2z"/></symbol><symbol id="p-book-open" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h8v2H3v12h8V5h2v12h8V5h-8V3h10v16H13v2h-2v-2H1V3h2zm16 7h-4v2h4v-2zm-4-3h4v2h-4V7zm2 6h-2v2h2v-2z"/></symbol><symbol id="p-server" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h18v18H3V3zm2 2v6h14V5H5zm14 8H5v6h14v-6zM7 7h2v2H7V7zm2 8H7v2h2v-2z"/></symbol><symbol id="p-copy" viewBox="0 0 24 24"><path fill="currentColor" d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z"/></symbol><symbol id="p-zap" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1h2v8h8v4h-2v-2h-8V5h-2V3h2V1zM8 7V5h2v2H8zM6 9V7h2v2H6zm-2 2V9h2v2H4zm10 8v2h-2v2h-2v-8H2v-4h2v2h8v6h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm0 0h2v-2h-2v2z"/></symbol><symbol id="i-logo" viewBox="0 0 12 12"><path fill="currentColor" d="M2 0h8v1h-8zM1 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM1 4h10v1h-10zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM1 7h10v1h-10zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM1 10h1v1h-1zM10 10h1v1h-1zM2 11h8v1h-8z"/><path fill="var(--accent)" d="M1 5h10v1h-10zM1 6h10v1h-10z"/></symbol><symbol id="i-admin" viewBox="0 0 12 12"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></symbol><symbol id="i-support" viewBox="0 0 12 12"><path fill="currentColor" d="M3 0h5v1h-5zM2 1h1v1h-1zM8 1h1v1h-1zM1 2h1v1h-1zM3 2h5v1h-5zM9 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM7 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM9 4h1v1h-1zM4 5h3v1h-3zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM4 7h3v1h-3z"/></symbol><symbol id="i-analyst" viewBox="0 0 12 12"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M9 0h1v1h-1zM8 1h2v1h-2zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM9 6h1v1h-1zM9 7h1v1h-1z"/></symbol><symbol id="i-scan" viewBox="0 0 12 12"><path fill="currentColor" d="M2 0h5v1h-5zM1 1h1v1h-1zM7 1h1v1h-1zM0 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM8 3h1v1h-1zM0 4h1v1h-1zM8 4h1v1h-1zM0 5h1v1h-1zM8 5h1v1h-1zM1 6h1v1h-1zM7 6h1v1h-1zM2 7h5v1h-5zM8 7h1v1h-1zM9 8h1v1h-1zM10 9h1v1h-1zM11 10h1v1h-1z"/><path fill="var(--accent)" d="M3 3h3v1h-3zM3 4h3v1h-3z"/></symbol><symbol id="i-tag" viewBox="0 0 12 12"><path fill="currentColor" d="M0 0h7v1h-7zM0 1h1v1h-1zM7 1h1v1h-1zM0 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM9 3h1v1h-1zM0 4h1v1h-1zM10 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM10 7h1v1h-1zM0 8h1v1h-1zM9 8h1v1h-1zM0 9h1v1h-1zM8 9h1v1h-1zM0 10h8v1h-8z"/><path fill="var(--accent)" d="M2 2h2v1h-2zM2 3h2v1h-2z"/></symbol><symbol id="i-mask" viewBox="0 0 12 12"><path fill="currentColor" d="M4 1h4v1h-4zM2 2h2v1h-2zM8 2h2v1h-2zM1 3h1v1h-1zM5 3h2v1h-2zM10 3h1v1h-1zM0 4h1v1h-1zM4 4h4v1h-4zM11 4h1v1h-1zM0 7h1v1h-1zM4 7h4v1h-4zM11 7h1v1h-1zM1 8h1v1h-1zM5 8h2v1h-2zM10 8h1v1h-1zM2 9h2v1h-2zM8 9h2v1h-2zM4 10h4v1h-4z"/><path fill="var(--accent)" d="M0 5h12v1h-12zM0 6h12v1h-12z"/></symbol><symbol id="i-prove" viewBox="0 0 12 12"><path fill="currentColor" d="M0 0h12v1h-12zM0 1h1v1h-1zM11 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h1v1h-1zM8 10h1v1h-1zM4 11h4v1h-4z"/><path fill="var(--accent)" d="M10 2h1v1h-1zM9 3h2v1h-2zM2 4h1v1h-1zM8 4h2v1h-2zM2 5h2v1h-2zM7 5h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2zM4 7h3v1h-3zM5 8h1v1h-1z"/></symbol><symbol id="i-guard" viewBox="0 0 12 12"><path fill="currentColor" d="M3 0h6v1h-6zM2 1h1v1h-1zM9 1h1v1h-1zM1 2h1v1h-1zM10 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h6v1h-6z"/><path fill="var(--accent)" d="M8 2h2v1h-2zM7 3h2v1h-2zM6 4h2v1h-2zM5 5h2v1h-2zM4 6h2v1h-2zM3 7h2v1h-2zM2 8h2v1h-2z"/></symbol><symbol id="i-lock" viewBox="0 0 12 12"><path fill="currentColor" d="M4 0h4v1h-4zM3 1h1v1h-1zM8 1h1v1h-1zM2 2h1v1h-1zM9 2h1v1h-1zM2 3h1v1h-1zM9 3h1v1h-1zM0 4h12v1h-12zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM0 10h1v1h-1zM11 10h1v1h-1zM0 11h12v1h-12z"/><path fill="var(--accent)" d="M5 6h2v1h-2zM5 7h2v1h-2zM6 8h1v1h-1z"/></symbol><symbol id="i-chain" viewBox="0 0 12 12"><path fill="currentColor" d="M0 2h3v1h-3zM8 2h3v1h-3zM0 3h1v1h-1zM2 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM0 4h1v1h-1zM2 4h7v1h-7zM10 4h1v1h-1zM0 5h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM0 6h3v1h-3zM8 6h3v1h-3z"/><path fill="var(--accent)" d="M1 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM9 4h1v1h-1zM1 5h1v1h-1zM9 5h1v1h-1z"/></symbol><symbol id="i-offline" viewBox="0 0 12 12"><path fill="currentColor" d="M0 8h12v1h-12zM0 9h1v1h-1zM11 9h1v1h-1zM0 10h1v1h-1zM2 10h2v1h-2zM11 10h1v1h-1zM0 11h12v1h-12z"/><path fill="var(--accent)" d="M0 0h1v1h-1zM10 0h1v1h-1zM1 1h1v1h-1zM9 1h1v1h-1zM2 2h1v1h-1zM8 2h1v1h-1zM3 3h1v1h-1zM7 3h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM5 5h1v1h-1zM4 6h1v1h-1zM6 6h1v1h-1zM3 7h1v1h-1zM7 7h1v1h-1z"/></symbol></defs></svg>
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="PardaDB home"><svg class="px" width="28" height="28" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h8v1h-8zM1 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM1 4h10v1h-10zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM1 7h10v1h-10zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM1 10h1v1h-1zM10 10h1v1h-1zM2 11h8v1h-8z"/><path fill="var(--accent)" d="M1 5h10v1h-10zM1 6h10v1h-10z"/></svg><span>PardaDB</span></a>
+    <a class="logo" href="#top" aria-label="PardaDB home"><svg class="px" width="28" height="28" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-logo"/></svg><span>PardaDB</span></a>
     <nav class="links" aria-label="Sections">
       <a href="#how">How it works</a>
       <a href="#roles">Roles</a>
@@ -354,7 +354,7 @@ footer .r{margin-left:auto}
     </nav>
     <div class="tools">
       <button class="themebtn" id="theme" type="button" aria-label="Colour theme: Auto. Click to change."><span class="sw" aria-hidden="true"></span><span class="tl" id="theme-l">Auto</span></button>
-      <a class="btn pri sm" href="/dashboard">Demo <svg class="pa" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z"/></svg></a>
+      <a class="btn pri sm" href="/dashboard">Demo <svg class="pa" width="16" height="16" aria-hidden="true" focusable="false"><use href="#p-arrow-right"/></svg></a>
     </div>
   </div>
 </header>
@@ -369,7 +369,7 @@ footer .r{margin-left:auto}
       <div>
         <p class="lede">PardaDB sits between your staff and the bank&rsquo;s SQL databases. It <strong>finds personal data by itself</strong> (card numbers, Aadhaar, PAN, phone numbers, names, balances) and <strong>hides it the moment a query runs</strong>, based on who is asking. Nothing is copied. Nothing is rewritten.</p>
         <div class="ctas">
-          <a class="btn pri" href="/dashboard"><svg class="pa" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/></svg> Open the demo</a>
+          <a class="btn pri" href="/dashboard"><svg class="pa" width="18" height="18" aria-hidden="true" focusable="false"><use href="#p-play"/></svg> Open the demo</a>
           <a class="btn" href="#how">How it works</a>
         </div>
         <ul class="facts">
@@ -382,9 +382,9 @@ footer .r{margin-left:auto}
       <figure class="console" id="demo" aria-label="Live example: the same customer row seen by three roles" style="margin:0">
         <div class="c-bar"><i></i><i></i><i></i><span>pardadb &middot; saffron_bank</span><b class="live">LIVE</b></div>
         <div class="seg" role="group" aria-label="View the row as">
-          <button type="button" data-role="admin" aria-pressed="true"><svg class="px" width="18" height="18" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg>Admin<span class="bar"></span></button>
-          <button type="button" data-role="support" aria-pressed="false"><svg class="px" width="18" height="18" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h5v1h-5zM2 1h1v1h-1zM8 1h1v1h-1zM1 2h1v1h-1zM3 2h5v1h-5zM9 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM7 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM9 4h1v1h-1zM4 5h3v1h-3zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM4 7h3v1h-3z"/></svg>Support<span class="bar"></span></button>
-          <button type="button" data-role="analyst" aria-pressed="false"><svg class="px" width="18" height="18" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M9 0h1v1h-1zM8 1h2v1h-2zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM9 6h1v1h-1zM9 7h1v1h-1z"/></svg>Analyst<span class="bar"></span></button>
+          <button type="button" data-role="admin" aria-pressed="true"><svg class="px" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-admin"/></svg>Admin<span class="bar"></span></button>
+          <button type="button" data-role="support" aria-pressed="false"><svg class="px" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-support"/></svg>Support<span class="bar"></span></button>
+          <button type="button" data-role="analyst" aria-pressed="false"><svg class="px" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-analyst"/></svg>Analyst<span class="bar"></span></button>
         </div>
         <div class="c-sql"><b id="c-role">admin</b>&gt; <span class="kw">SELECT</span> cust_nm, mob_no, dob_dt, pan_no, card_no, curr_bal, city <span class="kw">FROM</span> customers &hellip; <span class="kw">WHERE</span> customer_id = 'C10427';<span class="cur" aria-hidden="true"></span></div>
         <table class="rt">
@@ -393,13 +393,13 @@ footer .r{margin-left:auto}
             <tr><td class="col">cust_nm</td><td class="tag">PII_MEDIUM</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">Ritika Sharma</mark></td></tr>
             <tr><td class="col">mob_no</td><td class="tag">PII_MEDIUM</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">+919000012345</mark></td></tr>
             <tr><td class="col">dob_dt</td><td class="tag">PII_QUASI</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">1991-04-12</mark></td></tr>
-            <tr><td class="col">pan_no</td><td class="tag">PII_HIGH</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">ABCPS1234K</mark></td></tr>
+            <tr><td class="col">pan_no</td><td class="tag">PII_HIGH</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">ABCPS0000K</mark></td></tr>
             <tr><td class="col">card_no</td><td class="tag">PII_HIGH</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">4111111111116916</mark></td></tr>
             <tr><td class="col">curr_bal</td><td class="tag">FINANCIAL_CONFIDENTIAL</td><td><span class="rule full">FULL</span></td><td class="val"><mark class="m b">452300</mark></td></tr>
             <tr><td class="col">city</td><td class="tag">not personal</td><td><span class="rule clean">FULL</span></td><td class="val">Pune</td></tr>
           </tbody>
         </table>
-        <div class="c-who" id="c-who"><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg><p><b>Admin</b> &middot; security and DBA team. Sees real values, and every look is still written to the audit log.</p></div>
+        <div class="c-who" id="c-who"><svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-admin"/></svg><p><b>Admin</b> &middot; security and DBA team. Sees real values, and every look is still written to the audit log.</p></div>
         <div class="c-foot"><span id="c-count">0 of 7 columns masked</span><span>raw row <span class="ok">unchanged &#10003;</span></span><span>audit <span id="c-aud">#1042</span> chained</span></div>
       </figure>
     </div>
@@ -409,7 +409,7 @@ footer .r{margin-left:auto}
 <!-- ======================= PROOF STRIP ======================= -->
 <section class="strip" aria-label="Measured results">
   <ul class="wrap">
-    <li><span class="num">129,260</span><span>rows scanned in about half a second</span></li>
+    <li><span class="num">129,260</span><span>rows covered; 120 columns classified in about half a second</span></li>
     <li><span class="num">120</span><span>columns in 9 tables, labelled automatically</span></li>
     <li><span class="num">~40<small> MB</small></span><span>of memory while running</span></li>
     <li><span class="num">3<small> DBs</small></span><span>SQLite, MySQL and PostgreSQL, identical output</span></li>
@@ -430,9 +430,9 @@ footer .r{margin-left:auto}
     <div>
       <p class="eyebrow">What each person actually needs</p>
       <ul class="who">
-        <li><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg><div><b>Admin</b><span>Real values, for fixing problems. Fully audited.</span></div></li>
-        <li><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h5v1h-5zM2 1h1v1h-1zM8 1h1v1h-1zM1 2h1v1h-1zM3 2h5v1h-5zM9 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM7 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM9 4h1v1h-1zM4 5h3v1h-3zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM4 7h3v1h-3z"/></svg><div><b>Support</b><span>Enough to recognise a caller: first name, last four digits.</span></div></li>
-        <li><svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M9 0h1v1h-1zM8 1h2v1h-2zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM9 6h1v1h-1zM9 7h1v1h-1z"/></svg><div><b>Analyst</b><span>Patterns, not people: tokens, age bands, balance ranges.</span></div></li>
+        <li><svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-admin"/></svg><div><b>Admin</b><span>Real values, for fixing problems. Fully audited.</span></div></li>
+        <li><svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-support"/></svg><div><b>Support</b><span>Enough to recognise a caller: first name, last four digits.</span></div></li>
+        <li><svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-analyst"/></svg><div><b>Analyst</b><span>Patterns, not people: tokens, age bands, balance ranges.</span></div></li>
       </ul>
       <p class="small">PardaDB gives each of them exactly that, from the same live tables, with no copy to keep in sync.</p>
     </div>
@@ -448,10 +448,10 @@ footer .r{margin-left:auto}
       <p class="lede">Point PardaDB at a database. It does the rest on its own, and you can check every decision it made.</p>
     </div>
     <ol class="steps">
-      <li class="step box"><div class="n">Step 01<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h5v1h-5zM1 1h1v1h-1zM7 1h1v1h-1zM0 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM8 3h1v1h-1zM0 4h1v1h-1zM8 4h1v1h-1zM0 5h1v1h-1zM8 5h1v1h-1zM1 6h1v1h-1zM7 6h1v1h-1zM2 7h5v1h-5zM8 7h1v1h-1zM9 8h1v1h-1zM10 9h1v1h-1zM11 10h1v1h-1z"/><path fill="var(--accent)" d="M3 3h3v1h-3zM3 4h3v1h-3z"/></svg></div><h3>Scan</h3><p>Reads a small sample from every column and recognises personal data by its shape, its checksum and the column name.</p><code>129,260 rows &middot; ~0.5 s</code></li>
-      <li class="step box"><div class="n">Step 02<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h7v1h-7zM0 1h1v1h-1zM7 1h1v1h-1zM0 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM9 3h1v1h-1zM0 4h1v1h-1zM10 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM10 7h1v1h-1zM0 8h1v1h-1zM9 8h1v1h-1zM0 9h1v1h-1zM8 9h1v1h-1zM0 10h8v1h-8z"/><path fill="var(--accent)" d="M2 2h2v1h-2zM2 3h2v1h-2z"/></svg></div><h3>Tag</h3><p>Gives each column a label such as <em>high-risk ID</em> or <em>financial</em>, with the evidence shown next to it.</p><code>PII_HIGH &middot; PII_MEDIUM &middot; FINANCIAL_CONFIDENTIAL</code></li>
-      <li class="step box"><div class="n">Step 03<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 1h4v1h-4zM2 2h2v1h-2zM8 2h2v1h-2zM1 3h1v1h-1zM5 3h2v1h-2zM10 3h1v1h-1zM0 4h1v1h-1zM4 4h4v1h-4zM11 4h1v1h-1zM0 7h1v1h-1zM4 7h4v1h-4zM11 7h1v1h-1zM1 8h1v1h-1zM5 8h2v1h-2zM10 8h1v1h-1zM2 9h2v1h-2zM8 9h2v1h-2zM4 10h4v1h-4z"/><path fill="var(--accent)" d="M0 5h12v1h-12zM0 6h12v1h-12z"/></svg></div><h3>Mask</h3><p>When someone runs a query, the answer is masked for their role on its way out. The stored data is never touched.</p><code>policy.json: tag &times; role &rarr; rule</code></li>
-      <li class="step box"><div class="n">Step 04<svg class="px" width="36" height="36" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h12v1h-12zM0 1h1v1h-1zM11 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h1v1h-1zM8 10h1v1h-1zM4 11h4v1h-4z"/><path fill="var(--accent)" d="M10 2h1v1h-1zM9 3h2v1h-2zM2 4h1v1h-1zM8 4h2v1h-2zM2 5h2v1h-2zM7 5h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2zM4 7h3v1h-3zM5 8h1v1h-1z"/></svg></div><h3>Prove</h3><p>Every query is written to a tamper-evident log, and fingerprints show the tables are exactly as they were.</p><code>hash-chained audit &middot; SHA-256</code></li>
+      <li class="step box"><div class="n">Step 01<svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-scan"/></svg></div><h3>Scan</h3><p>Reads a small sample from every column and recognises personal data by its shape, its checksum and the column name.</p><code>129,260 rows &middot; ~0.5 s</code></li>
+      <li class="step box"><div class="n">Step 02<svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-tag"/></svg></div><h3>Tag</h3><p>Gives each column a label such as <em>high-risk ID</em> or <em>financial</em>, with the evidence shown next to it.</p><code>PII_HIGH &middot; PII_MEDIUM &middot; FINANCIAL_CONFIDENTIAL</code></li>
+      <li class="step box"><div class="n">Step 03<svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-mask"/></svg></div><h3>Mask</h3><p>When someone runs a query, the answer is masked for their role on its way out. The stored data is never touched.</p><code>policy.json: tag &times; role &rarr; rule</code></li>
+      <li class="step box"><div class="n">Step 04<svg class="px" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-prove"/></svg></div><h3>Prove</h3><p>Every query is written to a tamper-evident log, and fingerprints show the tables are exactly as they were.</p><code>hash-chained audit &middot; SHA&#8209;256</code></li>
     </ol>
   </div>
 </section>
@@ -464,14 +464,14 @@ footer .r{margin-left:auto}
       <h2 id="feat-h">Everything a bank needs to share data safely.</h2>
     </div>
     <div class="feats">
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 2h8v2H6V2zM4 6V4h2v2H4zm0 8H2V6h2v8zm2 2H4v-2h2v2zm8 0v2H6v-2h8zm2-2h-2v2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm0-8h2v8h-2V6zm0 0V4h-2v2h2z"/></svg><h3>Finds PII by itself</h3><p>Cards (Luhn-checked), Aadhaar, PAN, SSN, phones, email, UPI, names, addresses, balances.</p></div>
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M11 0H5v2H3v6h2v2h6V8H5V2h6V0zm0 2h2v6h-2V2zM0 14h2v4h12v2H0v-6zm2 0h12v-2H2v2zm14 0h-2v6h2v-6zM15 0h4v2h-4V0zm4 8h-4v2h4V8zm0-6h2v6h-2V2zm5 12h-2v4h-4v2h6v-6zm-6-2h4v2h-4v-2z"/></svg><h3>Masks per role</h3><p>Full, partial, token, range or redacted, decided per column and role at query time.</p></div>
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 2H2v12h2V4h16v10h2V2zM6 14H4v2h2v-2zm0 2h2v2h2v2H8v-2H6v-2zm4 4v2h4v-2h2v-2h-2v2h-4zm10-6h-2v2h-2v2h2v-2h2v-2z"/></svg><h3>Inference guard</h3><p>Stops queries that try to work out hidden values by filtering or sorting on them.</p></div>
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15 2H9v2H7v4H4v14h16V8h-3V4h-2V2zm0 2v4H9V4h6zm-6 6h9v10H6V10h3zm4 3h-2v4h2v-4z"/></svg><h3>Read-only by design</h3><p>Every write to bank data is blocked. Databases are opened read-only.</p></div>
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 7h10v4h5v2h-5v4H7v-4H2v-2h5V7zm2 2v6h6V9H9z"/></svg><h3>Tamper-evident audit</h3><p>Each query record carries the hash of the one before. Edit one and the chain breaks.</p></div>
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h18v18H3V3zm16 16V5H5v14h14z"/></svg><h3>Integrity proof</h3><p>SHA-256 fingerprints before and after show the tables did not change.</p></div>
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h8v2H3v12h8V5h2v12h8V5h-8V3h10v16H13v2h-2v-2H1V3h2zm16 7h-4v2h4v-2zm-4-3h4v2h-4V7zm2 6h-2v2h2v-2z"/></svg><h3>Free text and JSON</h3><p>Masks PII inside support tickets, notes and JSON fields, not just whole columns.</p></div>
-      <div class="feat"><svg class="pa" width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h18v18H3V3zm2 2v6h14V5H5zm14 8H5v6h14v-6zM7 7h2v2H7V7zm2 8H7v2h2v-2z"/></svg><h3>Three databases, one result</h3><p>SQLite, MySQL and PostgreSQL through one interface, with identical output.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-search"/></svg><h3>Finds PII by itself</h3><p>Cards (Luhn-checked), Aadhaar, PAN, SSN, phones, email, UPI, names, addresses, balances.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-users"/></svg><h3>Masks per role</h3><p>Full, partial, token, range or redacted, decided per column and role at query time.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-shield"/></svg><h3>Inference guard</h3><p>Stops queries that try to work out hidden values by filtering or sorting on them.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-lock"/></svg><h3>Read-only by design</h3><p>Every write to bank data is blocked. Databases are opened read-only.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-git-commit"/></svg><h3>Tamper-evident audit</h3><p>Each query record carries the hash of the one before. Edit one and the chain breaks.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-check"/></svg><h3>Integrity proof</h3><p>SHA-256 fingerprints before and after show the tables did not change.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-book-open"/></svg><h3>Free text and JSON</h3><p>Masks PII inside support tickets, notes and JSON fields, not just whole columns.</p></div>
+      <div class="feat"><svg class="pa" width="32" height="32" aria-hidden="true" focusable="false"><use href="#p-server"/></svg><h3>Three databases, one result</h3><p>SQLite, MySQL and PostgreSQL through one interface, with identical output.</p></div>
     </div>
   </div>
 </section>
@@ -488,15 +488,15 @@ footer .r{margin-left:auto}
       <table class="roles">
         <thead><tr>
           <th scope="col">Column</th>
-          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 0h1v1h-1zM4 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM2 1h7v1h-7z"/></svg><div><b>Admin</b><span>Security &amp; DBA</span></div></div></th>
-          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h5v1h-5zM2 1h1v1h-1zM8 1h1v1h-1zM1 2h1v1h-1zM3 2h5v1h-5zM9 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM7 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM9 4h1v1h-1zM4 5h3v1h-3zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM4 7h3v1h-3z"/></svg><div><b>Support</b><span>Customer service</span></div></div></th>
-          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h5v1h-5zM2 3h1v1h-1zM8 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM3 6h5v1h-5zM4 7h1v1h-1zM6 7h1v1h-1zM1 8h9v1h-9zM0 9h1v1h-1zM10 9h1v1h-1zM0 10h1v1h-1zM10 10h1v1h-1zM0 11h11v1h-11z"/><path fill="var(--accent)" d="M9 0h1v1h-1zM8 1h2v1h-2zM9 2h1v1h-1zM9 3h1v1h-1zM9 4h1v1h-1zM9 5h1v1h-1zM9 6h1v1h-1zM9 7h1v1h-1z"/></svg><div><b>Analyst</b><span>Reports &amp; trends</span></div></div></th>
+          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-admin"/></svg><div><b>Admin</b><span>Security &amp; DBA</span></div></div></th>
+          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-support"/></svg><div><b>Support</b><span>Customer service</span></div></div></th>
+          <th scope="col"><div class="rh"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-analyst"/></svg><div><b>Analyst</b><span>Reports &amp; trends</span></div></div></th>
         </tr></thead>
         <tbody>
           <tr><th scope="row">card_no<small>card number</small></th><td data-l="Admin"><mark class="m b">4111111111116916</mark></td><td data-l="Support"><mark class="m r">4111-XXXX-XXXX-6916</mark></td><td data-l="Analyst"><mark class="m r">[REDACTED]</mark></td></tr>
           <tr><th scope="row">cust_nm<small>customer name</small></th><td data-l="Admin"><mark class="m b">Ritika Sharma</mark></td><td data-l="Support"><mark class="m r">Ritika S*****</mark></td><td data-l="Analyst"><mark class="m r">tok_5a1c9e07b3d2</mark></td></tr>
           <tr><th scope="row">mob_no<small>phone</small></th><td data-l="Admin"><mark class="m b">+919000012345</mark></td><td data-l="Support"><mark class="m r">+91 XXXXXX2345</mark></td><td data-l="Analyst"><mark class="m r">tok_c08e41f6a9b7</mark></td></tr>
-          <tr><th scope="row">pan_no<small>tax ID</small></th><td data-l="Admin"><mark class="m b">ABCPS1234K</mark></td><td data-l="Support"><mark class="m r">XXXXXX234K</mark></td><td data-l="Analyst"><mark class="m r">[REDACTED]</mark></td></tr>
+          <tr><th scope="row">pan_no<small>tax ID</small></th><td data-l="Admin"><mark class="m b">ABCPS0000K</mark></td><td data-l="Support"><mark class="m r">XXXXXX000K</mark></td><td data-l="Analyst"><mark class="m r">[REDACTED]</mark></td></tr>
           <tr><th scope="row">dob_dt<small>date of birth</small></th><td data-l="Admin"><mark class="m b">1991-04-12</mark></td><td data-l="Support"><mark class="m r">1991</mark></td><td data-l="Analyst"><mark class="m r">30-39</mark></td></tr>
           <tr><th scope="row">curr_bal<small>balance (&#8377;)</small></th><td data-l="Admin"><mark class="m b">452300</mark></td><td data-l="Support"><mark class="m r">[REDACTED]</mark></td><td data-l="Analyst"><mark class="m r">1L-10L</mark></td></tr>
           <tr><th scope="row">city<small>not personal</small></th><td data-l="Admin">Pune</td><td data-l="Support">Pune</td><td data-l="Analyst">Pune</td></tr>
@@ -523,7 +523,7 @@ footer .r{margin-left:auto}
     </div>
     <div class="safe">
       <article class="card box s7">
-        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 0h6v1h-6zM2 1h1v1h-1zM9 1h1v1h-1zM1 2h1v1h-1zM10 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h6v1h-6z"/><path fill="var(--accent)" d="M8 2h2v1h-2zM7 3h2v1h-2zM6 4h2v1h-2zM5 5h2v1h-2zM4 6h2v1h-2zM3 7h2v1h-2zM2 8h2v1h-2z"/></svg><h3>Inference guard</h3></div>
+        <div class="ic"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-guard"/></svg><h3>Inference guard</h3></div>
         <p>Asking &ldquo;which cards start with 4111?&rdquo; would reveal digits that Support is not allowed to see. So would sorting by phone number. Those queries are refused, with the reason.</p>
         <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>support &amp; analyst queries</span></div>
 <pre><span class="p">support&gt;</span> SELECT * FROM cards WHERE CARD_NO LIKE <span class="s">'4111%'</span>;
@@ -536,14 +536,17 @@ footer .r{margin-left:auto}
 <span class="o">OK</span> <span class="c">non-personal columns: allowed</span></pre></div>
       </article>
       <article class="card box s5">
-        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 0h4v1h-4zM3 1h1v1h-1zM8 1h1v1h-1zM2 2h1v1h-1zM9 2h1v1h-1zM2 3h1v1h-1zM9 3h1v1h-1zM0 4h12v1h-12zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM0 10h1v1h-1zM11 10h1v1h-1zM0 11h12v1h-12z"/><path fill="var(--accent)" d="M5 6h2v1h-2zM5 7h2v1h-2zM6 8h1v1h-1z"/></svg><h3>Read-only</h3></div>
+        <div class="ic"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg><h3>Read-only</h3></div>
         <p>PardaDB can never change bank data. Databases are opened read-only, and every write statement is refused before it reaches them, even for Admin.</p>
         <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>admin</span></div>
 <pre><span class="p">admin&gt;</span> UPDATE accounts SET curr_bal = 0;
+<span class="x">BLOCKED</span> write statements are blocked on bank data: PardaDB is read-only by design
+
+<span class="p">admin&gt;</span> DELETE FROM cards;
 <span class="x">BLOCKED</span> write statements are blocked on bank data: PardaDB is read-only by design</pre></div>
       </article>
       <article class="card box s4">
-        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 2h3v1h-3zM8 2h3v1h-3zM0 3h1v1h-1zM2 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM0 4h1v1h-1zM2 4h7v1h-7zM10 4h1v1h-1zM0 5h1v1h-1zM2 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM0 6h3v1h-3zM8 6h3v1h-3z"/><path fill="var(--accent)" d="M1 3h1v1h-1zM9 3h1v1h-1zM1 4h1v1h-1zM9 4h1v1h-1zM1 5h1v1h-1zM9 5h1v1h-1z"/></svg><h3>Audit chain</h3></div>
+        <div class="ic"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-chain"/></svg><h3>Audit chain</h3></div>
         <p>Every query is recorded: who, which role, what SQL, what was masked. Each record holds the hash of the one before, so a quiet edit breaks the chain.</p>
         <div class="chain" aria-label="Three linked audit records">
           <div class="blk"><b>#1041</b><span>prev 3b07&hellip;</span></div><i class="lnk"></i>
@@ -552,12 +555,12 @@ footer .r{margin-left:auto}
         </div>
       </article>
       <article class="card box s4">
-        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h12v1h-12zM0 1h1v1h-1zM11 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM0 4h1v1h-1zM11 4h1v1h-1zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM0 7h1v1h-1zM11 7h1v1h-1zM1 8h1v1h-1zM10 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM3 10h1v1h-1zM8 10h1v1h-1zM4 11h4v1h-4z"/><path fill="var(--accent)" d="M10 2h1v1h-1zM9 3h2v1h-2zM2 4h1v1h-1zM8 4h2v1h-2zM2 5h2v1h-2zM7 5h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2zM4 7h3v1h-3zM5 8h1v1h-1z"/></svg><h3>Integrity proof</h3></div>
+        <div class="ic"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-prove"/></svg><h3>Integrity proof</h3></div>
         <p>SHA-256 fingerprints of every table, taken before and after, show nothing changed. One click in the dashboard.</p>
         <div class="fp">cards &nbsp;before 7d1e&hellip;a90c<br>cards &nbsp;after&nbsp; 7d1e&hellip;a90c <span class="ok">&#10003; unchanged</span></div>
       </article>
       <article class="card box s4">
-        <div class="ic"><svg class="px" width="32" height="32" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 8h12v1h-12zM0 9h1v1h-1zM11 9h1v1h-1zM0 10h1v1h-1zM2 10h2v1h-2zM11 10h1v1h-1zM0 11h12v1h-12z"/><path fill="var(--accent)" d="M0 0h1v1h-1zM10 0h1v1h-1zM1 1h1v1h-1zM9 1h1v1h-1zM2 2h1v1h-1zM8 2h1v1h-1zM3 3h1v1h-1zM7 3h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM5 5h1v1h-1zM4 6h1v1h-1zM6 6h1v1h-1zM3 7h1v1h-1zM7 7h1v1h-1z"/></svg><h3>Runs offline</h3></div>
+        <div class="ic"><svg class="px" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-offline"/></svg><h3>Runs offline</h3></div>
         <p>No cloud service, no tracking, nothing sent out. Built to run inside a bank network; even this page loads nothing from the internet.</p>
         <div class="pills"><span>no CDN</span><span>no telemetry</span><span>~40 MB RAM</span></div>
       </article>
@@ -570,8 +573,8 @@ footer .r{margin-left:auto}
   <div class="wrap two">
     <div>
       <p class="eyebrow">06 <b>Optional AI</b></p>
-      <h2 id="ai-h">Rules catch the obvious. A small AI model catches the rest.</h2>
-      <p class="lede">Card and phone numbers have a fixed shape, so rules find them reliably. Names and addresses written inside a support ticket do not. An optional small model, running on the same machine, finds those too.</p>
+      <h2 id="ai-h">Rules catch patterns. A small AI model catches names.</h2>
+      <p class="lede">Card numbers, phone numbers and even written addresses follow patterns, so rules find them reliably: <strong>164 of 164 addresses</strong> in the organiser data. A person&rsquo;s name inside a support ticket has no pattern. An optional small model, running on the same machine, finds those too.</p>
       <div class="meter" aria-label="Customer-name recall">
         <div><span>Rules only</span><b>0.911</b><span class="cells" style="--c:var(--red)"><i style="width:91.1%"></i></span></div>
         <div><span>Rules + AI model</span><b>0.993</b><span class="cells" style="--c:var(--violet)"><i style="width:99.3%"></i></span></div>
@@ -582,7 +585,7 @@ footer .r{margin-left:auto}
       <div class="t-head"><span>support_tickets.ticket_text</span>
         <div class="mini" role="group" aria-label="Detection mode"><button type="button" data-ai="0" aria-pressed="false">Rules only</button><button type="button" data-ai="1" aria-pressed="true">Rules + AI</button></div>
       </div>
-      <p class="t-body">Customer <mark class="m v">Ritika Sharma</mark> called from <mark class="m r">+91 90000 12345</mark>. She says card <mark class="m r">4111 1111 1111 6916</mark> was charged twice and wants the new card sent to <mark class="m v">14 Lake View Road, Baner, Pune</mark>.</p>
+      <p class="t-body">Customer <mark class="m v">Ritika Sharma</mark> called from <mark class="m r">+91 90000 12345</mark>. She says card <mark class="m r">4111 1111 1111 6916</mark> was charged twice and wants the new card sent to <mark class="m r">14 Lake View Road, Baner, Pune</mark>.</p>
       <div class="t-out" aria-live="polite"><b>analyst sees&gt;</b> <span id="t-out">Customer [NAME] called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to [ADDRESS].</span></div>
       <div class="t-key"><span><mark class="m r">red</mark> found by rules</span><span><mark class="m v">violet</mark> found by AI</span><span id="t-leak" hidden><mark class="m a">amber</mark> missed: would leak</span></div>
     </div>
@@ -598,8 +601,8 @@ footer .r{margin-left:auto}
       <p class="lede">A single Python process. Use the web dashboard, the full-screen terminal UI, the <code>pardadb</code> CLI, or call the API from your own tools.</p>
     </div>
     <div class="dev">
-      <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>quick start &middot; shell</span><button class="btn" type="button" data-copy="cli" aria-label="Copy the CLI commands"><svg class="pa" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z"/></svg>Copy</button></div>
-<pre id="cli"><span class="c"># connect, scan, open dashboard + terminal UI</span>
+      <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>quick start &middot; shell</span><button class="btn" type="button" data-copy="cli" aria-label="Copy the CLI commands"><svg class="pa" width="14" height="14" aria-hidden="true" focusable="false"><use href="#p-copy"/></svg>Copy</button></div>
+<pre id="cli" tabindex="0" aria-label="CLI commands"><span class="c"># connect, scan, open dashboard + terminal UI</span>
 <span class="p">$</span> pardadb
 <span class="c"># scan once and print the PII catalog</span>
 <span class="p">$</span> pardadb scan --db mysql
@@ -609,8 +612,8 @@ footer .r{margin-left:auto}
 <span class="p">$</span> pardadb compare --sql "SELECT cust_nm, mob_no FROM customers"
 <span class="c"># SHA-256 proof that nothing changed</span>
 <span class="p">$</span> pardadb verify --db postgres</pre></div>
-      <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>REST &middot; curl</span><button class="btn" type="button" data-copy="api" aria-label="Copy the API example"><svg class="pa" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z"/></svg>Copy</button></div>
-<pre id="api"><span class="c"># health, backends and scan progress</span>
+      <div class="term"><div class="t-bar"><i></i><i></i><i></i><span>REST &middot; curl</span><button class="btn" type="button" data-copy="api" aria-label="Copy the API example"><svg class="pa" width="14" height="14" aria-hidden="true" focusable="false"><use href="#p-copy"/></svg>Copy</button></div>
+<pre id="api" tabindex="0" aria-label="REST API example"><span class="c"># health, backends and scan progress</span>
 <span class="p">$</span> curl -s localhost:8765/api/status
 
 <span class="c"># run a masked query as a role (or "user")</span>
@@ -637,8 +640,8 @@ footer .r{margin-left:auto}
       </table>
     </div>
     <div class="works">
-      <div class="card box"><div class="ic"><svg class="pa" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h18v18H3V3zm2 2v6h14V5H5zm14 8H5v6h14v-6zM7 7h2v2H7V7zm2 8H7v2h2v-2z"/></svg><h3>Works with</h3></div><div class="pills"><span>SQLite</span><span>MySQL 8</span><span>PostgreSQL 16</span></div><p>One interface, identical masked output on all three.</p></div>
-      <div class="card box"><div class="ic"><svg class="pa" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 1h2v8h8v4h-2v-2h-8V5h-2V3h2V1zM8 7V5h2v2H8zM6 9V7h2v2H6zm-2 2V9h2v2H4zm10 8v2h-2v2h-2v-8H2v-4h2v2h8v6h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm0 0h2v-2h-2v2z"/></svg><h3>Four ways in</h3></div><div class="pills"><span>Web dashboard</span><span>Terminal UI</span><span>CLI</span><span>REST API</span></div><p>Rules live in one readable file: <code>policy.json</code>.</p></div>
+      <div class="card box"><div class="ic"><svg class="pa" width="28" height="28" aria-hidden="true" focusable="false"><use href="#p-server"/></svg><h3>Works with</h3></div><div class="pills"><span>SQLite</span><span>MySQL 8</span><span>PostgreSQL 16</span></div><p>One interface, identical masked output on all three.</p></div>
+      <div class="card box"><div class="ic"><svg class="pa" width="28" height="28" aria-hidden="true" focusable="false"><use href="#p-zap"/></svg><h3>Four ways in</h3></div><div class="pills"><span>Web dashboard</span><span>Terminal UI</span><span>CLI</span><span>REST API</span></div><p>Rules live in one readable file: <code>policy.json</code>.</p></div>
     </div>
   </div>
 </section>
@@ -647,12 +650,12 @@ footer .r{margin-left:auto}
 <section class="cta" aria-labelledby="cta-h">
   <div class="wrap">
     <div class="box">
-      <svg class="px" width="96" height="96" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h8v1h-8zM1 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM1 4h10v1h-10zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM1 7h10v1h-10zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM1 10h1v1h-1zM10 10h1v1h-1zM2 11h8v1h-8z"/><path fill="var(--accent)" d="M1 5h10v1h-10zM1 6h10v1h-10z"/></svg>
+      <svg class="px" width="96" height="96" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-logo"/></svg>
       <div>
         <h2 id="cta-h">See it on a whole (made-up) bank.</h2>
         <p>9 tables, 120 columns, 129,260 rows. Switch roles, try to trick the guard, check the audit chain.</p>
       </div>
-      <a class="btn pri" href="/dashboard"><svg class="pa" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/></svg> Open the demo</a>
+      <a class="btn pri" href="/dashboard"><svg class="pa" width="18" height="18" aria-hidden="true" focusable="false"><use href="#p-play"/></svg> Open the demo</a>
     </div>
   </div>
 </section>
@@ -660,9 +663,9 @@ footer .r{margin-left:auto}
 
 <footer>
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="Back to top"><svg class="px" width="20" height="20" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 0h8v1h-8zM1 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM11 2h1v1h-1zM0 3h1v1h-1zM11 3h1v1h-1zM1 4h10v1h-10zM0 5h1v1h-1zM11 5h1v1h-1zM0 6h1v1h-1zM11 6h1v1h-1zM1 7h10v1h-10zM0 8h1v1h-1zM11 8h1v1h-1zM0 9h1v1h-1zM11 9h1v1h-1zM1 10h1v1h-1zM10 10h1v1h-1zM2 11h8v1h-8z"/><path fill="var(--accent)" d="M1 5h10v1h-10zM1 6h10v1h-10z"/></svg><span style="font-size:15px">PardaDB</span></a>
+    <a class="logo" href="#top" aria-label="Back to top"><svg class="px" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#i-logo"/></svg><span style="font-size:15px">PardaDB</span></a>
     <span>Team AVNI &middot; TalentAP Mega Hackathon 2026 &middot; B1 Smart Data Masking</span>
-    <span class="r"><a href="/dashboard">Open the demo</a> &middot; <a href="/assets/LICENSES.md">Licences</a></span>
+    <span class="r"><a href="/dashboard">Open the demo</a> &middot; fonts OFL, icons MIT (see assets/LICENSES.md)</span>
   </div>
 </footer>
 
@@ -698,7 +701,7 @@ footer .r{margin-left:auto}
     ['cust_nm', 'PII_MEDIUM', 'Ritika Sharma', ['PARTIAL', 'Ritika S*****'], ['HASH', 'tok_5a1c9e07b3d2']],
     ['mob_no', 'PII_MEDIUM', '+919000012345', ['PARTIAL', '+91 XXXXXX2345'], ['HASH', 'tok_c08e41f6a9b7']],
     ['dob_dt', 'PII_QUASI', '1991-04-12', ['PARTIAL', '1991'], ['GENERALIZE', '30-39']],
-    ['pan_no', 'PII_HIGH', 'ABCPS1234K', ['PARTIAL', 'XXXXXX234K'], ['REDACT', '[REDACTED]']],
+    ['pan_no', 'PII_HIGH', 'ABCPS0000K', ['PARTIAL', 'XXXXXX000K'], ['REDACT', '[REDACTED]']],
     ['card_no', 'PII_HIGH', '4111111111116916', ['PARTIAL', '4111-XXXX-XXXX-6916'], ['REDACT', '[REDACTED]']],
     ['curr_bal', 'FINANCIAL_CONFIDENTIAL', '452300', ['REDACT', '[REDACTED]'], ['BUCKET', '1L-10L']],
     ['city', 'not personal', 'Pune', ['FULL', 'Pune'], ['FULL', 'Pune']],
@@ -754,26 +757,34 @@ footer .r{margin-left:auto}
     btns.forEach((b) => {
       const on = b.dataset.role === r;
       b.setAttribute('aria-pressed', String(on));
-      const bar = b.querySelector('.bar'); // restart the step progress bar
-      bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = '';
     });
     render(r, animate);
   }
   btns.forEach((b) => {
     b.addEventListener('click', () => { con.classList.add('manual'); setRole(b.dataset.role, true); });
-    // the progress bar drives the auto-cycle, so hover/focus pauses both together
-    b.querySelector('.bar').addEventListener('animationend', () => {
-      if (con.classList.contains('manual') || b.dataset.role !== role) return;
-      setRole(ORDER[(ORDER.indexOf(role) + 1) % ORDER.length], true);
-    });
   });
   render('admin', false);
+
+  // auto-cycle every 4.2 s with a stepped progress bar; pauses on hover/focus, stops after a click
+  const STEP = 300, STEPS = 14;
+  let tick = 0, hold = false, auto = !reduced.matches;
+  con.addEventListener('mouseenter', () => { hold = true; });
+  con.addEventListener('mouseleave', () => { hold = false; });
+  con.addEventListener('focusin', () => { hold = true; });
+  con.addEventListener('focusout', () => { hold = false; });
+  const bars = () => btns.forEach((b) => { b.querySelector('.bar').style.width = (b.dataset.role === role && auto ? (tick / STEPS) * 100 : 0) + '%'; });
+  const timer = setInterval(() => {
+    if (!auto || con.classList.contains('manual')) { auto = false; bars(); clearInterval(timer); return; }
+    if (hold || document.hidden) return;
+    if (++tick > STEPS) { tick = 0; setRole(ORDER[(ORDER.indexOf(role) + 1) % ORDER.length], true); }
+    bars();
+  }, STEP);
 
   /* ---------- AI ticket toggle ---------- */
   const ticket = $('#ticket');
   const OUT = {
     1: 'Customer [NAME] called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to [ADDRESS].',
-    0: 'Customer <mark class="m a">Ritika Sharma</mark> called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to <mark class="m a">14 Lake View Road, Baner, Pune</mark>.',
+    0: 'Customer <mark class="m a">Ritika Sharma</mark> called from [PHONE]. She says card [CARD] was charged twice and wants the new card sent to [ADDRESS].',
   };
   $$('.mini button', ticket).forEach((b) => b.addEventListener('click', () => {
     const on = b.dataset.ai === '1';
