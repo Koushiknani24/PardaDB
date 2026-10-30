@@ -11,6 +11,7 @@ import re
 import time
 from collections import Counter
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from . import config, detectors
@@ -190,9 +191,261 @@ def json_pii_keys(values: list[Any]) -> Counter[str]:
     return keys
 
 
+@dataclass
+class _Column:
+    """One column under classification: its sample, what the header says, and the result being built."""
+
+    table: str
+    column: str
+    values: list[Any]
+    hint: str | None
+    strength: float
+    negative: bool
+    toks: list[str]
+    kinds: list[str | None]
+    counts: Counter[str | None]
+    res: dict[str, Any]
+
+    @property
+    def n(self) -> int:
+        return len(self.values)
+
+    @property
+    def distinct(self) -> float:
+        return len({str(v) for v in self.values}) / self.n
+
+    @property
+    def hint_note(self) -> str:
+        if self.hint:
+            return f"header '{self.column}' suggests {self.hint}"
+        return f"header '{self.column}' gives no signal"
+
+    def rate(self, *ents: str) -> float:
+        return _rate(self.counts, self.n, *ents)
+
+    def tag(self, entity: str, conf: float, *why: str, status: str | None = None) -> dict[str, Any]:
+        """Tag the column as `entity`; confidence >= 0.8 is applied automatically, lower goes to review."""
+        self.res.update(entity=entity, tag=ENTITY_TAG[entity], confidence=round(min(conf, 1.0), 2))
+        self.res["status"] = status or ("auto" if conf >= 0.8 else "review")
+        self.res["evidence"].extend(why)
+        return self.res
+
+    def clean(self, why: str) -> dict[str, Any]:
+        """Leave the column untagged, recording why."""
+        self.res["evidence"].append(why)
+        return self.res
+
+
+# Each rule returns the finished result when it decides the column, or None to defer to the next rule.
+
+
+def _json_rule(c: _Column) -> dict[str, Any] | None:
+    """JSON documents: tagged when any key path holds PII."""
+    if c.rate("json") < 0.8:
+        return None
+    keys = json_pii_keys(c.values)
+    if not keys:
+        return c.clean("JSON documents without PII keys")
+    c.res["json_keys"] = sorted(keys)
+    return c.tag(
+        "json",
+        0.95,
+        f"JSON documents in {c.counts['json']}/{c.n} samples",
+        "PII keys: " + ", ".join(f"{k} ({cnt})" for k, cnt in keys.most_common()),
+    )
+
+
+def _aadhaar_rule(c: _Column) -> dict[str, Any] | None:
+    """Aadhaar (including pre-masked) vs look-alike 12-digit reference numbers."""
+    n, counts = c.n, c.counts
+    aad = counts["aadhaar"] + counts["aadhaar_masked"]
+    if aad / n < 0.6:
+        return None
+    firsts = {str(v).strip()[0] for v, k in zip(c.values, c.kinds, strict=False) if k == "aadhaar"}
+    if c.negative and c.hint != "aadhaar":
+        return c.clean(f"12-digit values but header '{c.column}' marks a reference number")
+    if counts["aadhaar_masked"] or len(firsts) >= 5 or c.hint == "aadhaar":
+        notes = [f"Aadhaar format in {aad}/{n} samples"]
+        if counts["aadhaar_masked"]:
+            notes.append(f"{counts['aadhaar_masked']} already masked at source")
+        notes.append(c.hint_note)
+        return c.tag("aadhaar", aad / n + (0.1 if c.hint == "aadhaar" else 0), *notes)
+    return c.clean(f"12-digit values but first digit only {sorted(firsts)}: reference numbers, not Aadhaar")
+
+
+def _formatted_id_rule(c: _Column) -> dict[str, Any] | None:
+    """Strong formatted identifiers: card, PAN, email, UPI, phone (minus business contacts)."""
+    for ent in ("card", "pan", "email", "upi", "phone"):
+        r = c.rate(ent)
+        if r < 0.6:
+            continue
+        if ent in ("email", "phone") and ("branch" in c.toks or "branch" in c.table.lower()):
+            return c.clean(f"{ent} values belong to a branch (business contact, not personal data)")
+        if ent == "email" and all(str(v).lower().endswith("@" + detectors.ORG_DOMAIN) for v in c.values):
+            return c.clean("emails on the bank's own domain (business contact)")
+        if ent == "upi" and r < 0.9 and c.rate("name", "org") >= 0.1:
+            return None  # names and UPI handles mixed (e.g. counterparty): handled as free text
+        extra = " (all pass Luhn)" if ent == "card" else ""
+        return c.tag(
+            ent, r + (0.1 if c.hint == ent else 0), f"{ent} format in {c.counts[ent]}/{c.n} samples{extra}", c.hint_note
+        )
+    return None
+
+
+def _card_reference_rule(c: _Column) -> dict[str, Any] | None:
+    """Reference columns that carry some real card numbers (e.g. transactions.ref_no): mask value by value."""
+    cards = c.counts["card"]
+    if not cards or cards / c.n < 0.05:
+        return None
+    return c.tag("text", 0.85, f"Luhn-valid card numbers in {cards}/{c.n} samples", "masked value by value")
+
+
+def _ssn_rule(c: _Column) -> dict[str, Any] | None:
+    """SSN: formatted 3-2-4 or bare 9 digits with an ssn header."""
+    n = c.n
+    ssn_like = sum(1 for v in c.values if detectors.RE_SSN.match(str(v).strip()))
+    if ssn_like / n < 0.6 or not (c.hint == "ssn" or c.counts["ssn"] / n >= 0.3):
+        return None
+    return c.tag(
+        "ssn",
+        ssn_like / n + (0.1 if c.hint == "ssn" else 0),
+        f"SSN format (dashed, spaced or bare) in {ssn_like}/{n} samples",
+        c.hint_note,
+    )
+
+
+def _long_digits_rule(c: _Column) -> dict[str, Any] | None:
+    """Long digit strings: account numbers (by header) vs plain identifiers."""
+    n = c.n
+    if c.counts["digits"] / n < 0.8 or c.negative:
+        return None
+    luhn_ok = sum(detectors.luhn(detectors.digits(str(v))) for v in c.values)
+    if c.hint == "account" or "acct" in c.toks or "linked" in c.toks:
+        return c.tag(
+            "account",
+            0.9 + 0.1 * (c.hint == "account"),
+            f"{c.counts['digits']}/{n} long digit strings",
+            f"Luhn passes {luhn_ok}/{n}: not cards",
+            c.hint_note,
+        )
+    return c.clean(f"long digit strings, Luhn passes {luhn_ok}/{n}, no account header: identifiers")
+
+
+def _customer_id_rule(c: _Column) -> dict[str, Any] | None:
+    """A customer_id header links records to a person whatever its values look like."""
+    if "customer" in c.toks and "id" in c.toks:
+        return c.tag("customer_id", 0.9, "customer identifier: links records to a person", "tokenised for analysts")
+    return None
+
+
+def _date_rule(c: _Column) -> dict[str, Any] | None:
+    """Dates: only birth dates are personal."""
+    if c.counts["date"] / c.n < 0.8:
+        return None
+    if c.hint == "dob":
+        return c.tag("dob", 0.95, f"dates in {c.counts['date']}/{c.n} samples", c.hint_note)
+    return c.clean("dates without a birth-date header")
+
+
+def _numeric_rule(c: _Column) -> dict[str, Any] | None:
+    """Numbers: money, credit score or postal code, decided by the header."""
+    if c.rate("number", "digits") < 0.8:
+        return None
+    if c.hint in ("money", "credit_score") and not c.negative:
+        return c.tag(c.hint, 0.9, f"numeric in {c.n}/{c.n} samples", c.hint_note)
+    if c.hint == "postal":
+        return c.tag("postal", 0.9, "postal codes", c.hint_note)
+    return c.clean("numeric values without a money or postal header")
+
+
+def _categorical_rule(c: _Column) -> dict[str, Any] | None:
+    """Gender and residency columns, recognised by header (gender also needs few distinct values)."""
+    if c.hint == "gender" and len({str(v) for v in c.values}) <= 6:
+        return c.tag("gender", 0.85, "low-cardinality gender values", c.hint_note)
+    if c.hint == "residency":
+        return c.tag("residency", 0.75, "immigration status values", c.hint_note, status="review")
+    return None
+
+
+def _person_name_rule(c: _Column) -> dict[str, Any] | None:
+    """Person names (detectors already exclude orgs, cities and statuses)."""
+    names, distinct = c.counts["name"], c.distinct
+    if names / c.n < 0.6 or not (distinct >= 0.4 or c.hint == "person"):
+        return None
+    return c.tag(
+        "person",
+        names / c.n + (0.1 if c.hint == "person" else 0),
+        f"person-name shape in {names}/{c.n} samples",
+        f"distinct ratio {distinct:.2f}",
+        c.hint_note,
+    )
+
+
+def _address_rule(c: _Column) -> dict[str, Any] | None:
+    """Addresses by value shape, or by header when values are varied enough."""
+    addr = c.counts["address"] / c.n
+    if not (addr >= 0.5 or (c.hint == "address" and c.distinct >= 0.3)):
+        return None
+    conf = max(addr, 0.7 if c.hint == "address" else 0)
+    return c.tag(
+        "address",
+        conf + (0.1 if c.hint == "address" else 0),
+        f"address shape in {c.counts['address']}/{c.n} samples",
+        c.hint_note,
+    )
+
+
+def _free_text_rule(c: _Column) -> dict[str, Any] | None:
+    """Free text (and mixed columns such as counterparty): count PII spans inside values."""
+    counts, n = c.counts, c.n
+    if c.rate("text", "name", "upi", "org", "word") < 0.5 or not (counts["text"] or counts["upi"]):
+        return None
+    with_spans, ents = 0, Counter()
+    for v in c.values:
+        spans = detectors.find_spans(str(v))
+        if spans:
+            with_spans += 1
+            ents.update(e for _, _, e in spans)
+    if not (with_spans / n >= 0.1 or (counts["upi"] and counts["name"])):
+        return None
+    mix = ", ".join(f"{e} {cnt}" for e, cnt in ents.most_common(5))
+    return c.tag(
+        "text",
+        0.8 + 0.2 * min(1, with_spans / n),
+        f"PII inside text in {with_spans}/{n} samples",
+        mix or "names and UPI handles mixed",
+    )
+
+
+def _fallback_rule(c: _Column) -> dict[str, Any]:
+    """No value pattern decided: organisation names stay clean, a strong header alone goes to review."""
+    if c.counts["org"] / c.n >= 0.5:
+        return c.clean("organisation names (employer, merchant): not personal data")
+    if c.hint and c.strength >= 1 and not c.negative:
+        return c.tag(c.hint, 0.6, c.hint_note, "values inconclusive", status="review")
+    return c.clean(f"no PII pattern ({', '.join(f'{k} {cnt}' for k, cnt in c.counts.most_common(3))})")
+
+
+# Order matters: the first rule that returns a result decides the column.
+_RULES: tuple[Callable[[_Column], dict[str, Any] | None], ...] = (
+    _json_rule,
+    _aadhaar_rule,
+    _formatted_id_rule,
+    _card_reference_rule,
+    _ssn_rule,
+    _long_digits_rule,
+    _customer_id_rule,
+    _date_rule,
+    _numeric_rule,
+    _categorical_rule,
+    _person_name_rule,
+    _address_rule,
+    _free_text_rule,
+)
+
+
 def classify_column(table: str, column: str, values: list[Any], null_rate: float) -> dict[str, Any]:
     """Decide one column's tag from its sampled values and header."""
-    n = len(values)
     hint, strength, negative, toks = header_hint(column)
     res: dict[str, Any] = {
         "table": table,
@@ -203,167 +456,18 @@ def classify_column(table: str, column: str, values: list[Any], null_rate: float
         "evidence": [],
         "status": "clean",
         "null_rate": null_rate,
-        "sampled": n,
+        "sampled": len(values),
     }
-    if n == 0:
+    if not values:
         res["evidence"].append("no non-null values to sample")
         return res
     kinds = [detectors.classify_value(v) for v in values]
-    counts = Counter(kinds)
-    distinct = len({str(v) for v in values}) / n
-    ev = res["evidence"]
-
-    def tag(entity: str, conf: float, *why: str, status: str | None = None) -> dict[str, Any]:
-        res.update(entity=entity, tag=ENTITY_TAG[entity], confidence=round(min(conf, 1.0), 2))
-        res["status"] = status or ("auto" if conf >= 0.8 else "review")
-        ev.extend(why)
-        return res
-
-    hint_note = f"header '{column}' suggests {hint}" if hint else f"header '{column}' gives no signal"
-
-    # JSON documents: scan key paths
-    if _rate(counts, n, "json") >= 0.8:
-        keys = json_pii_keys(values)
-        if keys:
-            res["json_keys"] = sorted(keys)
-            return tag(
-                "json",
-                0.95,
-                f"JSON documents in {counts['json']}/{n} samples",
-                "PII keys: " + ", ".join(f"{k} ({c})" for k, c in keys.most_common()),
-            )
-        ev.append("JSON documents without PII keys")
-        return res
-
-    # Aadhaar (including pre-masked) vs look-alike reference numbers
-    aad = counts["aadhaar"] + counts["aadhaar_masked"]
-    if aad / n >= 0.6:
-        firsts = {str(v).strip()[0] for v, k in zip(values, kinds, strict=False) if k == "aadhaar"}
-        if negative and hint != "aadhaar":
-            ev.append(f"12-digit values but header '{column}' marks a reference number")
-            return res
-        if counts["aadhaar_masked"] or len(firsts) >= 5 or hint == "aadhaar":
-            notes = [f"Aadhaar format in {aad}/{n} samples"]
-            if counts["aadhaar_masked"]:
-                notes.append(f"{counts['aadhaar_masked']} already masked at source")
-            notes.append(hint_note)
-            return tag("aadhaar", aad / n + (0.1 if hint == "aadhaar" else 0), *notes)
-        ev.append(f"12-digit values but first digit only {sorted(firsts)}: reference numbers, not Aadhaar")
-        return res
-
-    # Strong formatted identifiers
-    for ent in ("card", "pan", "email", "upi", "phone"):
-        r = _rate(counts, n, ent)
-        if r >= 0.6:
-            if ent in ("email", "phone") and ("branch" in toks or "branch" in table.lower()):
-                ev.append(f"{ent} values belong to a branch (business contact, not personal data)")
-                return res
-            if ent == "email" and all(str(v).lower().endswith("@" + detectors.ORG_DOMAIN) for v in values):
-                ev.append("emails on the bank's own domain (business contact)")
-                return res
-            if ent == "upi" and r < 0.9 and _rate(counts, n, "name", "org") >= 0.1:
-                break  # names and UPI handles mixed (e.g. counterparty): handled as free text below
-            extra = " (all pass Luhn)" if ent == "card" else ""
-            return tag(
-                ent, r + (0.1 if hint == ent else 0), f"{ent} format in {counts[ent]}/{n} samples{extra}", hint_note
-            )
-
-    # Reference columns that carry some real card numbers (e.g. transactions.ref_no): mask value by value
-    if counts["card"] and counts["card"] / n >= 0.05:
-        return tag("text", 0.85, f"Luhn-valid card numbers in {counts['card']}/{n} samples", "masked value by value")
-
-    # SSN: formatted 3-2-4 or bare 9 digits with an ssn header
-    ssn_like = sum(1 for v in values if detectors.RE_SSN.match(str(v).strip()))
-    if ssn_like / n >= 0.6 and (hint == "ssn" or counts["ssn"] / n >= 0.3):
-        return tag(
-            "ssn",
-            ssn_like / n + (0.1 if hint == "ssn" else 0),
-            f"SSN format (dashed, spaced or bare) in {ssn_like}/{n} samples",
-            hint_note,
-        )
-
-    # Long digit strings: account numbers vs ids
-    if counts["digits"] / n >= 0.8 and not negative:
-        luhn_ok = sum(detectors.luhn(detectors.digits(str(v))) for v in values)
-        if hint == "account" or "acct" in toks or "linked" in toks:
-            return tag(
-                "account",
-                0.9 + 0.1 * (hint == "account"),
-                f"{counts['digits']}/{n} long digit strings",
-                f"Luhn passes {luhn_ok}/{n}: not cards",
-                hint_note,
-            )
-        ev.append(f"long digit strings, Luhn passes {luhn_ok}/{n}, no account header: identifiers")
-        return res
-
-    if "customer" in toks and "id" in toks:
-        return tag("customer_id", 0.9, "customer identifier: links records to a person", "tokenised for analysts")
-
-    # Dates: only birth dates are personal
-    if counts["date"] / n >= 0.8:
-        if hint == "dob":
-            return tag("dob", 0.95, f"dates in {counts['date']}/{n} samples", hint_note)
-        ev.append("dates without a birth-date header")
-        return res
-
-    # Numbers: money, credit score, postal codes
-    if _rate(counts, n, "number", "digits") >= 0.8:
-        if hint in ("money", "credit_score") and not negative:
-            return tag(hint, 0.9, f"numeric in {n}/{n} samples", hint_note)
-        if hint == "postal":
-            return tag("postal", 0.9, "postal codes", hint_note)
-        ev.append("numeric values without a money or postal header")
-        return res
-
-    if hint == "gender" and len({str(v) for v in values}) <= 6:
-        return tag("gender", 0.85, "low-cardinality gender values", hint_note)
-    if hint == "residency":
-        return tag("residency", 0.75, "immigration status values", hint_note, status="review")
-
-    # Names (after excluding orgs, cities and statuses)
-    names = counts["name"]
-    if names / n >= 0.6 and (distinct >= 0.4 or hint == "person"):
-        return tag(
-            "person",
-            names / n + (0.1 if hint == "person" else 0),
-            f"person-name shape in {names}/{n} samples",
-            f"distinct ratio {distinct:.2f}",
-            hint_note,
-        )
-
-    if counts["address"] / n >= 0.5 or (hint == "address" and distinct >= 0.3):
-        conf = max(counts["address"] / n, 0.7 if hint == "address" else 0)
-        return tag(
-            "address",
-            conf + (0.1 if hint == "address" else 0),
-            f"address shape in {counts['address']}/{n} samples",
-            hint_note,
-        )
-
-    # Free text (and mixed columns such as counterparty): count PII spans inside values
-    texty = _rate(counts, n, "text", "name", "upi", "org", "word")
-    if texty >= 0.5 and (counts["text"] or counts["upi"]) and n:
-        with_spans, ents = 0, Counter()
-        for v in values:
-            spans = detectors.find_spans(str(v))
-            if spans:
-                with_spans += 1
-                ents.update(e for _, _, e in spans)
-        if with_spans / n >= 0.1 or (counts["upi"] and counts["name"]):
-            mix = ", ".join(f"{e} {c}" for e, c in ents.most_common(5))
-            return tag(
-                "text",
-                0.8 + 0.2 * min(1, with_spans / n),
-                f"PII inside text in {with_spans}/{n} samples",
-                mix or "names and UPI handles mixed",
-            )
-    if counts["org"] / n >= 0.5:
-        ev.append("organisation names (employer, merchant): not personal data")
-        return res
-    if hint and strength >= 1 and not negative:
-        return tag(hint, 0.6, hint_note, "values inconclusive", status="review")
-    ev.append(f"no PII pattern ({', '.join(f'{k} {c}' for k, c in counts.most_common(3))})")
-    return res
+    col = _Column(table, column, values, hint, strength, negative, toks, kinds, Counter(kinds), res)
+    for rule in _RULES:
+        decided = rule(col)
+        if decided is not None:
+            return decided
+    return _fallback_rule(col)
 
 
 def scan(
