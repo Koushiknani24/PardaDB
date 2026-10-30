@@ -42,7 +42,15 @@ ALLOWED_HOSTS = ("127.0.0.1", "localhost", "[::1]", *config.EXTRA_HOSTS)
 
 
 class BadRequest(ValueError):
-    """The client sent invalid input; answered with HTTP 400."""
+    """The client sent invalid input; answered with HTTP `status` (400)."""
+
+    status = 400
+
+
+class BodyTooLarge(BadRequest):
+    """The request body exceeds MAX_BODY_BYTES; answered with HTTP 413."""
+
+    status = 413
 
 
 def int_param(q: dict[str, Any], key: str, default: int, lo: int, hi: int) -> int:
@@ -66,6 +74,19 @@ def str_param(q: dict[str, Any], key: str, max_len: int = 200, required: bool = 
     if not isinstance(value, str) or len(value) > max_len:
         raise BadRequest(f"'{key}' must be text of at most {max_len} characters")
     return value
+
+
+def body_length(header: str | None) -> int:
+    """The Content-Length of a POST body: a whole number of at most MAX_BODY_BYTES."""
+    try:
+        n = int(header or 0)
+    except ValueError:
+        raise BadRequest("Content-Length must be a whole number") from None
+    if n < 0:
+        raise BadRequest("Content-Length must not be negative")
+    if n > MAX_BODY_BYTES:
+        raise BodyTooLarge(f"request body is larger than {MAX_BODY_BYTES // 1024} KB")
+    return n
 
 
 def sql_param(body: dict[str, Any]) -> str:
@@ -114,7 +135,7 @@ def make_handler(rt: Runtime) -> type[BaseHTTPRequestHandler]:
             # JSON only: a cross-site form post cannot set this type without a CORS preflight we never allow.
             if not (self.headers.get("Content-Type") or "").startswith("application/json"):
                 raise BadRequest("POST bodies must be sent as application/json")
-            n = int_param({"n": self.headers.get("Content-Length") or 0}, "n", 0, 0, MAX_BODY_BYTES)
+            n = body_length(self.headers.get("Content-Length"))
             try:
                 body = json.loads(self.rfile.read(n) or b"{}") if n else {}
             except (json.JSONDecodeError, UnicodeDecodeError):
@@ -124,12 +145,12 @@ def make_handler(rt: Runtime) -> type[BaseHTTPRequestHandler]:
             return body
 
         def _guarded(self, route: Callable[[], None]) -> None:
-            """Run a route after the origin check, mapping errors to 400 / 409 / 500 responses."""
+            """Run a route after the origin check, mapping errors to 400 / 413 / 409 / 500 responses."""
             try:
                 self._check_origin()
                 return route()
             except BadRequest as e:
-                return self._send(400, {"ok": False, "error": str(e)})
+                return self._send(e.status, {"ok": False, "error": str(e)})
             except KeyError as e:
                 return self._send(409, {"ok": False, "error": str(e).strip("'\"")})
             except Exception:  # last-resort handler: log details, return a safe message

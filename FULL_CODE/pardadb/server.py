@@ -142,12 +142,14 @@ class Runtime:
             "finished_at": None,
         }
         self.active: str | None = None
+        self.seq = 0  # number of the last event; only changed under self.lock
 
     # ------------------------------------------------------------ events
     def event(self, level: str, msg: str) -> None:
-        self.seq = getattr(self, "seq", 0) + 1
-        ev = {"seq": self.seq, "ts": time.strftime("%H:%M:%S"), "level": level, "msg": msg}
-        self.events.append(ev)
+        """Append a numbered event (numbers are unique and increasing across threads) and log it."""
+        with self.lock:
+            self.seq += 1
+            self.events.append({"seq": self.seq, "ts": time.strftime("%H:%M:%S"), "level": level, "msg": msg})
         log.log({"warn": logging.WARNING, "err": logging.ERROR}.get(level, logging.INFO), msg)
         if self.log_cb:
             self.log_cb(level, msg)
@@ -166,10 +168,13 @@ class Runtime:
         threading.Thread(target=self.watch, daemon=True, name="schema-watch").start()
 
     def connect(self, n: str, quiet: bool = False) -> None:
-        """Try to connect backend `n`; on failure mark it unreachable (warn unless `quiet`)."""
+        """Connect backend `n` (or reopen a lost one); on failure mark it unreachable (warn unless `quiet`).
+
+        A lost backend keeps its Backend object, so its engine and catalog stay valid once it is back.
+        """
         info = self.dbs[n]
         try:
-            b = backends.connect(n)
+            b = self.open_backend(n)
             tables = b.tables()
             rows = sum(b.row_count(t) for t in tables)
             info.update(status="connected", detail=b.detail, tables=len(tables), rows=rows, latency_ms=b.ping())
@@ -177,9 +182,17 @@ class Runtime:
             self.active = self.active or n
             self.event("ok", f"{info['label']} connected: {len(tables)} tables, {rows:,} rows ({b.detail})")
         except DB_ERRORS as e:
-            info.update(status="unreachable", detail=f"{type(e).__name__}: {str(e).splitlines()[0][:80]}")
+            info.update(status="unreachable", detail=f"{type(e).__name__}: {(str(e).splitlines() or [''])[0][:80]}")
             if not quiet:
                 self.event("warn", f"{info['label']} unreachable (retrying every 10 s): {info['detail']}")
+
+    def open_backend(self, n: str) -> backends.Backend:
+        """The known backend `n` with its connection reopened, or a newly connected one."""
+        b = self.conns.get(n)
+        if b is None:
+            return backends.connect(n)
+        b.reconnect()
+        return b
 
     def fingerprint(self, n: str) -> None:
         b = self.conns[n]
@@ -264,29 +277,47 @@ class Runtime:
         while True:
             time.sleep(10)
             tick += 1
-            for n in self.order:
-                if n not in self.conns:
-                    self.connect(n, quiet=True)
-                    if n in self.conns:
-                        self.fingerprint(n)
-                        self.run_scan(n)
-            if tick % 3:
+            self.retry_unreachable()
+            if tick % 3 == 0:
+                self.check_schemas()
+
+    def to_reconnect(self) -> list[str]:
+        """Backends the watcher must (re)connect: never connected, or connected once and lost since."""
+        return [n for n in self.order if n not in self.conns or self.dbs[n]["status"] == "unreachable"]
+
+    def retry_unreachable(self) -> None:
+        """Reconnect lost databases; fingerprint and scan the ones that never got an engine."""
+        for n in self.to_reconnect():
+            self.connect(n, quiet=True)
+            if self.dbs[n]["status"] != "connected" or n in self.engines:
                 continue
-            for n, b in list(self.conns.items()):
-                try:
-                    self.dbs[n]["latency_ms"] = b.ping()
-                    b._schema = None
-                    live = {(t.lower(), c.lower()) for t, cols in b.schema().items() for c in cols}
-                    known = {(c["table"].lower(), c["column"].lower()) for c in self.catalogs[n]["columns"]}
-                    new = live - known
-                    if new:
-                        self.event(
-                            "warn", f"{self.dbs[n]['label']}: {len(new)} new column(s) {sorted(new)[:3]}: re-scanning"
-                        )
-                        self.run_scan(n)
-                except DB_ERRORS as e:
-                    self.dbs[n]["status"] = "unreachable"
-                    self.event("warn", f"{self.dbs[n]['label']} lost: {e}")
+            try:
+                self.fingerprint(n)
+                self.run_scan(n)
+            except DB_ERRORS as e:
+                self.lost(n, e)
+
+    def check_schemas(self) -> None:
+        """Ping each connected database and re-scan it when new columns appeared."""
+        for n, b in list(self.conns.items()):
+            if self.dbs[n]["status"] != "connected" or n not in self.catalogs:
+                continue
+            try:
+                self.dbs[n]["latency_ms"] = b.ping()
+                live = {(t.lower(), c.lower()) for t, cols in b.refresh_schema().items() for c in cols}
+                known = {(c["table"].lower(), c["column"].lower()) for c in self.catalogs[n]["columns"]}
+                new = live - known
+                if new:
+                    label = self.dbs[n]["label"]
+                    self.event("warn", f"{label}: {len(new)} new column(s) {sorted(new)[:3]}: re-scanning")
+                    self.run_scan(n)
+            except DB_ERRORS as e:
+                self.lost(n, e)
+
+    def lost(self, n: str, e: BaseException) -> None:
+        """Mark backend `n` unreachable so the 10-second retry in watch() reconnects it."""
+        self.dbs[n]["status"] = "unreachable"
+        self.event("warn", f"{self.dbs[n]['label']} lost (retrying every 10 s): {e}")
 
     # ------------------------------------------------------------ AI model add-on
     def ml_start(self) -> None:

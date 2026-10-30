@@ -4,39 +4,75 @@ dates, JSON) so every backend returns identical masked output."""
 
 from __future__ import annotations
 
+import contextlib
 import datetime as dt
 import decimal
 import hashlib
 import json
+import logging
 import sqlite3
+import threading
 import time
-from typing import Any
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 from . import config
 
+try:
+    import pymysql
+except ImportError:  # optional driver: MySQL is then simply unavailable
+    pymysql = None
+try:
+    import pg8000.dbapi
+except ImportError:  # optional driver: PostgreSQL is then simply unavailable
+    pg8000 = None
+
+log = logging.getLogger(__name__)
+
 Row = list[Any]
 Schema = dict[str, dict[str, str]]  # {table: {column: declared type}}
+T = TypeVar("T")
+B = TypeVar("B", bound="Backend")
 
 # The database playground lives in FULL_CODE/db/ as plain SQL so the schema is reviewable.
 PLAYGROUND_SQL = (config.REPO / "db" / "playground_schema.sql", config.REPO / "db" / "playground_seed.sql")
 
 
+# MySQL client codes meaning the socket is gone: server has gone away, lost during query / at handshake.
+MYSQL_LOST_CODES = frozenset({2006, 2013, 2055})
+# pg8000 raises InterfaceError with exactly these messages once its socket is unusable.
+PG_LOST_MESSAGES = frozenset({"network error", "connection is closed"})
+
+
 def driver_errors() -> tuple[type[BaseException], ...]:
     """Exception types any backend can raise for connection or query problems."""
     errors: list[type[BaseException]] = [sqlite3.Error, OSError]
-    try:
-        import pymysql
-
+    if pymysql is not None:
         errors.append(pymysql.err.MySQLError)
-    except ImportError:
-        pass
-    try:
-        import pg8000.dbapi
-
+    if pg8000 is not None:
         errors.append(pg8000.dbapi.Error)
-    except ImportError:
-        pass
     return tuple(errors)
+
+
+DRIVER_ERRORS = driver_errors()
+
+
+def connection_lost(e: BaseException) -> bool:
+    """True when `e` means the connection itself is unusable (not a bad statement)."""
+    if isinstance(e, sqlite3.ProgrammingError):
+        return "closed" in str(e)  # "Cannot operate on a closed database."
+    if pymysql is not None and isinstance(e, pymysql.err.InterfaceError):
+        return True
+    if pymysql is not None and isinstance(e, pymysql.err.OperationalError):
+        return bool(e.args) and e.args[0] in MYSQL_LOST_CODES
+    if pg8000 is not None and isinstance(e, pg8000.dbapi.InterfaceError):
+        return str(e) in PG_LOST_MESSAGES
+    return False
+
+
+def timed_out(e: BaseException) -> bool:
+    """True when the statement hit the driver's read timeout (re-running it would double the wait)."""
+    return isinstance(e.__cause__, TimeoutError) or "timed out" in str(e)
 
 
 def normalise(v: Any) -> Any:
@@ -57,17 +93,24 @@ def normalise(v: Any) -> Any:
 
 
 class Backend:
-    """Base adapter: subclasses supply connect(), tables(), columns() and dialect quirks."""
+    """Base adapter: subclasses supply _open(), tables(), columns() and dialect quirks.
+
+    One connection is shared by HTTP threads, the watcher and TUI workers, and no driver allows
+    concurrent use of a connection, so every use goes through run(), which holds `self.lock`.
+    """
 
     name = label = dialect = ""
     detail = ""
+    writable = False
 
     def __init__(self) -> None:
         self.conn: Any = None  # DB-API connection of whichever driver the subclass uses
         self._schema: Schema | None = None
+        self.lock = threading.RLock()
 
     # -- interface -------------------------------------------------------
-    def connect(self) -> Backend:
+    def _open(self) -> None:
+        """Open `self.conn` and apply the session settings (read-only, timeouts)."""
         raise NotImplementedError
 
     def quote(self, ident: str) -> str:
@@ -99,19 +142,62 @@ class Backend:
     def random_sql(self) -> str:
         return "RANDOM()"
 
+    # -- connection ------------------------------------------------------
+    def connect(self: B) -> B:
+        """Open the connection; returns self so `SQLiteBackend().connect()` chains."""
+        with self.lock:
+            self._open()
+        return self
+
+    def reconnect(self) -> None:
+        """Drop the current connection (it may already be dead) and open a new one."""
+        with self.lock:
+            with contextlib.suppress(*DRIVER_ERRORS):
+                self.conn.close()
+            self._open()
+
+    def run(self, work: Callable[[Any], T], retry: bool = True) -> T:
+        """Call `work(cursor)` holding the connection lock.
+
+        If the connection turns out to be gone, it is reopened, and `work` is run once more when
+        `retry` is set (reads only: writes and timed-out statements are never re-run). A second
+        failure propagates to the caller.
+        """
+        with self.lock:
+            try:
+                return work(self.conn.cursor())
+            except DRIVER_ERRORS as e:
+                if not connection_lost(e):
+                    raise
+                self.reconnect()
+                if not retry or timed_out(e):
+                    raise
+                log.warning("%s: connection lost (%s); reconnected, retrying the statement once", self.name, e)
+                return work(self.conn.cursor())
+
     # -- shared ----------------------------------------------------------
     def execute(self, sql: str, params: tuple[Any, ...] = (), limit: int | None = None) -> tuple[list[str], list[Row]]:
-        """Run one statement; return (column names, normalised rows), at most `limit` rows when given."""
-        cur = self.conn.cursor()
-        cur.execute(sql, params) if params else cur.execute(sql)
-        cols = [d[0] for d in cur.description] if cur.description else []
-        rows = cur.fetchmany(limit) if limit else cur.fetchall()
-        return cols, [[normalise(v) for v in r] for r in rows]
+        """Run one read statement; return (column names, normalised rows), at most `limit` rows when given."""
+
+        def work(cur: Any) -> tuple[list[str], list[Row]]:
+            cur.execute(sql, params) if params else cur.execute(sql)
+            cols = [d[0] for d in cur.description] if cur.description else []
+            rows = cur.fetchmany(limit) if limit else cur.fetchall()
+            return cols, [[normalise(v) for v in r] for r in rows]
+
+        return self.run(work)
 
     def schema(self) -> Schema:
-        if self._schema is None:
-            self._schema = {t: {c: (ty or "TEXT") for c, ty in self.columns(t)} for t in self.tables()}
-        return self._schema
+        with self.lock:
+            if self._schema is None:
+                self._schema = {t: {c: (ty or "TEXT") for c, ty in self.columns(t)} for t in self.tables()}
+            return self._schema
+
+    def refresh_schema(self) -> Schema:
+        """Forget the cached schema and read it again, picking up new tables and columns."""
+        with self.lock:
+            self._schema = None
+            return self.schema()
 
     def sample(self, table: str, column: str, n: int = 200) -> list[Any]:
         """Random non-null sample: scan cost depends on n, not on table size."""
@@ -129,17 +215,18 @@ class Backend:
     def fingerprint(self, table: str) -> tuple[str, int]:
         """SHA-256 over every raw row in primary-key order: proves the data never changed."""
         cols = [c for c, _ in self.columns(table)]
-        cur = self.conn.cursor()
-        cur.execute(self.sql("SELECT * FROM {t} ORDER BY {c}", t=table, c=cols[0]))
-        h, n = hashlib.sha256(), 0
-        while True:
-            rows = cur.fetchmany(2000)
-            if not rows:
-                break
-            for r in rows:
-                h.update(repr([str(normalise(v)) for v in r]).encode())
-                n += 1
-        return h.hexdigest(), n
+        sql = self.sql("SELECT * FROM {t} ORDER BY {c}", t=table, c=cols[0])
+
+        def work(cur: Any) -> tuple[str, int]:
+            cur.execute(sql)
+            h, n = hashlib.sha256(), 0
+            while rows := cur.fetchmany(2000):
+                for r in rows:
+                    h.update(repr([str(normalise(v)) for v in r]).encode())
+                n += len(rows)
+            return h.hexdigest(), n
+
+        return self.run(work)
 
     def ping(self) -> float:
         t0 = time.perf_counter()
@@ -150,13 +237,12 @@ class Backend:
 class SQLiteBackend(Backend):
     name, label, dialect = "sqlite", "SQLite", "sqlite"
 
-    def connect(self) -> SQLiteBackend:
+    def _open(self) -> None:
         path = config.SQLITE_PATH
         self.detail = f"{path.name} (read-only)"
         # mode=ro: the engine physically cannot modify the file
         self.conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, check_same_thread=False)
         self.conn.execute("PRAGMA query_only = ON")
-        return self
 
     def tables(self) -> list[str]:
         return [
@@ -173,9 +259,7 @@ class SQLiteBackend(Backend):
 class MySQLBackend(Backend):
     name, label, dialect = "mysql", "MySQL 8", "mysql"
 
-    def connect(self) -> MySQLBackend:
-        import pymysql
-
+    def _open(self) -> None:
         c = config.MYSQL
         self.detail = f"{c['host']}:{c['port']}/{c['database']} (read-only session)"
         self.db = c["database"]
@@ -188,7 +272,6 @@ class MySQLBackend(Backend):
             write_timeout=config.DB_TIMEOUT_S,
         )
         self.conn.cursor().execute("SET SESSION TRANSACTION READ ONLY")
-        return self
 
     def quote(self, ident: str) -> str:
         return "`" + ident.replace("`", "``") + "`"
@@ -220,15 +303,12 @@ class MySQLBackend(Backend):
 class PostgresBackend(Backend):
     name, label, dialect = "postgres", "PostgreSQL 16", "postgres"
 
-    def connect(self) -> PostgresBackend:
-        import pg8000.dbapi
-
+    def _open(self) -> None:
         c = config.POSTGRES
         self.detail = f"{c['host']}:{c['port']}/{c['database']} (read-only session)"
         self.conn = pg8000.dbapi.connect(**c, timeout=config.DB_TIMEOUT_S)
         self.conn.autocommit = True
         self.conn.cursor().execute("SET default_transaction_read_only = on")
-        return self
 
     def tables(self) -> list[str]:
         return [
@@ -257,7 +337,7 @@ class PlaygroundBackend(SQLiteBackend):
     name, label, dialect = "playground", "Playground (writable)", "sqlite"
     writable = True
 
-    def connect(self) -> PlaygroundBackend:
+    def _open(self) -> None:
         path = config.state_path("playground.db")
         fresh = not path.exists()
         self.detail = f"{path.name} (your test tables)"
@@ -266,15 +346,20 @@ class PlaygroundBackend(SQLiteBackend):
             for script in PLAYGROUND_SQL:
                 self.conn.executescript(script.read_text())
             self.conn.commit()
-        return self
 
     def write(self, sql: str) -> int:
-        """Run one write statement and commit; returns the affected row count (-1 for DDL)."""
-        cur = self.conn.cursor()
-        cur.execute(sql)
-        self.conn.commit()
-        self._schema = None
-        return cur.rowcount
+        """Run one write statement and commit; returns the affected row count (-1 for DDL).
+
+        Never retried: if the connection drops mid-write it is reopened and the error propagates.
+        """
+
+        def work(cur: Any) -> int:
+            cur.execute(sql)
+            self.conn.commit()
+            self._schema = None
+            return cur.rowcount
+
+        return self.run(work, retry=False)
 
 
 BACKENDS: dict[str, type[Backend]] = {
