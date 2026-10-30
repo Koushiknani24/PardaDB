@@ -11,7 +11,7 @@ from textual.binding import Binding
 from textual.containers import Vertical, VerticalScroll
 from textual.coordinate import Coordinate
 from textual.screen import ModalScreen
-from textual.widgets import Button, DataTable, Static
+from textual.widgets import Button, DataTable, Static, TextArea
 from textual.widgets.option_list import Option
 
 from . import masks, server
@@ -55,6 +55,29 @@ MARK_AI = "bold white on #7c3aed"  # spans found by the AI model (SLM), not by r
 
 PAGE, QUERY_ROWS, CELL_MAX = 25, 50, 40
 _FLAT = {ord("\n"): " ", ord("\r"): " ", ord("\t"): " "}
+ERROR_MAX = 160  # longest error/reason shown on one line
+
+# Every key of the TUI, for the "?" help screen (the footer shows the ones that apply to the active tab).
+HELP_KEYS = (
+    ("1 … 6", "switch tab: Monitor, Explorer, Catalog, Query, Audit, Integrity"),
+    ("a / s / n", "view as Admin / Support / aNalyst (Explorer and Query tabs)"),
+    ("[ / ]", "previous / next page of the table (Explorer)"),
+    ("ctrl+r", "run the SQL in the editor (from another tab: jump to Query)"),
+    ("up / down", "in the SQL editor's first / last line: previous / next query from history"),
+    ("enter / click", "open a cell or catalog row in full; Esc closes it"),
+    ("m", "turn the AI model (free-text PII) on or off"),
+    ("d", "open the web dashboard in a browser"),
+    ("? / F1", "this help"),
+    ("q", "quit (closes a dialog first)"),
+)
+TAB_HELP = (
+    ("Monitor", "databases and their status, PII scan progress, CPU/RAM, query counters, live events"),
+    ("Explorer", "page through any table as a role and see exactly which cells are masked"),
+    ("Catalog", "every column the PII scan classified, with tag, confidence and evidence"),
+    ("Query", "run SQL (or a preset) as a user; 'Compare 3 roles' shows the same query per role"),
+    ("Audit", "hash-chained log of every query; the banner says whether the chain is intact"),
+    ("Integrity", "re-hash every table and prove masking never changed the source data"),
+)
 
 
 def mark_style(ent: object, flag: object) -> str:
@@ -131,11 +154,22 @@ def fill_grid(
     return show
 
 
+def one_line(msg: object, limit: int = ERROR_MAX) -> str:
+    """A message collapsed onto one line (whitespace runs become one space), cut to `limit` characters."""
+    s = " ".join(str(msg).split())
+    return s if len(s) <= limit else s[: limit - 1] + "…"
+
+
 def outcome_text(res: Result) -> Text:
-    """Red BLOCKED/ERROR badge with the reason, for a result that did not run."""
+    """Red BLOCKED/ERROR badge with the reason on one readable line, for a result that did not run."""
     if res.get("blocked"):
-        return Text.assemble((" BLOCKED ", "bold white on red"), " ", (str(res.get("reason")), "bold red"))
-    return Text.assemble((" ERROR ", "bold white on red"), " ", (str(res.get("error")), "red"))
+        return Text.assemble((" BLOCKED ", "bold white on red"), " ", (one_line(res.get("reason")), "bold red"))
+    return Text.assemble((" ERROR ", "bold white on red"), " ", (one_line(res.get("error")), "red"))
+
+
+def same_cell(a: object, b: object) -> bool:
+    """True when two grid cells would render identically (text and base style), so no redraw is needed."""
+    return str(a) == str(b) and getattr(a, "style", None) == getattr(b, "style", None)
 
 
 class ClickTable(DataTable):
@@ -176,6 +210,44 @@ def preset_options() -> list[Option | None]:
             last = cat
         opts.append(Option(Text("  " + p["title"]), id=str(i)))
     return opts
+
+
+class SqlArea(TextArea):
+    """SQL editor with shell-like history: up on the first line / down on the last line recall queries."""
+
+    def __init__(self, text: str = "", **kw: Any) -> None:
+        super().__init__(text, **kw)
+        self.sql_history: list[str] = []
+        self.hpos = 0
+        self.draft = ""
+
+    def remember(self, sql: str) -> None:
+        """Add a query that was run (consecutive repeats are kept once) and reset the history cursor."""
+        if not self.sql_history or self.sql_history[-1] != sql:
+            self.sql_history.append(sql)
+        self.hpos = len(self.sql_history)
+
+    def recall(self, step: int) -> bool:
+        """Show the older (-1) or newer (+1) history entry; past the newest, the unsent draft. False at either end."""
+        pos = self.hpos + step
+        if not self.sql_history or pos < 0 or pos > len(self.sql_history):
+            return False
+        if self.hpos == len(self.sql_history):
+            self.draft = self.text
+        self.hpos = pos
+        self.text = self.sql_history[pos] if pos < len(self.sql_history) else self.draft
+        last = self.document.line_count - 1
+        self.move_cursor((0, 0) if step < 0 else (last, len(self.document.get_line(last))))
+        return True
+
+    def action_cursor_up(self, select: bool = False) -> None:
+        if select or self.cursor_location[0] > 0 or not self.recall(-1):
+            super().action_cursor_up(select)
+
+    def action_cursor_down(self, select: bool = False) -> None:
+        at_end = self.cursor_location[0] >= self.document.line_count - 1
+        if select or not at_end or not self.recall(1):
+            super().action_cursor_down(select)
 
 
 class InfoModal(ModalScreen):
@@ -275,3 +347,17 @@ def cell_modal(res: Result, row: int, col: int) -> InfoModal:
         for a, b, e, flag in marks:
             body.stylize(mark_style(e, flag), a, b)
     return InfoModal(_cell_head(res, row, c), body, _marks_legend(marks))
+
+
+def help_modal() -> InfoModal:
+    """The "?" screen: every key binding and what each tab is for."""
+    body = Text()
+    for k, what in HELP_KEYS:
+        body.append(f"{k:<15}", "bold cyan")
+        body.append(what + "\n")
+    body.append("\n")
+    for i, (tab, what) in enumerate(TAB_HELP, 1):
+        body.append(f"{i} {tab:<13}", "bold")
+        body.append(what + "\n", "dim")
+    legend = Text("Masked cells are coloured by strategy; click one to see its PII spans.", "dim")
+    return InfoModal(Text("PardaDB keys and tabs", "bold"), body, legend)

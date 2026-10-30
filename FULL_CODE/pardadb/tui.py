@@ -17,6 +17,7 @@ with contextlib.suppress(ImportError):  # arrow keys and history for input(); ab
 
 from rich import box
 from rich.console import Console
+from rich.markup import escape
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
@@ -94,7 +95,7 @@ class TUI:
         """Print monitoring events that arrived since the last prompt."""
         evs = [e for e in self.rt.events if e["seq"] > self.seen]
         for e in evs:
-            self.con.print(f"[dim]{e['ts']}[/] [{LEVEL.get(e['level'], 'white')}]{e['msg']}[/]")
+            self.print_event(e)
         if evs:
             self.seen = evs[-1]["seq"]
 
@@ -232,9 +233,27 @@ class TUI:
             + (f" · last query {lq.get('ms')} ms ({lq.get('status')})" if lq else "")
         )
 
+    def print_event(self, e: dict[str, Any]) -> None:
+        """One event line; the message is escaped so brackets in it (SQL, lists) are printed, not parsed as markup."""
+        self.con.print(f"[dim]{e['ts']}[/] [{LEVEL.get(e['level'], 'white')}]{escape(str(e['msg']))}[/]")
+
+    def count_arg(self, n: str, usage: str) -> int | None:
+        """`n` as a positive int, or None after printing the command's usage (like `p` does for bad input)."""
+        try:
+            v = int(n)
+        except ValueError:
+            v = 0
+        if v > 0:
+            return v
+        self.con.print(f"[yellow]{escape(f'usage: {usage}  (n must be a positive whole number, got {n!r})')}[/]")
+        return None
+
     def c_events(self, n: str = "20", *_: str) -> None:
-        for e in list(self.rt.events)[-int(n) :]:
-            self.con.print(f"[dim]{e['ts']}[/] [{LEVEL.get(e['level'], 'white')}]{e['msg']}[/]")
+        k = self.count_arg(n, "events [n]")
+        if k is None:
+            return
+        for e in list(self.rt.events)[-k:]:
+            self.print_event(e)
 
     def c_use(self, name: str | None = None, *_: str) -> None:
         if name not in self.rt.engines:
@@ -287,8 +306,11 @@ class TUI:
         for r in rest:
             if "=" in r:
                 fcol, fval = r.split("=", 1)
+        eng = self.eng()
+        if not eng:
+            return self.con.print("[yellow]not scanned yet[/]")
         self.browse_args = (table, offset, fcol, fval)
-        res = self.eng().browse(table, self.role, self.user, offset, 15, fcol, fval)
+        res = eng.browse(table, self.role, self.user, offset, 15, fcol, fval)
         self.show_result(self.rt.count(res), f"{table} as {self.user or self.role} · rows {offset + 1}-{offset + 15}")
 
     def c_next(self, *_: str, step: int = 15) -> None:
@@ -397,7 +419,10 @@ class TUI:
         self.con.print(tb)
 
     def c_audit(self, n: str = "15", *_: str) -> None:
-        a = audit.read(int(n))
+        k = self.count_arg(n, "audit [n]")
+        if k is None:
+            return
+        a = audit.read(k)
         self.con.print(
             "[green]hash chain intact[/]" if a["chain_ok"] else "[bold red]hash chain BROKEN[/]",
             f"[dim]({a['total']} records)[/]",

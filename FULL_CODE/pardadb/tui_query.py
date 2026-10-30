@@ -8,11 +8,11 @@ from typing import Any
 from rich.text import Text
 from textual import on, work
 from textual.containers import VerticalScroll
-from textual.widgets import Button, DataTable, OptionList, Select, Static, Switch, TabbedContent, TextArea
+from textual.widgets import Button, DataTable, OptionList, Select, Static, Switch, TabbedContent
 
 from . import audit, engine, server
 from .tui_base import PardaBase
-from .tui_widgets import AUDIT_STYLE, QUERY_ROWS, Result, fill_grid, outcome_text
+from .tui_widgets import AUDIT_STYLE, QUERY_ROWS, Result, SqlArea, fill_grid, one_line, outcome_text
 
 
 def result_summary(res: Result) -> Text:
@@ -63,7 +63,7 @@ class QueryTab(PardaBase):
         # OptionList has no double-click event, so two selections of one preset within 0.6 s count as one.
         double = self._last_preset == (ev.option.id,) and now - self._last_preset_t < 0.6
         self._last_preset, self._last_preset_t = (ev.option.id,), now
-        self.query_one("#q-sql", TextArea).text = p["sql"]
+        self.query_one("#q-sql", SqlArea).text = p["sql"]
         self.query_one("#q-msg", Static).update(
             Text.assemble(
                 (f"{p.get('category', '')}: ", "dim"),
@@ -76,8 +76,12 @@ class QueryTab(PardaBase):
             self.action_run_query()
 
     def _query_args(self) -> tuple[str, str, str, str] | None:
-        """(backend, sql, role, user) for the editor's query, or None after warning what is missing."""
-        sql = self.query_one("#q-sql", TextArea).text.strip()
+        """(backend, sql, role, user) for the editor's query, or None after warning what is missing.
+
+        A query that will run is added to the editor's history (up/down recall it).
+        """
+        editor = self.query_one("#q-sql", SqlArea)
+        sql = editor.text.strip()
         n = self.rt.active
         if not sql:
             self.notify("Type a SQL query first", severity="warning")
@@ -87,6 +91,7 @@ class QueryTab(PardaBase):
             return None
         user = self.query_one("#q-user", Select).value
         role = self.rt.role_of(user, None)
+        editor.remember(sql)
         return n, sql, role, user
 
     @on(Button.Pressed, "#q-run")
@@ -107,13 +112,13 @@ class QueryTab(PardaBase):
             n2 = self.rt.route(n, sql)
             res = self.rt.count(self.rt.engines[n2].run(sql, role, user))
         except Exception as e:
-            res = {"ok": False, "error": f"{type(e).__name__}: {e}", "role": role, "user": user}
+            res = {"ok": False, "error": one_line(f"{type(e).__name__}: {e}"), "role": role, "user": user}
         self.call_from_thread(self.show_query, [res])
         if res.get("write"):
             try:
                 self.rt.after_write(res)
             except Exception as e:
-                self.call_from_thread(self.notify, f"Re-scan failed: {e}", severity="error")
+                self.call_from_thread(self.notify, one_line(f"Re-scan failed: {e}"), severity="error")
 
     @on(Button.Pressed, "#q-compare")
     def _compare(self) -> None:
@@ -131,7 +136,7 @@ class QueryTab(PardaBase):
                 res = self.rt.count(self.rt.engines[n2].run(sql, r, f"compare:{r}"))
                 out.append(res)
         except Exception as e:
-            out.append({"ok": False, "error": f"{type(e).__name__}: {e}", "role": "?"})
+            out.append({"ok": False, "error": one_line(f"{type(e).__name__}: {e}"), "role": "?"})
         self.call_from_thread(self.show_query, out)
 
     def show_query(self, results: list[Result]) -> None:
@@ -192,8 +197,8 @@ class QueryTab(PardaBase):
             Text.assemble(
                 (" CHAIN INTACT " if ok else " CHAIN BROKEN ", "bold white on green" if ok else "bold white on red"),
                 (f"  {data.get('total', 0):,} records, each holding the SHA-256 of the previous one", "dim"),
-                (f"   {data['error']}" if data.get("error") else "", "red"),
-                ("   (showing newest 50)", "dim"),
+                (f"   {one_line(data['error'])}" if data.get("error") else "", "red"),
+                ("   (showing newest 50)" if data.get("records") else "   no queries yet: run one on tab 4", "dim"),
             )
         )
         g = self.query_one("#au-grid", DataTable)
@@ -220,7 +225,7 @@ class QueryTab(PardaBase):
         try:
             res = self.rt.integrity(n)
         except Exception as e:
-            res = {"all_unchanged": False, "tables": [], "error": f"{type(e).__name__}: {e}"}
+            res = {"all_unchanged": False, "tables": [], "error": one_line(f"{type(e).__name__}: {e}")}
         self.call_from_thread(self.show_verify, n, res)
 
     def show_verify(self, n: str, res: dict[str, Any]) -> None:

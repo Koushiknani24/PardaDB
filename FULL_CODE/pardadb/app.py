@@ -15,6 +15,7 @@ from textual import on
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.css.query import NoMatches
 from textual.widgets import (
     Button,
     DataTable,
@@ -28,14 +29,13 @@ from textual.widgets import (
     TabbedContent,
     TabPane,
     Tabs,
-    TextArea,
 )
 
 from . import engine, server
 from .tui_explorer import ExplorerTab
-from .tui_monitor import MonitorTab
+from .tui_monitor import TICK_S, MonitorTab
 from .tui_query import QueryTab
-from .tui_widgets import ClickTable, preset_options
+from .tui_widgets import ClickTable, SqlArea, help_modal, preset_options
 
 # Column headers of the grids whose columns never change (result grids get theirs per query).
 FIXED_COLUMNS = {
@@ -44,6 +44,8 @@ FIXED_COLUMNS = {
     "#au-grid": ("time", "user", "role", "backend", "status", "sql", "detail", "hash"),
     "#in-grid": ("table", "rows", "fingerprint at start", "fingerprint now", "result"),
 }
+# Bindings shown in the footer (and active) only on these tabs; every other binding applies everywhere.
+TAB_ACTIONS = {"role": ("explorer", "query"), "page": ("explorer",)}
 
 
 class PardaApp(MonitorTab, ExplorerTab, QueryTab):
@@ -94,9 +96,16 @@ class PardaApp(MonitorTab, ExplorerTab, QueryTab):
         Binding("4", "tab('query')", "Query"),
         Binding("5", "tab('audit')", "Audit"),
         Binding("6", "tab('integrity')", "Integrity"),
+        Binding("a", "role('admin')", "Admin"),
+        Binding("s", "role('support')", "Support"),
+        Binding("n", "role('analyst')", "aNalyst"),
+        Binding("left_square_bracket", "page(-1)", "Prev page", key_display="["),
+        Binding("right_square_bracket", "page(1)", "Next page", key_display="]"),
         Binding("ctrl+r", "run_query", "Run query", priority=True),
         Binding("d", "dashboard", "Web dashboard"),
         Binding("m", "toggle_ml", "AI model on/off"),
+        Binding("question_mark", "help", "Help", key_display="?"),
+        Binding("f1", "help", "Help", show=False),
         Binding("q", "quit", "Quit"),
     ]
 
@@ -176,6 +185,7 @@ class PardaApp(MonitorTab, ExplorerTab, QueryTab):
     def _user_select(self) -> Select:
         """Picker of the dashboard users to run queries as, defaulting to the first Support user."""
         users = self.rt.users or [{"username": r, "display_name": r.title(), "role": r} for r in engine.ROLES]
+        self.q_user_role = {u["username"]: u["role"] for u in users}
         default_user = next((u["username"] for u in users if u["role"] == "support"), users[0]["username"])
         return Select(
             [
@@ -200,7 +210,7 @@ class PardaApp(MonitorTab, ExplorerTab, QueryTab):
                 yield Static("Presets  [dim](click to load, double-click to run)[/]", classes="title")
                 yield OptionList(*preset_options(), id="q-presets")
             with Vertical(id="q-main"):
-                yield TextArea(server.PRESETS[0]["sql"], id="q-sql", soft_wrap=True)
+                yield SqlArea(server.PRESETS[0]["sql"], id="q-sql", soft_wrap=True)
                 with Horizontal(classes="bar"):
                     yield Button("Run  (ctrl+r)", id="q-run", variant="success")
                     yield Button("Compare 3 roles", id="q-compare", variant="primary")
@@ -244,25 +254,42 @@ class PardaApp(MonitorTab, ExplorerTab, QueryTab):
     def on_mount(self) -> None:
         for sel, cols in FIXED_COLUMNS.items():
             t = self.query_one(sel, DataTable)
-            for c in cols:
-                t.add_column(c)
+            for i, c in enumerate(cols):
+                t.add_column(c, key=f"c{i}")
         for i in (1, 2):
             self.query_one(f"#q-title-{i}").display = False
             self.query_one(f"#q-grid-{i}").display = False
         self.query_one("#q-grid-0").display = False
         self.query_one("#q-msg", Static).update(Text(server.PRESETS[0]["expect"], style="dim"))
-        self.query_one("#ex-msg", Static).update(Text("Waiting for the first scan to finish…", style="yellow"))
-        self.tick()
-        self.set_interval(1.5, self.tick)
+        wait = Text("Scanning… tables appear when the first scan finishes.", "yellow")
+        self.query_one("#ex-msg", Static).update(wait)
+        self.poll_status()
+        self.set_interval(TICK_S, self.tick)
 
     # ------------------------------------------------------------------ tabs, keys
     @on(TabbedContent.TabActivated)
     def _tab_activated(self, ev: TabbedContent.TabActivated) -> None:
         pid = ev.pane.id if ev.pane else ""
+        self.refresh_bindings()  # footer hints follow the tab
         if pid == "audit":
             self.load_audit()
         elif pid in ("explorer", "catalog"):
             self.refresh_views()
+        elif pid == "monitor" and self.st:
+            self.update_monitor(self.st)  # it was not redrawn while hidden
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        """Hide tab-specific bindings (roles, paging) from the footer and keys on tabs they do not apply to."""
+        tabs = TAB_ACTIONS.get(action)
+        if tabs is None:
+            return True
+        try:
+            return self.active_tab() in tabs
+        except NoMatches:  # still composing
+            return False
+
+    def action_help(self) -> None:
+        self.push_screen(help_modal())
 
     def action_tab(self, tab: str) -> None:
         tc = self.query_one("#tabs", TabbedContent)

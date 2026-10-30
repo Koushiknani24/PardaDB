@@ -20,9 +20,12 @@ from .tui_widgets import (
     Result,
     cell_modal,
     fill_grid,
+    one_line,
     outcome_text,
     strat,
 )
+
+CAT_DEBOUNCE_S = 0.25  # wait for a pause in typing before re-filtering the catalog
 
 
 def catalog_detail(c: dict[str, Any], pol: dict[str, str]) -> InfoModal:
@@ -58,7 +61,7 @@ class ExplorerTab(PardaBase):
         try:
             data = self.rt.tables(n)
         except Exception as e:
-            data = {"error": f"{type(e).__name__}: {e}"}
+            data = {"error": one_line(f"{type(e).__name__}: {e}")}
         self.call_from_thread(self.show_tables, n, data)
 
     def show_tables(self, n: str, data: dict[str, Any]) -> None:
@@ -161,10 +164,26 @@ class ExplorerTab(PardaBase):
 
     @on(Button.Pressed, ".role")
     def _role_clicked(self, ev: Button.Pressed) -> None:
-        self.role = ev.button.id.split("-", 1)[1]
+        self.action_role(ev.button.id.split("-", 1)[1])
+
+    def action_role(self, role: str) -> None:
+        """View as `role`: Explorer role buttons and re-browse, plus the Query tab's user picker."""
+        self.role = role
         for b in self.query(".role").results(Button):
-            b.variant = "primary" if b.id == ev.button.id else "default"
-        self.browse()
+            b.variant = "primary" if b.id == f"role-{role}" else "default"
+        user = next((u for u, r in self.q_user_role.items() if r == role), None)
+        if user:
+            self.query_one("#q-user", Select).value = user
+        if self.active_tab() == "explorer":
+            self.browse()
+        self.notify(f"Viewing as {role.upper()}", timeout=2)
+
+    def action_page(self, step: int) -> None:
+        """Previous (-1) or next (+1) Explorer page."""
+        if step < 0:
+            self._prev()
+        else:
+            self._next()
 
     @on(Button.Pressed, "#ex-apply")
     def _apply_filter(self) -> None:
@@ -231,6 +250,10 @@ class ExplorerTab(PardaBase):
         self.cat_backend = n
         q = self.query_one("#cat-filter", Input).value.strip().lower()
         show_clean = self.query_one("#cat-clean", Switch).value
+        sig = (n, id(cat), q, show_clean)
+        if sig == self._cat_sig:  # same catalog and filter: the grid is already right
+            return
+        self._cat_sig = sig
         grid = self.query_one("#cat-grid", DataTable)
         grid.clear()
         shown = 0
@@ -269,6 +292,11 @@ class ExplorerTab(PardaBase):
         )
 
     @on(Input.Changed, "#cat-filter")
+    def _cat_typed(self) -> None:
+        if self._cat_timer:
+            self._cat_timer.stop()
+        self._cat_timer = self.set_timer(CAT_DEBOUNCE_S, self.load_catalog)
+
     @on(Switch.Changed, "#cat-clean")
     def _cat_filter(self) -> None:
         self.load_catalog()
@@ -300,4 +328,4 @@ class ExplorerTab(PardaBase):
         try:
             self.rt.run_scan(n)
         except Exception as e:
-            self.call_from_thread(self.notify, f"Scan failed: {e}", severity="error")
+            self.call_from_thread(self.notify, one_line(f"Scan failed: {e}"), severity="error")
