@@ -2,20 +2,20 @@
 so editing or deleting any past record breaks the chain.
 
 Several processes (the web server, the CLI) may append at once, so every append holds an
-exclusive ``flock`` on a sibling ``audit.lock`` file and links to the tail hash it reads
-from disk under that lock. When the active ``audit.jsonl`` grows past
+exclusive lock (``flock``, or ``msvcrt`` on Windows) on a sibling ``audit.lock`` file and links
+to the tail hash it reads from disk under that lock. When the active ``audit.jsonl`` grows past
 ``config.AUDIT_MAX_BYTES`` it is renamed to ``audit-<UTC time>-<n>.jsonl`` and the chain
 continues in a fresh file: its first record's ``prev`` is the rotated file's last hash.
 """
 
 from __future__ import annotations
 
-import fcntl
 import hashlib
 import json
 import logging
 import os
 import re
+import sys
 import time
 from collections import deque
 from collections.abc import Iterator
@@ -26,6 +26,29 @@ from typing import IO, Any
 from . import config
 
 log = logging.getLogger(__name__)
+
+if sys.platform == "win32":  # pragma: no cover - exercised on Windows only
+    import msvcrt
+
+    def _try_lock(f: IO[str]) -> None:
+        """Lock the lock file's first byte; raises OSError while another process holds it."""
+        f.seek(0)
+        msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+
+    def _unlock(f: IO[str]) -> None:
+        f.seek(0)
+        msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
+
+else:
+    import fcntl
+
+    def _try_lock(f: IO[str]) -> None:
+        """Exclusive non-blocking flock; raises OSError while another process holds it."""
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+    def _unlock(f: IO[str]) -> None:
+        fcntl.flock(f, fcntl.LOCK_UN)
+
 
 GENESIS = "0" * 64  # `prev` of the very first record
 _SEGMENT = re.compile(r"audit-\d{8}T\d{6}Z-(\d+)\.jsonl")
@@ -60,18 +83,21 @@ def _segments() -> list[Path]:
 
 @contextmanager
 def _exclusive_lock() -> Iterator[None]:
-    """Hold an exclusive flock on audit.lock, giving up after config.AUDIT_LOCK_TIMEOUT_S."""
-    with open(config.state_path("audit.lock"), "a") as fd:  # closing the file releases the lock
+    """Hold an exclusive lock on audit.lock (flock, or msvcrt on Windows) for at most AUDIT_LOCK_TIMEOUT_S."""
+    with open(config.state_path("audit.lock"), "a") as fd:
         deadline = time.monotonic() + config.AUDIT_LOCK_TIMEOUT_S
         while True:
             try:
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                _try_lock(fd)
                 break
-            except BlockingIOError:
+            except OSError:  # held by another process (BlockingIOError on Unix, PermissionError on Windows)
                 if time.monotonic() > deadline:
                     raise TimeoutError(f"audit log locked for over {config.AUDIT_LOCK_TIMEOUT_S}s") from None
                 time.sleep(_LOCK_POLL_S)
-        yield
+        try:
+            yield
+        finally:
+            _unlock(fd)
 
 
 def _parse(line: bytes) -> dict[str, Any] | None:
