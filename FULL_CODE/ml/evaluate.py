@@ -49,7 +49,7 @@ PARDA_LABELS = [
 ]
 KIND = {"Person": "person", "Address": "address", "Organization": "organization"}
 GOLDEN = ROOT / "golden"
-DB = ROOT.parent / "B1_Smart_Data_Masking_PII" / "sql" / "sqlite" / "saffron_bank.db"
+DB = ROOT.parent / "data" / "sql" / "sqlite" / "saffron_bank.db"
 
 
 def read_jsonl(path):

@@ -1,0 +1,118 @@
+{
+  "variant": "int8w",
+  "model_dir": "models/pardadb-pii-int8w",
+  "manifest": {
+    "format": "int8-weight",
+    "module": "quant_int8",
+    "source": "models/pardadb-pii",
+    "weights": [
+      "model.int8.safetensors"
+    ],
+    "scheme": "int8 symmetric per output channel, float16 scales; biases and norms float16",
+    "embeddings": "int8 per row",
+    "compute_dtype": "float32",
+    "int8_tensors": 49,
+    "fp16_tensors": 31,
+    "max_rel_error": 0.00394
+  },
+  "device": "cpu",
+  "threads": 4,
+  "threshold": 0.4,
+  "labels": [
+    "person",
+    "address",
+    "organization"
+  ],
+  "size": {
+    "weights_files": [
+      "model.int8.safetensors"
+    ],
+    "weights_mb": 45.41,
+    "dir_mb": 49.02,
+    "dir_files": [
+      "compression.json",
+      "gliner_config.json",
+      "model.int8.safetensors",
+      "special_tokens_map.json",
+      "tokenizer.json",
+      "tokenizer_config.json"
+    ],
+    "unit": "1 MB = 1e6 bytes"
+  },
+  "load_seconds": 0.59,
+  "rss_mb_before_load": 756.1,
+  "rss_mb_after_load": 972.9,
+  "bank_test": {
+    "person": {
+      "precision": 0.984,
+      "recall": 0.997,
+      "f1": 0.99,
+      "support": 363
+    },
+    "address": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 36
+    },
+    "organization": {
+      "precision": 0.968,
+      "recall": 0.993,
+      "f1": 0.981,
+      "support": 152
+    },
+    "micro": {
+      "precision": 0.98,
+      "recall": 0.996,
+      "f1": 0.988
+    },
+    "zero_leak_cases": 0.998
+  },
+  "golden": {
+    "person": {
+      "precision": 0.986,
+      "recall": 0.973,
+      "f1": 0.98,
+      "support": 149
+    },
+    "address": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 8
+    },
+    "organization": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "micro": {
+      "precision": 0.905,
+      "recall": 0.975,
+      "f1": 0.939
+    },
+    "zero_leak_cases": 0.977
+  },
+  "saffron_customer_name_recall": {
+    "recall": 0.998,
+    "n": 400
+  },
+  "saffron_narration_counterparty_recall": {
+    "recall": 0.948,
+    "n": 400
+  },
+  "cpu_latency_bank_test": {
+    "median_ms_per_text": 17.88,
+    "mean_ms_per_text": 18.25,
+    "p90_ms_per_text": 21.93,
+    "texts": 800,
+    "batch_size": 16
+  },
+  "peak_rss_mb": 1158.4,
+  "env": {
+    "torch": "2.8.0+cu128",
+    "cpu": "x86_64",
+    "cpu_count": 16
+  }
+}

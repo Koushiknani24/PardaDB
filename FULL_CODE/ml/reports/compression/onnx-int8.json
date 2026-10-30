@@ -1,0 +1,131 @@
+{
+  "variant": "onnx-int8",
+  "model_dir": "models/pardadb-pii-onnx-int8",
+  "manifest": {
+    "format": "onnx-int8",
+    "module": "quant_onnx",
+    "source": "models/pardadb-pii",
+    "weights": [
+      "model.int8.onnx"
+    ],
+    "opset": 19,
+    "runtime": "onnxruntime",
+    "weight_type": "QInt8",
+    "activations": "dynamic uint8, per tensor",
+    "per_channel": false,
+    "keep_fp32_regex": "/mlp/Wo/",
+    "int8_nodes": 37,
+    "fp32_nodes": [
+      "/core/token_rep_layer/bert_layer/model/layers.0/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.1/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.2/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.3/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.4/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.5/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.6/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.7/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.8/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.9/mlp/Wo/MatMul"
+    ]
+  },
+  "device": "cpu",
+  "threads": 4,
+  "threshold": 0.4,
+  "labels": [
+    "person",
+    "address",
+    "organization"
+  ],
+  "size": {
+    "weights_files": [
+      "model.int8.onnx"
+    ],
+    "weights_mb": 52.49,
+    "dir_mb": 56.11,
+    "dir_files": [
+      "compression.json",
+      "gliner_config.json",
+      "model.int8.onnx",
+      "special_tokens_map.json",
+      "tokenizer.json",
+      "tokenizer_config.json"
+    ],
+    "unit": "1 MB = 1e6 bytes"
+  },
+  "load_seconds": 0.6,
+  "rss_mb_before_load": 756.2,
+  "rss_mb_after_load": 862.2,
+  "bank_test": {
+    "person": {
+      "precision": 0.989,
+      "recall": 0.994,
+      "f1": 0.992,
+      "support": 363
+    },
+    "address": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 36
+    },
+    "organization": {
+      "precision": 0.882,
+      "recall": 0.987,
+      "f1": 0.932,
+      "support": 152
+    },
+    "micro": {
+      "precision": 0.958,
+      "recall": 0.993,
+      "f1": 0.975
+    },
+    "zero_leak_cases": 0.995
+  },
+  "golden": {
+    "person": {
+      "precision": 0.986,
+      "recall": 0.96,
+      "f1": 0.973,
+      "support": 149
+    },
+    "address": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 8
+    },
+    "organization": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "micro": {
+      "precision": 0.91,
+      "recall": 0.962,
+      "f1": 0.935
+    },
+    "zero_leak_cases": 0.966
+  },
+  "saffron_customer_name_recall": {
+    "recall": 0.995,
+    "n": 400
+  },
+  "saffron_narration_counterparty_recall": {
+    "recall": 0.925,
+    "n": 400
+  },
+  "cpu_latency_bank_test": {
+    "median_ms_per_text": 11.83,
+    "mean_ms_per_text": 12.33,
+    "p90_ms_per_text": 14.9,
+    "texts": 800,
+    "batch_size": 16
+  },
+  "peak_rss_mb": 1014.6,
+  "env": {
+    "torch": "2.8.0+cu128",
+    "cpu": "x86_64",
+    "cpu_count": 16
+  }
+}

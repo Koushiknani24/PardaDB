@@ -1,0 +1,141 @@
+{
+  "variant": "onnx-int8-qkv",
+  "model_dir": "models/pardadb-pii-onnx-int8-qkv",
+  "manifest": {
+    "format": "onnx-int8-qkv",
+    "module": "quant_onnx",
+    "source": "models/pardadb-pii",
+    "weights": [
+      "model.int8.onnx"
+    ],
+    "opset": 19,
+    "runtime": "onnxruntime",
+    "weight_type": "QInt8",
+    "activations": "dynamic uint8, per tensor",
+    "per_channel": false,
+    "keep_fp32_regex": "/(mlp/Wo|attn/Wqkv)/",
+    "int8_nodes": 27,
+    "fp32_nodes": [
+      "/core/token_rep_layer/bert_layer/model/layers.0/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.0/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.1/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.1/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.2/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.2/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.3/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.3/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.4/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.4/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.5/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.5/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.6/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.6/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.7/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.7/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.8/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.8/mlp/Wo/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.9/attn/Wqkv/MatMul",
+      "/core/token_rep_layer/bert_layer/model/layers.9/mlp/Wo/MatMul"
+    ]
+  },
+  "device": "cpu",
+  "threads": 4,
+  "threshold": 0.4,
+  "labels": [
+    "person",
+    "address",
+    "organization"
+  ],
+  "size": {
+    "weights_files": [
+      "model.int8.onnx"
+    ],
+    "weights_mb": 65.75,
+    "dir_mb": 69.36,
+    "dir_files": [
+      "compression.json",
+      "gliner_config.json",
+      "model.int8.onnx",
+      "special_tokens_map.json",
+      "tokenizer.json",
+      "tokenizer_config.json"
+    ],
+    "unit": "1 MB = 1e6 bytes"
+  },
+  "load_seconds": 0.6,
+  "rss_mb_before_load": 756.0,
+  "rss_mb_after_load": 876.3,
+  "bank_test": {
+    "person": {
+      "precision": 0.986,
+      "recall": 0.997,
+      "f1": 0.992,
+      "support": 363
+    },
+    "address": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 36
+    },
+    "organization": {
+      "precision": 0.956,
+      "recall": 0.993,
+      "f1": 0.974,
+      "support": 152
+    },
+    "micro": {
+      "precision": 0.979,
+      "recall": 0.996,
+      "f1": 0.987
+    },
+    "zero_leak_cases": 0.998
+  },
+  "golden": {
+    "person": {
+      "precision": 0.973,
+      "recall": 0.96,
+      "f1": 0.966,
+      "support": 149
+    },
+    "address": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 8
+    },
+    "organization": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "micro": {
+      "precision": 0.904,
+      "recall": 0.962,
+      "f1": 0.932
+    },
+    "zero_leak_cases": 0.966
+  },
+  "saffron_customer_name_recall": {
+    "recall": 0.998,
+    "n": 400
+  },
+  "saffron_narration_counterparty_recall": {
+    "recall": 0.927,
+    "n": 400
+  },
+  "cpu_latency_bank_test": {
+    "median_ms_per_text": 13.51,
+    "mean_ms_per_text": 13.53,
+    "p90_ms_per_text": 16.23,
+    "texts": 800,
+    "batch_size": 16
+  },
+  "peak_rss_mb": 1026.5,
+  "env": {
+    "torch": "2.8.0+cu128",
+    "cpu": "x86_64",
+    "cpu_count": 16
+  }
+}
