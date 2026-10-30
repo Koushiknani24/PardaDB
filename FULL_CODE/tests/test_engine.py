@@ -53,7 +53,6 @@ def test_alias_and_case_do_not_bypass_masking(eng):
         "SELECT substr(card_no, 1, 16) AS p FROM cards",
         "SELECT card_no || '' AS p FROM cards",
         "SELECT (SELECT card_no FROM cards LIMIT 1) AS p",
-        "SELECT CASE WHEN full_name = 'Komal Sharma' THEN 1 ELSE 0 END AS p FROM customers",
         "SELECT max(balance) AS p FROM customers",
     ],
 )
@@ -111,6 +110,28 @@ def test_inference_guard_blocks_non_admin(eng, sql, verb):
         if verb:
             assert f"cannot {verb}" in res["reason"]
     assert eng.run(sql, "admin", record=False)["ok"]
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        # a CASE / NULLIF / division on a masked value answers yes-or-no about it: a one-bit oracle
+        "SELECT CASE WHEN full_name = 'Komal Sharma' THEN 1 ELSE 0 END AS p FROM customers",
+        "SELECT CASE WHEN substr(card_no, 1, 1) = '4' THEN 1 END AS p FROM cards",
+        "SELECT nullif(card_no, '4111111111111111') AS p FROM cards",
+        "SELECT 1 / (length(card_no) - 16) AS p FROM cards",
+        # which row comes back would depend on a hidden value
+        "SELECT customer_id FROM customers LIMIT 1 OFFSET (SELECT CASE WHEN max(balance) > 100 THEN 1 ELSE 0 END "
+        "FROM customers)",
+        # functions that export whole tables or read server files
+        "SELECT table_to_xml('cards', true, true, '') AS x",
+        "SELECT pg_read_binary_file('/etc/hostname') AS x",
+    ],
+)
+def test_oracles_and_exporting_functions_are_blocked(eng, sql: str) -> None:
+    for role in ("support", "analyst"):
+        res = eng.run(sql, role, record=False)
+        assert res["blocked"] and not res["ok"], (role, sql, res)
 
 
 def test_inference_guard_allows_is_null(eng):
@@ -399,3 +420,23 @@ def test_identifier_case_leaves_ambiguous_names_alone() -> None:
         sqlglot.parse_one("SELECT name FROM a JOIN b ON 1 = 1", read="postgres"), schema
     )
     assert tree.sql(dialect="postgres") == 'SELECT name FROM "a" JOIN "b" ON 1 = 1'
+
+
+def test_audit_log_never_stores_literal_values(eng):
+    sql = "SELECT customer_id FROM customers WHERE full_name = 'Komal Sharma' AND customer_id = 1 LIMIT 5"
+    eng.run(sql, "admin")
+    logged = audit.read(1)["records"][-1]["sql"]
+    assert "Komal" not in logged and "'" not in logged
+    assert logged.startswith("SELECT customer_id FROM customers WHERE")
+
+
+@pytest.mark.parametrize(
+    ("sql", "expected"),
+    [
+        ("SELECT a FROM t WHERE pan = 'ABCPK0000F'", "SELECT a FROM t WHERE pan = ?"),
+        ("SELECT 1; DROP TABLE t", "SELECT ?; DROP TABLE t"),
+        ("SELECT (", "<statement that did not parse>"),
+    ],
+)
+def test_audit_sql_replaces_literals(sql: str, expected: str) -> None:
+    assert engine.audit_sql(sql, "sqlite") == expected

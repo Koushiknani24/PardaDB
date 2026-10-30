@@ -268,6 +268,10 @@ def classify_column(table: str, column: str, values: list[Any], null_rate: float
                 ent, r + (0.1 if hint == ent else 0), f"{ent} format in {counts[ent]}/{n} samples{extra}", hint_note
             )
 
+    # Reference columns that carry some real card numbers (e.g. transactions.ref_no): mask value by value
+    if counts["card"] and counts["card"] / n >= 0.05:
+        return tag("text", 0.85, f"Luhn-valid card numbers in {counts['card']}/{n} samples", "masked value by value")
+
     # SSN: formatted 3-2-4 or bare 9 digits with an ssn header
     ssn_like = sum(1 for v in values if detectors.RE_SSN.match(str(v).strip()))
     if ssn_like / n >= 0.6 and (hint == "ssn" or counts["ssn"] / n >= 0.3):

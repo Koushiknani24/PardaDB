@@ -42,6 +42,7 @@ ORDER = [
     "PARTIAL",
     "FULL",
 ]
+ORACLE_NODES = (exp.Case, exp.If, exp.Nullif, exp.Div, exp.Mod)
 BANNED_FUNCS = {
     "LOAD_FILE",
     "SLEEP",
@@ -56,6 +57,27 @@ BANNED_FUNCS = {
     "LO_IMPORT",
     "LO_EXPORT",
     "DBLINK",
+    # PostgreSQL: whole-table / query export, server file and setting reads, timing
+    "TABLE_TO_XML",
+    "TABLE_TO_XMLSCHEMA",
+    "TABLE_TO_XML_AND_XMLSCHEMA",
+    "QUERY_TO_XML",
+    "QUERY_TO_XMLSCHEMA",
+    "QUERY_TO_XML_AND_XMLSCHEMA",
+    "CURSOR_TO_XML",
+    "SCHEMA_TO_XML",
+    "DATABASE_TO_XML",
+    "PG_READ_BINARY_FILE",
+    "PG_LS_DIR",
+    "PG_STAT_FILE",
+    "PG_LS_LOGDIR",
+    "PG_LS_WALDIR",
+    "PG_LS_TMPDIR",
+    "PG_LS_ARCHIVE_STATUSDIR",
+    "LO_GET",
+    "CURRENT_SETTING",
+    "PG_SLEEP_FOR",
+    "PG_SLEEP_UNTIL",
 }
 
 
@@ -99,6 +121,22 @@ def parse_single(sql: str, dialect: str) -> exp.Expression:
     if not statements:
         raise ValueError("SQL syntax error: no statement to run")
     return statements[0]
+
+
+def audit_sql(sql: str, dialect: str) -> str:
+    """The statement as written to the audit log: same shape, every literal replaced by ``?``.
+
+    Values typed into a query (``WHERE pan_no = 'ABCPK0000F'``) are personal data themselves, so the
+    log keeps what was asked, not the values it was asked about.
+    """
+    try:
+        statements = [t for t in sqlglot.parse(sql, read=dialect) if t is not None]
+    except (sqlglot.errors.ParseError, sqlglot.errors.TokenError):
+        return "<statement that did not parse>"
+    return "; ".join(
+        t.transform(lambda n: exp.Placeholder() if isinstance(n, exp.Literal) else n).sql(dialect=dialect)
+        for t in statements
+    )
 
 
 def is_write(sql: str, dialect: str) -> bool:
@@ -347,6 +385,8 @@ class Engine:
                 raise Blocked("duplicate output column names; give every output a unique alias")
         if role != "admin":
             self._guard(tree, role)
+            if any(not isinstance(lim.expression, exp.Literal) for lim in tree.find_all(exp.Limit, exp.Offset)):
+                raise Blocked("inference guard: LIMIT and OFFSET must be plain numbers")
         if isinstance(tree, (exp.Select, exp.SetOperation)) and not tree.args.get("limit"):
             tree = tree.limit(config.MAX_ROWS)
         plan: list[PlanEntry] = []
@@ -354,6 +394,8 @@ class Engine:
             srcs = _source_columns(node)
             infos = [i for i in (self.info(t, c) for t, c in srcs) if i]
             if not infos:
+                if role != "admin" and node.expression.find(exp.Anonymous):
+                    raise Blocked(f"output '{name}' calls a function PardaDB cannot trace to a column; query refused")
                 plan.append(
                     {"name": name, "strategy": "FULL", "info": None, "source": sorted(f"{t}.{c}" for t, c in srcs)}
                 )
@@ -361,6 +403,12 @@ class Engine:
             strat = min((self.strategy(role, i) for i in infos), key=ORDER.index)
             info = min(infos, key=lambda i: ORDER.index(self.strategy(role, i)))
             if strat != "FULL" and not (len(srcs) == 1 and _is_direct(node)):
+                if node.expression.find(*ORACLE_NODES):
+                    # CASE / IF / NULLIF / division turn a masked value into NULL-or-not or an error: a 1-bit oracle
+                    raise Blocked(
+                        f"inference guard: role '{role}' cannot branch or divide on masked column(s) "
+                        f"{', '.join(sorted(f'{t}.{c}' for t, c in srcs))}"
+                    )
                 strat = "REDACT"
             plan.append({"name": name, "strategy": strat, "info": info, "source": sorted(f"{t}.{c}" for t, c in srcs)})
         return tree, plan
@@ -399,7 +447,7 @@ class Engine:
             query, plan = self.planned(sql, role)
         except Blocked as e:
             if record:
-                audit.append({**base, "status": "BLOCKED", "reason": str(e)})
+                self._audit(base, status="BLOCKED", reason=str(e))
             return {
                 **base,
                 "ok": False,
@@ -448,7 +496,7 @@ class Engine:
             out.append(row)
         masked = {p["name"]: p["strategy"] for p in plan if p["strategy"] != "FULL"}
         if record:
-            audit.append({**base, "status": "OK", "rows": len(out), "masked": masked})
+            self._audit(base, status="OK", rows=len(out), masked=masked)
         return {
             **base,
             "ok": True,
@@ -471,6 +519,10 @@ class Engine:
             "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
         }
 
+    def _audit(self, base: dict[str, Any], **fields: Any) -> None:  # noqa: ANN401 - record fields are free-form
+        """Append one audit record; the SQL is stored with its literal values removed."""
+        audit.append({**base, "sql": audit_sql(base["sql"], self.b.dialect), **fields})
+
     def write(self, sql: str, base: dict[str, Any], t0: float, record: bool) -> dict[str, Any] | None:
         """Playground only: run CREATE / INSERT / UPDATE / DELETE / ALTER / DROP. Returns None for reads."""
         try:
@@ -485,7 +537,7 @@ class Engine:
             log.warning("playground write failed: %s", e)
             return {**base, "ok": False, "blocked": False, "error": f"database error: {str(e).splitlines()[0]}"}
         if record:
-            audit.append({**base, "status": "WRITE", "rows": n})
+            self._audit(base, status="WRITE", rows=n)
         msg = (
             f"{tree.key.upper()} done on the playground: {max(n, 0)} row(s) affected. "
             "PardaDB is re-scanning the playground, so new tables and columns get tagged."

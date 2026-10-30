@@ -32,6 +32,7 @@ def classify(b, table, column):
         ("customers", "cust_nm", "person"),
         ("kyc_records", "aadhaar_no", "aadhaar"),
         ("support_tickets", "ticket_text", "text"),
+        ("transactions", "ref_no", "text"),  # some references are real card numbers: masked value by value
     ],
 )
 def test_pack_pii_columns_tagged(pack, table, column, entity):
