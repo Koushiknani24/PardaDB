@@ -172,3 +172,25 @@ def test_address_spans_find_written_addresses(text, address):
 )
 def test_address_spans_ignore_non_addresses(text):
     assert d.address_spans(text) == []
+
+
+@pytest.mark.parametrize(
+    ("text", "value", "entity"),
+    [
+        ("call me on 9000044094-\n Saurabh", "9000044094", "phone"),  # a trailing hyphen ends the number
+        ("aadhaar 2345 1234 1234-x", "2345 1234 1234", "aadhaar"),
+        (
+            "address Flat 1008, Gulmohar Towers, Pune 411010 pe bhejna",
+            "Flat 1008, Gulmohar Towers, Pune 411010",
+            "address",
+        ),
+    ],
+)
+def test_numbers_and_addresses_are_covered_whole(text: str, value: str, entity: str) -> None:
+    assert (value, entity) in [(text[a:b], e) for a, b, e in d.find_spans(text)]
+
+
+def test_overlapping_spans_leave_no_unmasked_tail() -> None:
+    text = "Co-applicant Ravi ABCPK0000P to sign"
+    spans = d.find_spans(text)
+    assert any(a <= text.index("ABCPK0000P") and b >= text.index(" to sign") for a, b, _ in spans)

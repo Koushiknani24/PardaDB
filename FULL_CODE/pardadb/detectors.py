@@ -214,12 +214,12 @@ NAME = r"(?:[A-Z][a-z]+|[A-Z]{2,})(?:[ ](?:[A-Z][a-z]+|[A-Z]{2,})){1,3}"
 SPAN_RULES = [
     ("email", re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]*[a-z]{2,}", re.I)),
     ("upi", re.compile(r"[\w.-]{2,}@(?:[a-z]*upi|ok[a-z]+|ybl|paytm|neelpay|apl|ibl|axl)\b", re.I)),
-    ("card", re.compile(r"(?<![\d-])\d{4}(?:[ -]?\d{4}){2}[ -]?\d{3,7}(?![\d-])")),
-    ("aadhaar", re.compile(r"(?<![\d-])[2-9]\d{3}[ -]\d{4}[ -]\d{4}(?![\d-])")),
+    ("card", re.compile(r"(?<![\d-])\d{4}(?:[ -]?\d{4}){2}[ -]?\d{3,7}(?!-?\d)")),
+    ("aadhaar", re.compile(r"(?<![\d-])[2-9]\d{3}[ -]\d{4}[ -]\d{4}(?!-?\d)")),
     ("pan", re.compile(r"\b[A-Z]{3}[PCHFATBLJG][A-Z]\d{4}[A-Z]\b")),
     ("ssn", re.compile(r"\b9\d{2}-\d{2}-\d{4}\b")),
     ("phone", re.compile(r"\+1 ?\(\d{3}\) ?\d{3}-\d{4}")),
-    ("phone", re.compile(r"(?<![\w-])(?:\+91[ -]?|0)?[6-9]\d{4}[ -]?\d{5}(?![\d-])")),
+    ("phone", re.compile(r"(?<![\w-])(?:\+91[ -]?|0)?[6-9]\d{4}[ -]?\d{5}(?!-?\d)")),  # trailing "-" ends it
     ("account", re.compile(r"(?<![\w])\d{11,18}(?![\d])")),
 ]
 # Indian postal addresses inside free text: a house number, an address word, then a 6-digit pincode.
@@ -244,7 +244,9 @@ def address_spans(text: str) -> list[tuple[int, int]]:
         if "\n" in window:
             lo += window.rindex("\n") + 1
         starts = [m.start() for m in HOUSE_NO.finditer(text, lo, pin.start())]
-        for start in reversed(starts):
+        # a 'Flat / Plot / H.No' start wins, so the house number is inside the span
+        prefixed = [s_ for s_ in starts if HOUSE_PREFIX.search(text, max(0, s_ - 12), s_)]
+        for start in prefixed[:1] + list(reversed(starts)):
             prefix = HOUSE_PREFIX.search(text, max(0, start - 12), start)
             begin = prefix.start() if prefix else start
             if ADDRESS_HINT.search(text, begin, pin.start()):
@@ -353,5 +355,8 @@ def find_spans(text: str, names: NameIndex | None = None, extra: Iterable[Span] 
     for s, e, ent in found:
         if s >= last_end:
             out.append((s, e, ent))
+            last_end = e
+        elif e > last_end:  # partial overlap: widen the kept span so no tail is left unmasked
+            out[-1] = (out[-1][0], e, out[-1][2])
             last_end = e
     return out
