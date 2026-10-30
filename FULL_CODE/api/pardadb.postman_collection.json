@@ -1,0 +1,660 @@
+{
+  "info": {
+    "name": "PardaDB API",
+    "_postman_id": "8c1f2b4e-1448-4b1a-9d00-pardadb00001",
+    "description": "Role-based dynamic masking, checked live. Start PardaDB (`pardadb`), then run this collection. Every request asserts the masking or blocking the problem statement asks for. All data is the synthetic Saffron Bank pack.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8765"
+    },
+    {
+      "key": "backend",
+      "value": "sqlite"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health and catalog",
+      "item": [
+        {
+          "name": "Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "status"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"version reported\", () => pm.expect(pm.response.json().version).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Users and roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"3 roles present\", () => { const r = new Set(pm.response.json().map(u => u.role.toLowerCase())); [\"admin\",\"support\",\"analyst\"].forEach(x => pm.expect(r.has(x)).to.be.true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PII catalog (auto-tagged columns)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/catalog?backend={{backend}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "catalog"
+              ],
+              "query": [
+                {
+                  "key": "backend",
+                  "value": "{{backend}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const cols = pm.response.json().columns;",
+                  "const find = (t, c) => cols.find(x => x.table === t && x.column.toLowerCase() === c);",
+                  "pm.test(\"cards.CARD_NO tagged PII_HIGH\", () => pm.expect(find(\"cards\", \"card_no\").tag).to.eql(\"PII_HIGH\"));",
+                  "pm.test(\"col_7 (no useful name) found to hold PAN\", () => pm.expect(find(\"loan_applications\", \"col_7\").entity).to.eql(\"pan\"));",
+                  "pm.test(\"curr_bal tagged FINANCIAL_CONFIDENTIAL\", () => pm.expect(find(\"accounts\", \"curr_bal\").tag).to.eql(\"FINANCIAL_CONFIDENTIAL\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Same query, three roles",
+      "item": [
+        {
+          "name": "Admin sees full card numbers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT CARD_NO, NAME_ON_CARD FROM cards ORDER BY CARD_REF LIMIT 3\",\n  \"role\": \"admin\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"full 16-digit card\", () => pm.expect(pm.response.json().rows[0][0].replace(/\\D/g, \"\")).to.have.lengthOf(16));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Support sees 4111-XXXX-XXXX-1234",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT CARD_NO, NAME_ON_CARD FROM cards ORDER BY CARD_REF LIMIT 3\",\n  \"role\": \"support\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"card partially masked\", () => pm.expect(pm.response.json().rows[0][0]).to.match(/^\\d{4}-XXXX-XXXX-\\d{4}$/));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analyst sees no card at all",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT CARD_NO, NAME_ON_CARD FROM cards ORDER BY CARD_REF LIMIT 3\",\n  \"role\": \"analyst\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"card redacted\", () => pm.expect(pm.response.json().rows[0][0]).to.not.match(/\\d{4}/));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Compare all roles at once",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/compare",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "compare"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT cust_nm, mob_no, dob_dt FROM customers LIMIT 3\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"admin and support differ\", () => pm.expect(JSON.stringify(r.admin.rows)).to.not.eql(JSON.stringify(r.support.rows)));",
+                  "pm.test(\"analyst gets age bands\", () => pm.expect(r.analyst.rows[0][2]).to.match(/^\\d0-\\d9$/));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Free text: PII masked inside tickets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT ticket_text FROM support_tickets ORDER BY ticket_id LIMIT 5\",\n  \"role\": \"analyst\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"no 16-digit card left in text\", () => pm.response.json().rows.forEach(r => pm.expect(String(r[0])).to.not.match(/\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}/)));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Bypass attempts are blocked or still masked",
+      "item": [
+        {
+          "name": "Rename the column: still masked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT CARD_NO AS x FROM cards LIMIT 2\",\n  \"role\": \"support\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"alias does not unmask\", () => pm.expect(pm.response.json().rows[0][0]).to.include(\"XXXX\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter on a hidden card number: blocked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT customer_id FROM cards WHERE CARD_NO LIKE '4111%'\",\n  \"role\": \"support\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"inference guard blocks it\", () => { const r = pm.response.json(); pm.expect(r.blocked).to.be.true; pm.expect(r.reason).to.include(\"inference guard\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sort by hidden balance: blocked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"SELECT customer_id FROM accounts ORDER BY curr_bal DESC LIMIT 5\",\n  \"role\": \"analyst\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"blocked\", () => pm.expect(pm.response.json().blocked).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Write to bank data: blocked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sql\": \"DELETE FROM customers\",\n  \"role\": \"admin\",\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"read-only by design\", () => pm.expect(pm.response.json().blocked).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid input: rejected",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "query"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"support\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400 for missing sql\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Proof",
+      "item": [
+        {
+          "name": "Tables unchanged (SHA-256 fingerprints)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/integrity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "integrity"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"backend\": \"{{backend}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"every table unchanged\", () => { const r = pm.response.json(); const t = r.tables || r; pm.expect(r.all_unchanged).to.be.true; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Audit log (hash chain)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/audit?limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "audit"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
